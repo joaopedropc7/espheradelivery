@@ -21,7 +21,7 @@ public class ProductService {
     private CategoryRepository categoryRepository;
 
     public ProductModel createProduct(ProductRecord dto){
-        CategoryModel category = categoryRepository.findById(dto.idCategory()).orElseThrow(() -> new ResourceNotFoundException("No records found for this ID!"));
+        CategoryModel category = categoryRepository.findById(dto.idCategory()).orElseThrow(() -> new ResourceNotFoundException("Não existe categoria com este ID!"));
         ProductModel product = new ProductModel(dto, category);
         productRepository.save(product);
         return product;
@@ -33,13 +33,13 @@ public class ProductService {
     }
 
     public ProductModel findById(Integer id){
-        ProductModel product = productRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("No records found for this ID!"));
+        ProductModel product = productRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Não existe produto com este ID!"));
         return product;
     }
 
     public ProductModel updateProduct(Integer id, ProductRecord dto){
-        ProductModel product = productRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("No records found for this ID!"));
-        CategoryModel category = categoryRepository.findById(dto.idCategory()).orElseThrow(() -> new ResourceNotFoundException("No records found for this ID!"));
+        ProductModel product = productRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Não existe produto com este ID!"));
+        CategoryModel category = categoryRepository.findById(dto.idCategory()).orElseThrow(() -> new ResourceNotFoundException("Não existe categoria com este ID!"));
 
         product.setName(dto.name());
         product.setCategoryModel(category);
@@ -52,7 +52,7 @@ public class ProductService {
     }
 
     public void inactiveProduct(Integer id){
-        ProductModel product = productRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("No records found for this ID!"));
+        ProductModel product = productRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Não existe produto com este ID!"));
         product.setInactive(true);
         productRepository.save(product);
     }

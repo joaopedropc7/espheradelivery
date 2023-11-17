@@ -1,5 +1,6 @@
 package br.com.esphera.delivery.models;
 
+import br.com.esphera.delivery.models.DTOS.CategoryRecord;
 import jakarta.persistence.*;
 
 import java.util.Objects;
@@ -17,8 +18,8 @@ public class CategoryModel {
     public CategoryModel() {
     }
 
-    public CategoryModel(String categoryName) {
-        this.categoryName = categoryName;
+    public CategoryModel(CategoryRecord categoryRecord) {
+        this.categoryName = categoryRecord.categoryName();
         this.inactive = false;
     }
 

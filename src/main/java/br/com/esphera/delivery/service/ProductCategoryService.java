@@ -2,6 +2,7 @@ package br.com.esphera.delivery.service;
 
 import br.com.esphera.delivery.exceptions.ResourceNotFoundException;
 import br.com.esphera.delivery.models.CategoryModel;
+import br.com.esphera.delivery.models.DTOS.CategoryRecord;
 import br.com.esphera.delivery.repository.CategoryRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -14,8 +15,8 @@ public class ProductCategoryService {
     @Autowired
     private CategoryRepository categoryRepository;
 
-    public CategoryModel createCategory(String nameCategory){
-        CategoryModel categoryModel = new CategoryModel(nameCategory);
+    public CategoryModel createCategory(CategoryRecord categoryRecord){
+        CategoryModel categoryModel = new CategoryModel(categoryRecord);
         categoryRepository.save(categoryModel);
         return categoryModel;
     }

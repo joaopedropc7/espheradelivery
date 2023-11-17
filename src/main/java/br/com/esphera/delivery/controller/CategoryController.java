@@ -1,6 +1,7 @@
 package br.com.esphera.delivery.controller;
 
 import br.com.esphera.delivery.models.CategoryModel;
+import br.com.esphera.delivery.models.DTOS.CategoryRecord;
 import br.com.esphera.delivery.service.ProductCategoryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -16,7 +17,7 @@ public class CategoryController {
     private ProductCategoryService categoryService;
 
     @PostMapping
-    public CategoryModel createCategory(@RequestBody String nameCategory){
+    public CategoryModel createCategory(@RequestBody CategoryRecord nameCategory){
         CategoryModel categoryModel = categoryService.createCategory(nameCategory);
         return  categoryModel;
     }

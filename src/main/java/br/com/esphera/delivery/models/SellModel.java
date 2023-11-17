@@ -1,6 +1,7 @@
 package br.com.esphera.delivery.models;
 
 import br.com.esphera.delivery.models.DTOS.SellCreateRecord;
+import br.com.esphera.delivery.models.Enums.StatusOrder;
 import jakarta.persistence.*;
 import org.hibernate.validator.constraints.br.CPF;
 
@@ -28,6 +29,7 @@ public class SellModel {
     private Double sellValueWithDiscount;
     private Double deliveryValue;
     private LocalDateTime orderDate;
+    private StatusOrder statusOrder;
     private Boolean orderCancelled;
 
     public SellModel() {
@@ -40,6 +42,7 @@ public class SellModel {
         this.enderecoModel = enderecoModel;
         this.shoppingCartModel = shoppingCartModel;
         this.sellValue = shoppingCartModel.getTotalValue();
+        this.statusOrder = StatusOrder.Recebido;
         this.discount = data.discount();
         this.sellValueWithDiscount = shoppingCartModel.getTotalValue() - data.discount();
         this.orderDate = LocalDateTime.now();
@@ -138,6 +141,14 @@ public class SellModel {
         return sellValueWithDiscount;
     }
 
+    public StatusOrder getStatusOrder() {
+        return statusOrder;
+    }
+
+    public void setStatusOrder(StatusOrder statusOrder) {
+        this.statusOrder = statusOrder;
+    }
+
     public void setSellValueWithDiscount(Double sellValueWithDiscount) {
         this.sellValueWithDiscount = sellValueWithDiscount;
     }
@@ -147,11 +158,11 @@ public class SellModel {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         SellModel sellModel = (SellModel) o;
-        return Objects.equals(id, sellModel.id) && Objects.equals(clientName, sellModel.clientName) && Objects.equals(cpf, sellModel.cpf) && Objects.equals(numberCellphone, sellModel.numberCellphone) && Objects.equals(enderecoModel, sellModel.enderecoModel) && Objects.equals(shoppingCartModel, sellModel.shoppingCartModel) && Objects.equals(sellValue, sellModel.sellValue) && Objects.equals(discount, sellModel.discount) && Objects.equals(deliveryValue, sellModel.deliveryValue) && Objects.equals(orderDate, sellModel.orderDate) && Objects.equals(orderCancelled, sellModel.orderCancelled);
+        return Objects.equals(id, sellModel.id) && Objects.equals(clientName, sellModel.clientName) && Objects.equals(cpf, sellModel.cpf) && Objects.equals(numberCellphone, sellModel.numberCellphone) && Objects.equals(enderecoModel, sellModel.enderecoModel) && Objects.equals(shoppingCartModel, sellModel.shoppingCartModel) && Objects.equals(sellValue, sellModel.sellValue) && Objects.equals(discount, sellModel.discount) && Objects.equals(sellValueWithDiscount, sellModel.sellValueWithDiscount) && Objects.equals(deliveryValue, sellModel.deliveryValue) && Objects.equals(orderDate, sellModel.orderDate) && statusOrder == sellModel.statusOrder && Objects.equals(orderCancelled, sellModel.orderCancelled);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, clientName, cpf, numberCellphone, enderecoModel, shoppingCartModel, sellValue, discount, deliveryValue, orderDate, orderCancelled);
+        return Objects.hash(id, clientName, cpf, numberCellphone, enderecoModel, shoppingCartModel, sellValue, discount, sellValueWithDiscount, deliveryValue, orderDate, statusOrder, orderCancelled);
     }
 }
