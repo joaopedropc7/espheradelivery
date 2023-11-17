@@ -11,6 +11,8 @@ import br.com.esphera.delivery.repository.ShoppingCartRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class SellService {
 
@@ -31,6 +33,20 @@ public class SellService {
         sellRepository.save(sellModel);
         return sellModel;
     }
+
+
+
+    public List<SellModel> listSells(){
+        List<SellModel> sells = sellRepository.findAll();
+        return sells;
+    }
+
+    public SellModel findByIdSell(Integer id){
+        SellModel sellModel = sellRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("No records found for this id"));
+        return  sellModel;
+    }
+
+
 
 
 }

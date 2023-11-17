@@ -14,6 +14,9 @@ public class ProductModel {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
     private String name;
+    @ManyToOne
+    @JoinColumn(name = "category_id")
+    private CategoryModel categoryModel;
     private String description;
     private String image;
     private Double costValue;
@@ -26,8 +29,9 @@ public class ProductModel {
     public ProductModel() {
     }
 
-    public ProductModel(ProductRecord dto) {
+    public ProductModel(ProductRecord dto, CategoryModel category) {
         this.name = dto.name();
+        this.categoryModel = category;
         this.description = dto.description();
         this.image = dto.image();
         this.costValue = dto.costValue();
@@ -117,6 +121,14 @@ public class ProductModel {
 
     public void setInactive(Boolean inactive) {
         this.inactive = inactive;
+    }
+
+    public CategoryModel getCategoryModel() {
+        return categoryModel;
+    }
+
+    public void setCategoryModel(CategoryModel categoryModel) {
+        this.categoryModel = categoryModel;
     }
 
     @Override

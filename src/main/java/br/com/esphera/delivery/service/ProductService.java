@@ -2,13 +2,14 @@ package br.com.esphera.delivery.service;
 
 import br.com.esphera.delivery.exceptions.ResourceNotFoundException;
 import br.com.esphera.delivery.models.DTOS.ProductRecord;
+import br.com.esphera.delivery.models.CategoryModel;
 import br.com.esphera.delivery.models.ProductModel;
+import br.com.esphera.delivery.repository.CategoryRepository;
 import br.com.esphera.delivery.repository.ProductRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class ProductService {
@@ -16,8 +17,12 @@ public class ProductService {
     @Autowired
     private ProductRepository productRepository;
 
+    @Autowired
+    private CategoryRepository categoryRepository;
+
     public ProductModel createProduct(ProductRecord dto){
-        ProductModel product = new ProductModel(dto);
+        CategoryModel category = categoryRepository.findById(dto.idCategory()).orElseThrow(() -> new ResourceNotFoundException("No records found for this ID!"));
+        ProductModel product = new ProductModel(dto, category);
         productRepository.save(product);
         return product;
     }
@@ -34,7 +39,10 @@ public class ProductService {
 
     public ProductModel updateProduct(Integer id, ProductRecord dto){
         ProductModel product = productRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("No records found for this ID!"));
+        CategoryModel category = categoryRepository.findById(dto.idCategory()).orElseThrow(() -> new ResourceNotFoundException("No records found for this ID!"));
+
         product.setName(dto.name());
+        product.setCategoryModel(category);
         product.setDescription(dto.description());
         product.setImage(dto.image());
         product.setCostValue(dto.costValue());
