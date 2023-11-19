@@ -1,6 +1,6 @@
 package br.com.esphera.delivery.models;
 
-import br.com.esphera.delivery.models.DTOS.EnderecoRecord;
+import br.com.esphera.delivery.models.DTOS.AddressRecord;
 import jakarta.persistence.*;
 
 import java.util.Objects;
@@ -23,7 +23,7 @@ public class EnderecoModel {
     public EnderecoModel() {
     }
 
-    public EnderecoModel(EnderecoRecord data){
+    public EnderecoModel(AddressRecord data){
         this.logradouro = data.logradouro();
         this.cep = data.cep();
         this.complemento = data.complemento();

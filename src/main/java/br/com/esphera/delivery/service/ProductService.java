@@ -27,6 +27,12 @@ public class ProductService {
         return product;
     }
 
+    public List<ProductModel> findProductsByCategory(Integer categoryId){
+        CategoryModel category = categoryRepository.findById(categoryId).orElseThrow(() -> new ResourceNotFoundException("Não existe categoria com este ID!"));
+        List<ProductModel> products = productRepository.findByCategoryId(category.getId());
+        return products;
+    }
+
     public List<ProductModel> findAllProducts(){
         List<ProductModel> products = productRepository.findAll();
         return products;

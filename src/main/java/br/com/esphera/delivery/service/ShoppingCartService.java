@@ -1,5 +1,6 @@
 package br.com.esphera.delivery.service;
 
+import br.com.esphera.delivery.exceptions.ResourceNotFoundException;
 import br.com.esphera.delivery.models.ProductCartItemModel;
 import br.com.esphera.delivery.models.ShoppingCartModel;
 import br.com.esphera.delivery.repository.ShoppingCartRepository;
@@ -76,6 +77,10 @@ public class ShoppingCartService {
         for (ProductCartItemModel productCart : shoppingCart.getProductCartItems()){
             shoppingCart.setTotalValue(shoppingCart.getTotalValue() + (productCart.getProduct().getValueSell() * productCart.getQuantity()));
         }
+    }
+
+    public ShoppingCartModel getShoppingCartInDBById(Integer cartID){
+        return shoppingCartRepository.findById(cartID).orElseThrow(() -> new ResourceNotFoundException("Nenhum carrinho de compra encontrado ocm este id!"));
     }
 
     public void clearCart(){

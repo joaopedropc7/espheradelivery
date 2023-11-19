@@ -3,6 +3,7 @@ package br.com.esphera.delivery.models;
 import br.com.esphera.delivery.models.DTOS.CategoryRecord;
 import jakarta.persistence.*;
 
+import java.util.List;
 import java.util.Objects;
 
 @Entity

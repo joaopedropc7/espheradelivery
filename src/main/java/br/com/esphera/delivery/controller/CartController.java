@@ -2,6 +2,7 @@ package br.com.esphera.delivery.controller;
 
 import br.com.esphera.delivery.models.ProductCartItemModel;
 import br.com.esphera.delivery.models.ProductModel;
+import br.com.esphera.delivery.models.ShoppingCartModel;
 import br.com.esphera.delivery.service.ProductService;
 import br.com.esphera.delivery.service.ShoppingCartService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,9 +35,9 @@ public class CartController {
     }
 
     @PostMapping("/checkout")
-    public ResponseEntity checkout(){
-        shoppingCartService.checkout();
-        return ResponseEntity.ok().build();
+    public ResponseEntity<Integer> checkout(){
+        ShoppingCartModel shoppingCartModel = shoppingCartService.checkout();
+        return ResponseEntity.ok(shoppingCartModel.getId());
     }
 
     @GetMapping("/quantity")
@@ -60,6 +61,11 @@ public class CartController {
         return ResponseEntity.ok().build();
     }
 
+    @GetMapping("/{id}")
+    public ShoppingCartModel getShoppingCartById(@PathVariable(value = "id")Integer id){
+        ShoppingCartModel shoppingCart = shoppingCartService.getShoppingCartInDBById(id);
+        return shoppingCart;
+    }
 
 
 }

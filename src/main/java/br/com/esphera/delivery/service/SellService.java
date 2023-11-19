@@ -6,7 +6,7 @@ import br.com.esphera.delivery.models.EnderecoModel;
 import br.com.esphera.delivery.models.Enums.StatusOrder;
 import br.com.esphera.delivery.models.SellModel;
 import br.com.esphera.delivery.models.ShoppingCartModel;
-import br.com.esphera.delivery.repository.EnderecoRepository;
+import br.com.esphera.delivery.repository.AddressRepository;
 import br.com.esphera.delivery.repository.SellRepository;
 import br.com.esphera.delivery.repository.ShoppingCartRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,15 +21,15 @@ public class SellService {
     private SellRepository sellRepository;
 
     @Autowired
-    private EnderecoRepository enderecoRepository;
+    private AddressRepository addressRepository;
 
     @Autowired
     private ShoppingCartRepository shoppingCartRepository;
 
     public SellModel createSell(SellCreateRecord data){
         ShoppingCartModel shoppingCartModel = shoppingCartRepository.findById(data.shoppingCartId()).orElseThrow(() -> new ResourceNotFoundException("No records found for this id"));
-        EnderecoModel enderecoModel = new EnderecoModel(data.enderecoRecord());
-        enderecoRepository.save(enderecoModel);
+        EnderecoModel enderecoModel = new EnderecoModel(data.addressRecord());
+        addressRepository.save(enderecoModel);
         SellModel sellModel = new SellModel(data, enderecoModel, shoppingCartModel);
         sellRepository.save(sellModel);
         return sellModel;
