@@ -3,6 +3,7 @@ package br.com.esphera.delivery.service;
 import br.com.esphera.delivery.exceptions.ResourceNotFoundException;
 import br.com.esphera.delivery.models.DTOS.ProductRecord;
 import br.com.esphera.delivery.models.CategoryModel;
+import br.com.esphera.delivery.models.ProductEntryItemModel;
 import br.com.esphera.delivery.models.ProductModel;
 import br.com.esphera.delivery.repository.CategoryRepository;
 import br.com.esphera.delivery.repository.ProductRepository;
@@ -61,5 +62,41 @@ public class ProductService {
         ProductModel product = productRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Não existe produto com este ID!"));
         product.setInactive(true);
         productRepository.save(product);
+    }
+
+    public void activeProduct(Integer id){
+        ProductModel product = productRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Não existe produto com este ID!"));
+        product.setInactive(false);
+        productRepository.save(product);
+    }
+
+    public void sellProduct(Integer productId, Integer productQuantity){
+        ProductModel product = productRepository.findById(productId).orElseThrow(() -> new ResourceNotFoundException("Não existe produto com este ID!"));
+        product.setQuantity(product.getQuantity() - productQuantity);
+        product.setSales(product.getSales() + productQuantity);
+        productRepository.save(product);
+    }
+
+    public void revertSellProduct(Integer productId, Integer productQuantity){
+        ProductModel product = productRepository.findById(productId).orElseThrow(() -> new ResourceNotFoundException("Não existe produto com este ID!"));
+        product.setQuantity(product.getQuantity() + productQuantity);
+        product.setSales(product.getSales() - productQuantity);
+        productRepository.save(product);
+    }
+
+    public void addQuantityInProduct(List<ProductEntryItemModel> productsList){
+        productsList.forEach(product -> {
+            ProductModel productModel = productRepository.findById(product.getProduct().getId()).orElseThrow(() -> new ResourceNotFoundException("Não existe produto com este ID!"));
+            productModel.setQuantity(productModel.getQuantity() + product.getQuantity());
+            productRepository.save(productModel);
+        });
+    }
+
+    public void cancelEntryById(List<ProductEntryItemModel> products) {
+        products.forEach(product -> {
+            ProductModel productModel = productRepository.findById(product.getProduct().getId()).orElseThrow(() -> new ResourceNotFoundException("Não existe produto com este ID!"));
+            productModel.setQuantity(productModel.getQuantity() - product.getQuantity());
+            productRepository.save(productModel);
+        });
     }
 }

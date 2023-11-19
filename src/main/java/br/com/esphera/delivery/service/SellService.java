@@ -9,6 +9,7 @@ import br.com.esphera.delivery.models.ShoppingCartModel;
 import br.com.esphera.delivery.repository.AddressRepository;
 import br.com.esphera.delivery.repository.SellRepository;
 import br.com.esphera.delivery.repository.ShoppingCartRepository;
+import br.com.esphera.delivery.validations.sells.ValidationSales;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -26,12 +27,22 @@ public class SellService {
     @Autowired
     private ShoppingCartRepository shoppingCartRepository;
 
+    @Autowired
+    private List<ValidationSales> validationSales;
+
+    @Autowired
+    private ProductService productService;
+
     public SellModel createSell(SellCreateRecord data){
         ShoppingCartModel shoppingCartModel = shoppingCartRepository.findById(data.shoppingCartId()).orElseThrow(() -> new ResourceNotFoundException("No records found for this id"));
         EnderecoModel enderecoModel = new EnderecoModel(data.addressRecord());
+        validationSales.forEach(validationSales -> validationSales.valid(data, shoppingCartModel));
         addressRepository.save(enderecoModel);
         SellModel sellModel = new SellModel(data, enderecoModel, shoppingCartModel);
         sellRepository.save(sellModel);
+        shoppingCartModel.getProductCartItems().forEach(productCartItemModel -> {
+            productService.sellProduct(productCartItemModel.getProduct().getId(), productCartItemModel.getQuantity());
+        });
         return sellModel;
     }
 
