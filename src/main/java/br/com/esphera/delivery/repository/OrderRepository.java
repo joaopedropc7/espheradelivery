@@ -1,14 +1,14 @@
 package br.com.esphera.delivery.repository;
 
 import br.com.esphera.delivery.models.Enums.StatusOrder;
-import br.com.esphera.delivery.models.SellModel;
+import br.com.esphera.delivery.models.OrderModel;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
 
-public interface SellRepository extends JpaRepository<SellModel, Integer> {
+public interface OrderRepository extends JpaRepository<OrderModel, Integer> {
 
-    List<SellModel> findByStatusOrder(StatusOrder statusOrder);
+    List<OrderModel> findByStatusOrder(StatusOrder statusOrder);
 
 
 }

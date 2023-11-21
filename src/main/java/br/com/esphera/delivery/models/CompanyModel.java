@@ -26,7 +26,7 @@ public class CompanyModel {
     @OneToMany
     @JoinColumn(name = "sells")
     @JsonIgnore
-    private List<SellModel> sells;
+    private List<OrderModel> sells;
     @OneToMany
     @JoinColumn(name = "products")
     @JsonIgnore
@@ -113,11 +113,11 @@ public class CompanyModel {
         this.defaulter = defaulter;
     }
 
-    public List<SellModel> getSells() {
+    public List<OrderModel> getSells() {
         return sells;
     }
 
-    public void setSells(List<SellModel> sells) {
+    public void setSells(List<OrderModel> sells) {
         this.sells = sells;
     }
 

@@ -7,6 +7,7 @@ import br.com.esphera.delivery.models.ProductEntryModel;
 import br.com.esphera.delivery.models.ProductModel;
 import br.com.esphera.delivery.repository.ProductEntryItemModelRepository;
 import br.com.esphera.delivery.repository.ProductEntryRepository;
+import br.com.esphera.delivery.validations.entry.ValidationEntry;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -25,9 +26,14 @@ public class ProductEntryService {
     @Autowired
     private ProductService productService;
 
+    @Autowired
+    private List<ValidationEntry> validationEntry;
+
     public ProductEntryModel createEntryProduct(ProductEntryRecord data){
+        validationEntry.forEach(validacao -> validacao.valid(data));
         List<ProductModel> productsModel = new ArrayList<>();
         List<ProductEntryItemModel> productsEntryModel = new ArrayList<>();
+
         data.products().forEach(product -> {
             ProductModel productModel = productService.findById(product.idProduct());
             ProductEntryItemModel productEntryItemModel = new ProductEntryItemModel(productModel, product.quantity(), product.priceBuy());
@@ -57,7 +63,7 @@ public class ProductEntryService {
         ProductEntryModel productEntryModel = entryRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Não foi encontrado entradas com o id: " + id));
         productEntryModel.setEntryCanceled(true);
         productService.cancelEntryById(productEntryModel.getProducts());
-
+        entryRepository.deleteById(id);
     }
 
 }

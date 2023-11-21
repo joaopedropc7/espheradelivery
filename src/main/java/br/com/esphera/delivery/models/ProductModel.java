@@ -24,6 +24,8 @@ public class ProductModel {
     private Integer quantity;
     private Integer sales;
     private LocalDate dateCreate;
+    private Double valueBuyTotal;
+    private Double valueSellTotal;
     private Boolean inactive;
 
     public ProductModel() {
@@ -36,6 +38,8 @@ public class ProductModel {
         this.image = dto.image();
         this.costValue = dto.costValue();
         this.valueSell = dto.valueSell();
+        this.valueBuyTotal = 0.0;
+        this.valueSellTotal = 0.0;
         this.quantity = 0;
         this.sales = 0;
         this.dateCreate = LocalDate.now();
@@ -129,6 +133,22 @@ public class ProductModel {
 
     public void setCategoryModel(CategoryModel categoryModel) {
         this.categoryModel = categoryModel;
+    }
+
+    public Double getValueBuyTotal() {
+        return valueBuyTotal;
+    }
+
+    public void setValueBuyTotal(Double valueBuyTotal) {
+        this.valueBuyTotal = valueBuyTotal;
+    }
+
+    public Double getValueSellTotal() {
+        return valueSellTotal;
+    }
+
+    public void setValueSellTotal(Double valueSellTotal) {
+        this.valueSellTotal = valueSellTotal;
     }
 
     @Override

@@ -6,5 +6,6 @@ public enum StatusOrder {
     Pronto,
     Rota,
     Entregue,
-    Cancelado
+    Cancelado,
+    Finalizado
 }

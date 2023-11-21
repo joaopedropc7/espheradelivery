@@ -1,16 +1,16 @@
 package br.com.esphera.delivery.models;
 
-import br.com.esphera.delivery.models.DTOS.SellCreateRecord;
+import br.com.esphera.delivery.models.DTOS.OrderCreateRecord;
 import br.com.esphera.delivery.models.Enums.StatusOrder;
+import br.com.esphera.delivery.models.Enums.TypeDelivery;
 import jakarta.persistence.*;
-import org.hibernate.validator.constraints.br.CPF;
 
 import java.time.LocalDateTime;
 import java.util.Objects;
 
 @Entity
 @Table(name = "sells")
-public class SellModel {
+public class OrderModel {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -31,11 +31,12 @@ public class SellModel {
     private LocalDateTime orderDate;
     private StatusOrder statusOrder;
     private Boolean orderCancelled;
+    private TypeDelivery typeDelivery;
 
-    public SellModel() {
+    public OrderModel() {
     }
 
-    public SellModel(SellCreateRecord data, EnderecoModel enderecoModel, ShoppingCartModel shoppingCartModel) {
+    public OrderModel(OrderCreateRecord data, EnderecoModel enderecoModel, ShoppingCartModel shoppingCartModel) {
         this.clientName = data.clientName();
         this.cpf = data.cpf();
         this.numberCellphone = data.numberCellphone();
@@ -47,6 +48,7 @@ public class SellModel {
         this.sellValueWithDiscount = shoppingCartModel.getTotalValue() - data.discount();
         this.orderDate = LocalDateTime.now();
         this.orderCancelled = false;
+        this.typeDelivery = data.typeDelivery();
     }
 
     public Integer getId() {
@@ -153,12 +155,20 @@ public class SellModel {
         this.sellValueWithDiscount = sellValueWithDiscount;
     }
 
+    public TypeDelivery getTypeDelivery() {
+        return typeDelivery;
+    }
+
+    public void setTypeDelivery(TypeDelivery typeDelivery) {
+        this.typeDelivery = typeDelivery;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        SellModel sellModel = (SellModel) o;
-        return Objects.equals(id, sellModel.id) && Objects.equals(clientName, sellModel.clientName) && Objects.equals(cpf, sellModel.cpf) && Objects.equals(numberCellphone, sellModel.numberCellphone) && Objects.equals(enderecoModel, sellModel.enderecoModel) && Objects.equals(shoppingCartModel, sellModel.shoppingCartModel) && Objects.equals(sellValue, sellModel.sellValue) && Objects.equals(discount, sellModel.discount) && Objects.equals(sellValueWithDiscount, sellModel.sellValueWithDiscount) && Objects.equals(deliveryValue, sellModel.deliveryValue) && Objects.equals(orderDate, sellModel.orderDate) && statusOrder == sellModel.statusOrder && Objects.equals(orderCancelled, sellModel.orderCancelled);
+        OrderModel orderModel = (OrderModel) o;
+        return Objects.equals(id, orderModel.id) && Objects.equals(clientName, orderModel.clientName) && Objects.equals(cpf, orderModel.cpf) && Objects.equals(numberCellphone, orderModel.numberCellphone) && Objects.equals(enderecoModel, orderModel.enderecoModel) && Objects.equals(shoppingCartModel, orderModel.shoppingCartModel) && Objects.equals(sellValue, orderModel.sellValue) && Objects.equals(discount, orderModel.discount) && Objects.equals(sellValueWithDiscount, orderModel.sellValueWithDiscount) && Objects.equals(deliveryValue, orderModel.deliveryValue) && Objects.equals(orderDate, orderModel.orderDate) && statusOrder == orderModel.statusOrder && Objects.equals(orderCancelled, orderModel.orderCancelled);
     }
 
     @Override

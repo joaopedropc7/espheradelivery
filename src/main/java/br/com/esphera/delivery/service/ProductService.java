@@ -88,6 +88,7 @@ public class ProductService {
         productsList.forEach(product -> {
             ProductModel productModel = productRepository.findById(product.getProduct().getId()).orElseThrow(() -> new ResourceNotFoundException("Não existe produto com este ID!"));
             productModel.setQuantity(productModel.getQuantity() + product.getQuantity());
+            productModel.setValueBuyTotal(productModel.getValueBuyTotal() + (product.getPriceBuy() * product.getQuantity()));
             productRepository.save(productModel);
         });
     }
@@ -96,6 +97,7 @@ public class ProductService {
         products.forEach(product -> {
             ProductModel productModel = productRepository.findById(product.getProduct().getId()).orElseThrow(() -> new ResourceNotFoundException("Não existe produto com este ID!"));
             productModel.setQuantity(productModel.getQuantity() - product.getQuantity());
+            productModel.setValueBuyTotal(productModel.getValueBuyTotal() - (product.getPriceBuy() * product.getQuantity()));
             productRepository.save(productModel);
         });
     }
