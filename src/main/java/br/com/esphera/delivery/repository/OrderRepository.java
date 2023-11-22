@@ -11,7 +11,7 @@ import java.util.List;
 
 public interface OrderRepository extends JpaRepository<OrderModel, Integer> {
 
-    List<OrderModel> findByStatusOrder(StatusOrder statusOrder);
+    List<OrderModel> findByStatusOrderAndCompanyModel(StatusOrder statusOrder, CompanyModel companyModel);
 
     List<OrderModel> findOrderModelsByCompanyModel(CompanyModel companyModel);
 

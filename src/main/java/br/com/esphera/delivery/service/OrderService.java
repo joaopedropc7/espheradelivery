@@ -66,8 +66,9 @@ public class OrderService {
         orderRepository.save(orderModel);
     }
 
-    public List<OrderModel> findByStatusOrder(StatusOrder statusOrder){
-        List<OrderModel> orderModels = orderRepository.findByStatusOrder(statusOrder);
+    public List<OrderModel> findByStatusOrder(StatusOrder statusOrder, Integer companyId){
+        CompanyModel companyModel = companyService.getCompanyById(companyId);
+        List<OrderModel> orderModels = orderRepository.findByStatusOrderAndCompanyModel(statusOrder, companyModel);
         return orderModels;
     }
 

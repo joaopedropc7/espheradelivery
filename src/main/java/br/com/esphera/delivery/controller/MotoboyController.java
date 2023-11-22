@@ -1,9 +1,10 @@
 package br.com.esphera.delivery.controller;
 
-import br.com.esphera.delivery.models.CategoryModel;
-import br.com.esphera.delivery.models.DTOS.CategoryRecord;
+import br.com.esphera.delivery.models.CompanyModel;
+import br.com.esphera.delivery.models.DTOS.MotoboyRecord;
+import br.com.esphera.delivery.models.MotoboysModel;
 import br.com.esphera.delivery.models.ShoppingCartModel;
-import br.com.esphera.delivery.service.CategoryService;
+import br.com.esphera.delivery.service.MotoboyService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -16,21 +17,21 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/category")
-public class CategoryController {
+@RequestMapping("/api/motoboy")
+public class MotoboyController {
 
     @Autowired
-    private CategoryService categoryService;
+    private MotoboyService motoboyService;
 
     @PostMapping("/{companyId}")
-    @Operation(summary = "Create a category", description = "Create a category",
-            tags = {"Category"},
+    @Operation(summary = "Create motoboy", description = "Create motoboy",
+            tags = {"Motoboy"},
             responses = {
                     @ApiResponse(description = "Success", responseCode = "200",
                             content = {
                                     @Content(
                                             mediaType = "application/json",
-                                            array = @ArraySchema(schema = @Schema(implementation = CategoryModel.class))
+                                            array = @ArraySchema(schema = @Schema(implementation = MotoboysModel.class))
                                     )
                             }),
                     @ApiResponse(description = "Bad Request", responseCode = "400", content = @Content),
@@ -39,20 +40,42 @@ public class CategoryController {
                     @ApiResponse(description = "Internal Error", responseCode = "500", content = @Content),
             }
     )
-    public CategoryModel createCategory(@RequestBody CategoryRecord nameCategory, @PathVariable(value = "companyId") Integer companyId){
-        CategoryModel categoryModel = categoryService.createCategory(nameCategory, companyId);
-        return  categoryModel;
+    public ResponseEntity<MotoboysModel> createMotoboy(@PathVariable(value = "companyId")Integer companyId, @RequestBody MotoboyRecord motoboyRecord){
+        MotoboysModel motoboysModel = motoboyService.createMotoboy(motoboyRecord, companyId);
+        return ResponseEntity.ok(motoboysModel);
+    };
+
+    @GetMapping("/{companyId}")
+    @Operation(summary = "Get all motoboys in company", description = "Get all motoboys in company",
+            tags = {"Motoboy"},
+            responses = {
+                    @ApiResponse(description = "Success", responseCode = "200",
+                            content = {
+                                    @Content(
+                                            mediaType = "application/json",
+                                            array = @ArraySchema(schema = @Schema(implementation = MotoboysModel.class))
+                                    )
+                            }),
+                    @ApiResponse(description = "Bad Request", responseCode = "400", content = @Content),
+                    @ApiResponse(description = "Unauthorized", responseCode = "401", content = @Content),
+                    @ApiResponse(description = "Not Found", responseCode = "404", content = @Content),
+                    @ApiResponse(description = "Internal Error", responseCode = "500", content = @Content),
+            }
+    )
+    public ResponseEntity<List<MotoboysModel>> findMotoboysByIdCompany(@PathVariable(value = "companyId")Integer companyId){
+        List<MotoboysModel> motoboys = motoboyService.findAllMotoboysByCompanyId(companyId);
+        return ResponseEntity.ok(motoboys);
     }
 
-    @GetMapping("/find/{idCompany}")
-    @Operation(summary = "find categorys", description = "find categorys parsing id Company",
-            tags = {"Category"},
+    @GetMapping("/{motoboyId}")
+    @Operation(summary = "Get motoboy by Id", description = "Get motoboy by Id",
+            tags = {"Motoboy"},
             responses = {
                     @ApiResponse(description = "Success", responseCode = "200",
                             content = {
                                     @Content(
                                             mediaType = "application/json",
-                                            array = @ArraySchema(schema = @Schema(implementation = CategoryModel.class))
+                                            array = @ArraySchema(schema = @Schema(implementation = MotoboysModel.class))
                                     )
                             }),
                     @ApiResponse(description = "Bad Request", responseCode = "400", content = @Content),
@@ -61,20 +84,20 @@ public class CategoryController {
                     @ApiResponse(description = "Internal Error", responseCode = "500", content = @Content),
             }
     )
-    public List<CategoryModel> findAllCategorys(@PathVariable(value = "idCompany")Integer idCompany){
-        List<CategoryModel> categorys = categoryService.findAllCategorys(idCompany);
-        return categorys;
+    public ResponseEntity<MotoboysModel> findMotoboyById(@PathVariable(value = "motoboyId")Integer motoboyId){
+        MotoboysModel motoboysModel = motoboyService.findMotoboyById(motoboyId);
+        return ResponseEntity.ok(motoboysModel);
     }
 
-    @GetMapping("/{id}")
-    @Operation(summary = "find category by id", description = "find category by id",
-            tags = {"Category"},
+    @PutMapping("/{motoboyId}")
+    @Operation(summary = "Put motoboy parsing Id and body", description = "Put motoboy parsing Id and body",
+            tags = {"Motoboy"},
             responses = {
                     @ApiResponse(description = "Success", responseCode = "200",
                             content = {
                                     @Content(
                                             mediaType = "application/json",
-                                            array = @ArraySchema(schema = @Schema(implementation = CategoryModel.class))
+                                            array = @ArraySchema(schema = @Schema(implementation = MotoboysModel.class))
                                     )
                             }),
                     @ApiResponse(description = "Bad Request", responseCode = "400", content = @Content),
@@ -83,20 +106,20 @@ public class CategoryController {
                     @ApiResponse(description = "Internal Error", responseCode = "500", content = @Content),
             }
     )
-    public CategoryModel findById(@PathVariable(value = "id") Integer id){
-        CategoryModel categoryModel = categoryService.findById(id);
-        return categoryModel;
+    public ResponseEntity<MotoboysModel> putMotoboy(@PathVariable(value = "motoboyId")Integer motoboyId, @RequestBody MotoboyRecord motoboyRecord){
+        MotoboysModel motoboysModel = motoboyService.putMotoboy(motoboyId, motoboyRecord);
+        return ResponseEntity.ok(motoboysModel);
     }
 
-    @PutMapping("/{id}")
-    @Operation(summary = "Put category by id and body", description = "Put category by id and body",
-            tags = {"Category"},
+    @PutMapping("/active/{motoboyId}")
+    @Operation(summary = "Active motoboy parsing Id", description = "Active motoboy parsing Id",
+            tags = {"Motoboy"},
             responses = {
                     @ApiResponse(description = "Success", responseCode = "200",
                             content = {
                                     @Content(
                                             mediaType = "application/json",
-                                            array = @ArraySchema(schema = @Schema(implementation = CategoryModel.class))
+                                            array = @ArraySchema(schema = @Schema(implementation = MotoboysModel.class))
                                     )
                             }),
                     @ApiResponse(description = "Bad Request", responseCode = "400", content = @Content),
@@ -105,20 +128,20 @@ public class CategoryController {
                     @ApiResponse(description = "Internal Error", responseCode = "500", content = @Content),
             }
     )
-    public CategoryModel updateCategory(@PathVariable(value = "id")Integer categoryId, @RequestBody String categoryName){
-        CategoryModel categoryModel = categoryService.updateCategory(categoryId, categoryName);
-        return categoryModel;
+    public ResponseEntity activeMotoboy(@PathVariable(value = "motoboyId")Integer motoboyId){
+         motoboyService.activeMotoboy(motoboyId);
+         return ResponseEntity.ok().build();
     }
 
-    @DeleteMapping("/{id}")
-    @Operation(summary = "delete category by id", description = "delete category by id",
-            tags = {"Category"},
+    @PutMapping("/inactive/{motoboyId}")
+    @Operation(summary = "Inactive motoboy parsing Id", description = "Inactive motoboy parsing Id",
+            tags = {"Motoboy"},
             responses = {
                     @ApiResponse(description = "Success", responseCode = "200",
                             content = {
                                     @Content(
                                             mediaType = "application/json",
-                                            array = @ArraySchema(schema = @Schema(implementation = CategoryModel.class))
+                                            array = @ArraySchema(schema = @Schema(implementation = MotoboysModel.class))
                                     )
                             }),
                     @ApiResponse(description = "Bad Request", responseCode = "400", content = @Content),
@@ -127,9 +150,13 @@ public class CategoryController {
                     @ApiResponse(description = "Internal Error", responseCode = "500", content = @Content),
             }
     )
-    public ResponseEntity inactiveCategory(@PathVariable(value = "id")Integer id){
-        categoryService.inactiveProduct(id);
+    public ResponseEntity inactiveMotoboy(@PathVariable(value = "motoboyId")Integer motoboyId){
+        motoboyService.inactiveMotoboy(motoboyId);
         return ResponseEntity.ok().build();
     }
+
+
+
+
 
 }

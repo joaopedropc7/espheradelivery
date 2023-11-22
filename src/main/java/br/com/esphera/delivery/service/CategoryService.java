@@ -26,8 +26,8 @@ public class CategoryService {
         return categoryModel;
     }
 
-    public List<CategoryModel> findAllCategorys(){
-        List<CategoryModel> categorys = categoryRepository.findAll();
+    public List<CategoryModel> findAllCategorys(Integer idCompany){
+        List<CategoryModel> categorys = categoryRepository.findCategoryModelByCompanyModel(companyService.getCompanyById(idCompany));
         return categorys;
     }
 
