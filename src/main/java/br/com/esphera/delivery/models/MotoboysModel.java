@@ -12,6 +12,11 @@ public class MotoboysModel {
     private String nameMotoboy;
     private String number;
     private String email;
+    @ManyToOne
+    @JoinColumn(name = "company_id")
+    private CompanyModel companyModel;
+
+    //private
 
 
 }

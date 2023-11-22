@@ -14,13 +14,17 @@ public class CategoryModel {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
     private String categoryName;
+    @ManyToOne
+    @JoinColumn(name = "company_id")
+    private CompanyModel companyModel;
     private Boolean inactive;
 
     public CategoryModel() {
     }
 
-    public CategoryModel(CategoryRecord categoryRecord) {
+    public CategoryModel(CategoryRecord categoryRecord, CompanyModel companyModel) {
         this.categoryName = categoryRecord.categoryName();
+        this.companyModel = companyModel;
         this.inactive = false;
     }
 
@@ -46,6 +50,14 @@ public class CategoryModel {
 
     public void setInactive(Boolean inactive) {
         this.inactive = inactive;
+    }
+
+    public CompanyModel getCompanyModel() {
+        return companyModel;
+    }
+
+    public void setCompanyModel(CompanyModel companyModel) {
+        this.companyModel = companyModel;
     }
 
     @Override

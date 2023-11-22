@@ -15,6 +15,9 @@ public class OrderModel {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
+    @ManyToOne
+    @JoinColumn(name = "company_id")
+    private CompanyModel companyModel;
     private String clientName;
     private String cpf;
     private String numberCellphone;
@@ -36,8 +39,9 @@ public class OrderModel {
     public OrderModel() {
     }
 
-    public OrderModel(OrderCreateRecord data, EnderecoModel enderecoModel, ShoppingCartModel shoppingCartModel) {
+    public OrderModel(OrderCreateRecord data, EnderecoModel enderecoModel, ShoppingCartModel shoppingCartModel, CompanyModel companyModel) {
         this.clientName = data.clientName();
+        this.companyModel = companyModel;
         this.cpf = data.cpf();
         this.numberCellphone = data.numberCellphone();
         this.enderecoModel = enderecoModel;
@@ -153,6 +157,14 @@ public class OrderModel {
 
     public void setSellValueWithDiscount(Double sellValueWithDiscount) {
         this.sellValueWithDiscount = sellValueWithDiscount;
+    }
+
+    public CompanyModel getCompanyModel() {
+        return companyModel;
+    }
+
+    public void setCompanyModel(CompanyModel companyModel) {
+        this.companyModel = companyModel;
     }
 
     public TypeDelivery getTypeDelivery() {

@@ -16,6 +16,9 @@ public class CompanyModel {
     private Integer id;
     private String nomeFantasia;
     private String razaoSocial;
+    private String cpf;
+    private String cnpj;
+    private String nameContact;
     private String numberCompany1;
     private String NumberCompany2;
     @ManyToOne
@@ -40,6 +43,12 @@ public class CompanyModel {
     public CompanyModel(CompanyRecord dto) {
         this.nomeFantasia = dto.nomeFantasia();
         this.razaoSocial = dto.razaoSocial();
+        if(dto.cpf() != null){
+            this.cnpj = dto.cnpj();
+        }else{
+            this.cpf = dto.cpf();
+        }
+        this.nameContact = dto.nameContact();
         this.numberCompany1 = dto.numberCompany1();
         this.NumberCompany2 = dto.numberCompany2();
         this.emailCompany = dto.emailCompany();
@@ -145,6 +154,29 @@ public class CompanyModel {
         this.inactive = inactive;
     }
 
+    public String getCpf() {
+        return cpf;
+    }
+
+    public void setCpf(String cpf) {
+        this.cpf = cpf;
+    }
+
+    public String getCnpj() {
+        return cnpj;
+    }
+
+    public void setCnpj(String cnpj) {
+        this.cnpj = cnpj;
+    }
+
+    public String getNameContact() {
+        return nameContact;
+    }
+
+    public void setNameContact(String nameContact) {
+        this.nameContact = nameContact;
+    }
 
     @Override
     public boolean equals(Object o) {

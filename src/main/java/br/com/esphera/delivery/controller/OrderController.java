@@ -17,9 +17,9 @@ public class OrderController {
     @Autowired
     private OrderService orderService;
 
-    @PostMapping
-    public ResponseEntity<OrderModel> createSell(@RequestBody OrderCreateRecord data){
-        OrderModel sellCrated = orderService.createSell(data);
+    @PostMapping("/{idCompany}")
+    public ResponseEntity<OrderModel> createSell(@RequestBody OrderCreateRecord data, @PathVariable(value = "idCompany") Integer idCompany){
+        OrderModel sellCrated = orderService.createSell(data, idCompany);
         return ResponseEntity.ok(sellCrated);
     }
 

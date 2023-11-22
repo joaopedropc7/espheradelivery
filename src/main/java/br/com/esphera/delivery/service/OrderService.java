@@ -1,6 +1,7 @@
 package br.com.esphera.delivery.service;
 
 import br.com.esphera.delivery.exceptions.ResourceNotFoundException;
+import br.com.esphera.delivery.models.CompanyModel;
 import br.com.esphera.delivery.models.DTOS.OrderCreateRecord;
 import br.com.esphera.delivery.models.EnderecoModel;
 import br.com.esphera.delivery.models.Enums.StatusOrder;
@@ -33,12 +34,16 @@ public class OrderService {
     @Autowired
     private ProductService productService;
 
-    public OrderModel createSell(OrderCreateRecord data){
+    @Autowired
+    private CompanyService companyService;
+
+    public OrderModel createSell(OrderCreateRecord data, Integer companyId){
+        CompanyModel companyModel = companyService.getCompanyById(companyId);
         ShoppingCartModel shoppingCartModel = shoppingCartRepository.findById(data.shoppingCartId()).orElseThrow(() -> new ResourceNotFoundException("No records found for this id"));
         EnderecoModel enderecoModel = new EnderecoModel(data.addressRecord());
         validationSales.forEach(validationSales -> validationSales.valid(data, shoppingCartModel));
         addressRepository.save(enderecoModel);
-        OrderModel orderModel = new OrderModel(data, enderecoModel, shoppingCartModel);
+        OrderModel orderModel = new OrderModel(data, enderecoModel, shoppingCartModel, companyModel);
         orderRepository.save(orderModel);
         shoppingCartModel.getProductCartItems().forEach(productCartItemModel -> {
             productService.sellProduct(productCartItemModel.getProduct().getId(), productCartItemModel.getQuantity());
