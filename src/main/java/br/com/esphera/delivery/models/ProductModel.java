@@ -1,6 +1,7 @@
 package br.com.esphera.delivery.models;
 
 import br.com.esphera.delivery.models.DTOS.ProductRecord;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
 import java.time.LocalDate;
@@ -27,11 +28,17 @@ public class ProductModel {
     private Double valueBuyTotal;
     private Double valueSellTotal;
     private Boolean inactive;
+    @ManyToOne
+    @JoinColumn(name = "company_id")
+    @JsonIgnore
+    private CompanyModel companyModel;
+
 
     public ProductModel() {
     }
 
-    public ProductModel(ProductRecord dto, CategoryModel category) {
+    public ProductModel(ProductRecord dto, CategoryModel category, CompanyModel companyModel) {
+        this.companyModel = companyModel;
         this.name = dto.name();
         this.categoryModel = category;
         this.description = dto.description();
@@ -149,6 +156,14 @@ public class ProductModel {
 
     public void setValueSellTotal(Double valueSellTotal) {
         this.valueSellTotal = valueSellTotal;
+    }
+
+    public CompanyModel getCompanyModel() {
+        return companyModel;
+    }
+
+    public void setCompanyModel(CompanyModel companyModel) {
+        this.companyModel = companyModel;
     }
 
     @Override

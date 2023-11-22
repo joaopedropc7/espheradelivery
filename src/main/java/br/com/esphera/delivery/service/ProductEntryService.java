@@ -1,6 +1,7 @@
 package br.com.esphera.delivery.service;
 
 import br.com.esphera.delivery.exceptions.ResourceNotFoundException;
+import br.com.esphera.delivery.models.CompanyModel;
 import br.com.esphera.delivery.models.DTOS.ProductEntryRecord;
 import br.com.esphera.delivery.models.ProductEntryItemModel;
 import br.com.esphera.delivery.models.ProductEntryModel;
@@ -29,18 +30,25 @@ public class ProductEntryService {
     @Autowired
     private List<ValidationEntry> validationEntry;
 
-    public ProductEntryModel createEntryProduct(ProductEntryRecord data){
+    @Autowired
+    private ProductEntryItemModelRepository entryItemModelRepository;
+
+    @Autowired
+    private CompanyService companyService;
+
+    public ProductEntryModel createEntryProduct(ProductEntryRecord data, Integer companyId){
+        CompanyModel companyModel = companyService.getCompanyById(companyId);
         validationEntry.forEach(validacao -> validacao.valid(data));
         List<ProductModel> productsModel = new ArrayList<>();
         List<ProductEntryItemModel> productsEntryModel = new ArrayList<>();
 
         data.products().forEach(product -> {
             ProductModel productModel = productService.findById(product.idProduct());
-            ProductEntryItemModel productEntryItemModel = new ProductEntryItemModel(productModel, product.quantity(), product.priceBuy());
+            ProductEntryItemModel productEntryItemModel = new ProductEntryItemModel(productModel, product.quantity(), product.priceBuy(), companyModel);
             productsEntryModel.add(productEntryItemModel);
             productsModel.add(productModel);
         });
-        ProductEntryModel entryModel = new ProductEntryModel(data, productsEntryModel);
+        ProductEntryModel entryModel = new ProductEntryModel(data, productsEntryModel, companyModel);
         entryRepository.save(entryModel);
         productService.addQuantityInProduct(productsEntryModel);
         productsEntryModel.forEach(productEntryItemModel -> {
@@ -50,8 +58,9 @@ public class ProductEntryService {
         return entryModel;
     }
 
-    public List<ProductEntryModel> findAll(){
-        return entryRepository.findAll();
+    public List<ProductEntryModel> findByCompanyId(Integer companyId){
+        CompanyModel companyModel = companyService.getCompanyById(companyId);
+        return entryRepository.findProductEntryModelsByCompanyModel(companyModel);
     }
 
     public ProductEntryModel findById(Integer id){
@@ -64,6 +73,13 @@ public class ProductEntryService {
         productEntryModel.setEntryCanceled(true);
         productService.cancelEntryById(productEntryModel.getProducts());
         entryRepository.deleteById(id);
+    }
+
+    public List<ProductEntryItemModel> findAllProductsInEntry(Integer companyId, Integer entryId){
+        CompanyModel companyModel = companyService.getCompanyById(companyId);
+        ProductEntryModel productEntryModel = findById(entryId);
+        List<ProductEntryItemModel> productsEntry = productEntryItemModelRepository.findProductEntryItemModelsByCompanyModelAndEntryModel(companyModel, productEntryModel);
+        return productsEntry;
     }
 
 }

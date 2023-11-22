@@ -3,11 +3,10 @@ package br.com.esphera.delivery.service;
 import br.com.esphera.delivery.exceptions.ResourceNotFoundException;
 import br.com.esphera.delivery.models.CompanyModel;
 import br.com.esphera.delivery.models.DTOS.OrderCreateRecord;
-import br.com.esphera.delivery.models.EnderecoModel;
+import br.com.esphera.delivery.models.AddressModel;
 import br.com.esphera.delivery.models.Enums.StatusOrder;
 import br.com.esphera.delivery.models.OrderModel;
 import br.com.esphera.delivery.models.ShoppingCartModel;
-import br.com.esphera.delivery.repository.AddressRepository;
 import br.com.esphera.delivery.repository.OrderRepository;
 import br.com.esphera.delivery.repository.ShoppingCartRepository;
 import br.com.esphera.delivery.validations.sells.ValidationSales;
@@ -23,7 +22,7 @@ public class OrderService {
     private OrderRepository orderRepository;
 
     @Autowired
-    private AddressRepository addressRepository;
+    private AddressService addressService;
 
     @Autowired
     private ShoppingCartRepository shoppingCartRepository;
@@ -40,10 +39,9 @@ public class OrderService {
     public OrderModel createSell(OrderCreateRecord data, Integer companyId){
         CompanyModel companyModel = companyService.getCompanyById(companyId);
         ShoppingCartModel shoppingCartModel = shoppingCartRepository.findById(data.shoppingCartId()).orElseThrow(() -> new ResourceNotFoundException("No records found for this id"));
-        EnderecoModel enderecoModel = new EnderecoModel(data.addressRecord());
         validationSales.forEach(validationSales -> validationSales.valid(data, shoppingCartModel));
-        addressRepository.save(enderecoModel);
-        OrderModel orderModel = new OrderModel(data, enderecoModel, shoppingCartModel, companyModel);
+        AddressModel addressModel = addressService.createAddress(data.addressRecord());
+        OrderModel orderModel = new OrderModel(data, addressModel, shoppingCartModel, companyModel);
         orderRepository.save(orderModel);
         shoppingCartModel.getProductCartItems().forEach(productCartItemModel -> {
             productService.sellProduct(productCartItemModel.getProduct().getId(), productCartItemModel.getQuantity());

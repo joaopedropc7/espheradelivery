@@ -15,20 +15,20 @@ public class ProductController {
     @Autowired
     private ProductService productService;
 
-    @PostMapping
-    public ProductModel createProduct(@RequestBody ProductRecord dto){
-        ProductModel productModel = productService.createProduct(dto);
+    @PostMapping("/{companyId}")
+    public ProductModel createProduct(@RequestBody ProductRecord dto, @PathVariable(value = "companyId")Integer companyId){
+        ProductModel productModel = productService.createProduct(dto, companyId);
         return productModel;
     }
 
-    @GetMapping
-    public List<ProductModel> findAllProducts(){
-        return productService.findAllProducts();
+    @GetMapping("/find/{companyId}")
+    public List<ProductModel> findAllProducts(@PathVariable(value = "companyId")Integer companyId){
+        return productService.findAllProducts(companyId);
     }
 
-    @GetMapping("/category/{id}")
-    public List<ProductModel> findAllProductsByCategory(@PathVariable(value = "id")Integer categoryId){
-        return productService.findProductsByCategory(categoryId);
+    @GetMapping("/category/{companyId}/{categoryId}")
+    public List<ProductModel> findAllProductsByCategory(@PathVariable(value = "companyId")Integer companyId, @PathVariable(value = "categoryId")Integer categoryId){
+        return productService.findProductsByCategory(companyId, categoryId);
     }
 
     @GetMapping("/{id}")

@@ -1,6 +1,7 @@
 package br.com.esphera.delivery.models;
 
 import br.com.esphera.delivery.models.DTOS.CategoryRecord;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
 import java.util.List;
@@ -16,6 +17,7 @@ public class CategoryModel {
     private String categoryName;
     @ManyToOne
     @JoinColumn(name = "company_id")
+    @JsonIgnore
     private CompanyModel companyModel;
     private Boolean inactive;
 

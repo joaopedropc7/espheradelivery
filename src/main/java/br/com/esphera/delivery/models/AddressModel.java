@@ -7,7 +7,7 @@ import java.util.Objects;
 
 @Entity
 @Table(name = "endereco")
-public class EnderecoModel {
+public class AddressModel {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -20,10 +20,10 @@ public class EnderecoModel {
     private String UF;
     private String numberHouse;
 
-    public EnderecoModel() {
+    public AddressModel() {
     }
 
-    public EnderecoModel(AddressRecord data){
+    public AddressModel(AddressRecord data){
         this.logradouro = data.logradouro();
         this.cep = data.cep();
         this.complemento = data.complemento();
@@ -101,7 +101,7 @@ public class EnderecoModel {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        EnderecoModel that = (EnderecoModel) o;
+        AddressModel that = (AddressModel) o;
         return Objects.equals(id, that.id) && Objects.equals(logradouro, that.logradouro) && Objects.equals(cep, that.cep) && Objects.equals(complemento, that.complemento) && Objects.equals(bairro, that.bairro) && Objects.equals(localidade, that.localidade) && Objects.equals(UF, that.UF) && Objects.equals(numberHouse, that.numberHouse);
     }
 

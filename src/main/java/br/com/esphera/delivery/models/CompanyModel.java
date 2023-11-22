@@ -23,7 +23,7 @@ public class CompanyModel {
     private String NumberCompany2;
     @ManyToOne
     @JoinColumn(name = "endereco_id")
-    private EnderecoModel enderecoModel;
+    private AddressModel addressModel;
     private String emailCompany;
     private Boolean defaulter;
     @OneToMany
@@ -40,19 +40,16 @@ public class CompanyModel {
     public CompanyModel() {
     }
 
-    public CompanyModel(CompanyRecord dto) {
+    public CompanyModel(CompanyRecord dto, AddressModel addressModel) {
         this.nomeFantasia = dto.nomeFantasia();
         this.razaoSocial = dto.razaoSocial();
-        if(dto.cpf() != null){
-            this.cnpj = dto.cnpj();
-        }else{
-            this.cpf = dto.cpf();
-        }
+        this.cnpj = dto.cnpj();
+        this.cpf = dto.cpf();
         this.nameContact = dto.nameContact();
         this.numberCompany1 = dto.numberCompany1();
         this.NumberCompany2 = dto.numberCompany2();
         this.emailCompany = dto.emailCompany();
-        this.enderecoModel = new EnderecoModel(dto.addressRecord());
+        this.addressModel = addressModel;
         this.defaulter = false;
         this.valueGenerated = 0.0;
         this.inactive = false;
@@ -98,12 +95,12 @@ public class CompanyModel {
         NumberCompany2 = numberCompany2;
     }
 
-    public EnderecoModel getEnderecoModel() {
-        return enderecoModel;
+    public AddressModel getEnderecoModel() {
+        return addressModel;
     }
 
-    public void setEnderecoModel(EnderecoModel enderecoModel) {
-        this.enderecoModel = enderecoModel;
+    public void setEnderecoModel(AddressModel addressModel) {
+        this.addressModel = addressModel;
     }
 
     public String getEmailCompany() {
@@ -183,11 +180,11 @@ public class CompanyModel {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         CompanyModel that = (CompanyModel) o;
-        return Objects.equals(id, that.id) && Objects.equals(nomeFantasia, that.nomeFantasia) && Objects.equals(razaoSocial, that.razaoSocial) && Objects.equals(numberCompany1, that.numberCompany1) && Objects.equals(NumberCompany2, that.NumberCompany2) && Objects.equals(enderecoModel, that.enderecoModel) && Objects.equals(emailCompany, that.emailCompany) && Objects.equals(defaulter, that.defaulter) && Objects.equals(sells, that.sells) && Objects.equals(products, that.products) && Objects.equals(valueGenerated, that.valueGenerated) && Objects.equals(inactive, that.inactive);
+        return Objects.equals(id, that.id) && Objects.equals(nomeFantasia, that.nomeFantasia) && Objects.equals(razaoSocial, that.razaoSocial) && Objects.equals(numberCompany1, that.numberCompany1) && Objects.equals(NumberCompany2, that.NumberCompany2) && Objects.equals(addressModel, that.addressModel) && Objects.equals(emailCompany, that.emailCompany) && Objects.equals(defaulter, that.defaulter) && Objects.equals(sells, that.sells) && Objects.equals(products, that.products) && Objects.equals(valueGenerated, that.valueGenerated) && Objects.equals(inactive, that.inactive);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, nomeFantasia, razaoSocial, numberCompany1, NumberCompany2, enderecoModel, emailCompany, defaulter, sells, products, valueGenerated, inactive);
+        return Objects.hash(id, nomeFantasia, razaoSocial, numberCompany1, NumberCompany2, addressModel, emailCompany, defaulter, sells, products, valueGenerated, inactive);
     }
 }

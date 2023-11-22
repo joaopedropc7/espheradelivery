@@ -22,11 +22,16 @@ public class ProductEntryModel {
     @OneToMany(mappedBy = "entryModel", cascade = CascadeType.ALL)
     private List<ProductEntryItemModel> products;
     private Boolean entryCanceled;
+    @ManyToOne
+    @JoinColumn(name = "company_id")
+    @JsonIgnore
+    private CompanyModel companyModel;
 
     public ProductEntryModel() {
     }
 
-    public ProductEntryModel(ProductEntryRecord data, List<ProductEntryItemModel> products) {
+    public ProductEntryModel(ProductEntryRecord data, List<ProductEntryItemModel> products, CompanyModel companyModel) {
+        this.companyModel = companyModel;
         this.totalValue = data.totalValue();
         this.supplier = data.supplier();
         this.dateEntry = LocalDate.parse(data.dateEntry());
@@ -89,6 +94,14 @@ public class ProductEntryModel {
 
     public void setEntryCanceled(Boolean entryCanceled) {
         this.entryCanceled = entryCanceled;
+    }
+
+    public CompanyModel getCompanyModel() {
+        return companyModel;
+    }
+
+    public void setCompanyModel(CompanyModel companyModel) {
+        this.companyModel = companyModel;
     }
 
     @Override

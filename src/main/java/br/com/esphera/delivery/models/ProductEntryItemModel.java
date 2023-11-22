@@ -23,11 +23,16 @@ public class ProductEntryItemModel {
     @ManyToOne(cascade = CascadeType.DETACH)
     @JsonIgnore
     private ProductEntryModel entryModel;
+    @ManyToOne
+    @JoinColumn(name = "company_id")
+    @JsonIgnore
+    private CompanyModel companyModel;
 
     public ProductEntryItemModel() {
     }
 
-    public ProductEntryItemModel(ProductModel productModel, Integer quantity, Double priceBuy) {
+    public ProductEntryItemModel(ProductModel productModel, Integer quantity, Double priceBuy, CompanyModel companyModel) {
+        this.companyModel = companyModel;
         this.product = productModel;
         this.quantity = quantity;
         this.priceBuy = priceBuy;
@@ -71,6 +76,14 @@ public class ProductEntryItemModel {
 
     public void setEntryModel(ProductEntryModel entryModel) {
         this.entryModel = entryModel;
+    }
+
+    public CompanyModel getCompanyModel() {
+        return companyModel;
+    }
+
+    public void setCompanyModel(CompanyModel companyModel) {
+        this.companyModel = companyModel;
     }
 
     @Override

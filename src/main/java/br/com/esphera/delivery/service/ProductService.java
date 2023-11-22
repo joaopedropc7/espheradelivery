@@ -1,6 +1,7 @@
 package br.com.esphera.delivery.service;
 
 import br.com.esphera.delivery.exceptions.ResourceNotFoundException;
+import br.com.esphera.delivery.models.CompanyModel;
 import br.com.esphera.delivery.models.DTOS.ProductRecord;
 import br.com.esphera.delivery.models.CategoryModel;
 import br.com.esphera.delivery.models.ProductEntryItemModel;
@@ -19,23 +20,31 @@ public class ProductService {
     private ProductRepository productRepository;
 
     @Autowired
-    private CategoryRepository categoryRepository;
+    private CategoryService categoryService;
 
-    public ProductModel createProduct(ProductRecord dto){
-        CategoryModel category = categoryRepository.findById(dto.idCategory()).orElseThrow(() -> new ResourceNotFoundException("Não existe categoria com este ID!"));
-        ProductModel product = new ProductModel(dto, category);
+    @Autowired
+    private CompanyService companyService;
+
+    public ProductModel createProduct(ProductRecord dto, Integer companyId){
+        CompanyModel companyModel = companyService.getCompanyById(companyId);
+        CategoryModel categoryModel = categoryService.findById(dto.idCategory());
+        ProductModel product = new ProductModel(dto, categoryModel, companyModel);
         productRepository.save(product);
         return product;
     }
 
-    public List<ProductModel> findProductsByCategory(Integer categoryId){
-        CategoryModel category = categoryRepository.findById(categoryId).orElseThrow(() -> new ResourceNotFoundException("Não existe categoria com este ID!"));
-        List<ProductModel> products = productRepository.findByCategoryId(category.getId());
+    public List<ProductModel> findProductsByCategory(Integer companyId, Integer categoryId){
+        CategoryModel category = categoryService.findById(categoryId);
+        CompanyModel companyModel = companyService.getCompanyById(companyId);
+        System.out.println(category.getCategoryName());
+        System.out.println(companyModel.getNameContact());
+        List<ProductModel> products = productRepository.findProductModelsByCompanyModelAndCategoryModel(companyModel, category);
         return products;
     }
 
-    public List<ProductModel> findAllProducts(){
-        List<ProductModel> products = productRepository.findAll();
+    public List<ProductModel> findAllProducts(Integer companyId){
+        CompanyModel companyModel = companyService.getCompanyById(companyId);
+        List<ProductModel> products = productRepository.finddProductByComapanyId(companyModel);
         return products;
     }
 
@@ -46,7 +55,7 @@ public class ProductService {
 
     public ProductModel updateProduct(Integer id, ProductRecord dto){
         ProductModel product = productRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Não existe produto com este ID!"));
-        CategoryModel category = categoryRepository.findById(dto.idCategory()).orElseThrow(() -> new ResourceNotFoundException("Não existe categoria com este ID!"));
+        CategoryModel category = categoryService.findById(dto.idCategory());
 
         product.setName(dto.name());
         product.setCategoryModel(category);

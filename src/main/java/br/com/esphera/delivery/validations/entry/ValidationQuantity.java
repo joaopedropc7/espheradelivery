@@ -17,7 +17,7 @@ public class ValidationQuantity implements ValidationEntry{
             totalProducts.updateAndGet(v -> v + products.quantity());
         });
 
-        if(!totalProducts.equals(data.quantityAllProducts())){
+        if(!totalProducts.get().equals(data.quantityAllProducts())){
             throw new ValidateException("A quantidade informada não está igual a quantidade total!");
         }
     }

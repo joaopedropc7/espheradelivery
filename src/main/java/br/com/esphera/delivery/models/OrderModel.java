@@ -3,6 +3,7 @@ package br.com.esphera.delivery.models;
 import br.com.esphera.delivery.models.DTOS.OrderCreateRecord;
 import br.com.esphera.delivery.models.Enums.StatusOrder;
 import br.com.esphera.delivery.models.Enums.TypeDelivery;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
@@ -17,13 +18,14 @@ public class OrderModel {
     private Integer id;
     @ManyToOne
     @JoinColumn(name = "company_id")
+    @JsonIgnore
     private CompanyModel companyModel;
     private String clientName;
     private String cpf;
     private String numberCellphone;
     @ManyToOne
     @JoinColumn(name = "endereco_id")
-    private EnderecoModel enderecoModel;
+    private AddressModel addressModel;
     @OneToOne
     @JoinColumn(name = "shoppingcart_id")
     private ShoppingCartModel shoppingCartModel;
@@ -39,12 +41,12 @@ public class OrderModel {
     public OrderModel() {
     }
 
-    public OrderModel(OrderCreateRecord data, EnderecoModel enderecoModel, ShoppingCartModel shoppingCartModel, CompanyModel companyModel) {
+    public OrderModel(OrderCreateRecord data, AddressModel addressModel, ShoppingCartModel shoppingCartModel, CompanyModel companyModel) {
         this.clientName = data.clientName();
         this.companyModel = companyModel;
         this.cpf = data.cpf();
         this.numberCellphone = data.numberCellphone();
-        this.enderecoModel = enderecoModel;
+        this.addressModel = addressModel;
         this.shoppingCartModel = shoppingCartModel;
         this.sellValue = shoppingCartModel.getTotalValue();
         this.statusOrder = StatusOrder.Recebido;
@@ -87,12 +89,12 @@ public class OrderModel {
         this.numberCellphone = numberCellphone;
     }
 
-    public EnderecoModel getEnderecoModel() {
-        return enderecoModel;
+    public AddressModel getEnderecoModel() {
+        return addressModel;
     }
 
-    public void setEnderecoModel(EnderecoModel enderecoModel) {
-        this.enderecoModel = enderecoModel;
+    public void setEnderecoModel(AddressModel addressModel) {
+        this.addressModel = addressModel;
     }
 
     public ShoppingCartModel getShoppingCartModel() {
@@ -180,11 +182,11 @@ public class OrderModel {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         OrderModel orderModel = (OrderModel) o;
-        return Objects.equals(id, orderModel.id) && Objects.equals(clientName, orderModel.clientName) && Objects.equals(cpf, orderModel.cpf) && Objects.equals(numberCellphone, orderModel.numberCellphone) && Objects.equals(enderecoModel, orderModel.enderecoModel) && Objects.equals(shoppingCartModel, orderModel.shoppingCartModel) && Objects.equals(sellValue, orderModel.sellValue) && Objects.equals(discount, orderModel.discount) && Objects.equals(sellValueWithDiscount, orderModel.sellValueWithDiscount) && Objects.equals(deliveryValue, orderModel.deliveryValue) && Objects.equals(orderDate, orderModel.orderDate) && statusOrder == orderModel.statusOrder && Objects.equals(orderCancelled, orderModel.orderCancelled);
+        return Objects.equals(id, orderModel.id) && Objects.equals(clientName, orderModel.clientName) && Objects.equals(cpf, orderModel.cpf) && Objects.equals(numberCellphone, orderModel.numberCellphone) && Objects.equals(addressModel, orderModel.addressModel) && Objects.equals(shoppingCartModel, orderModel.shoppingCartModel) && Objects.equals(sellValue, orderModel.sellValue) && Objects.equals(discount, orderModel.discount) && Objects.equals(sellValueWithDiscount, orderModel.sellValueWithDiscount) && Objects.equals(deliveryValue, orderModel.deliveryValue) && Objects.equals(orderDate, orderModel.orderDate) && statusOrder == orderModel.statusOrder && Objects.equals(orderCancelled, orderModel.orderCancelled);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, clientName, cpf, numberCellphone, enderecoModel, shoppingCartModel, sellValue, discount, sellValueWithDiscount, deliveryValue, orderDate, statusOrder, orderCancelled);
+        return Objects.hash(id, clientName, cpf, numberCellphone, addressModel, shoppingCartModel, sellValue, discount, sellValueWithDiscount, deliveryValue, orderDate, statusOrder, orderCancelled);
     }
 }
