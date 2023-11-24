@@ -1,4 +1,4 @@
-package br.com.esphera.delivery.ApiMaps;
+package br.com.esphera.delivery.ApiMaps.ValidatesAddressDTO.request;
 
 import java.util.List;
 
@@ -7,7 +7,7 @@ public record AddressMapDto(
         String postalCode,
         String administrativeArea,
         String locality,
-        String subLocality,
+        String sublocality,
         List<String> addressLines
 ) {
 }

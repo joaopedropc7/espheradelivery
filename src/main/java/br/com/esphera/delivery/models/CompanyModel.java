@@ -36,6 +36,7 @@ public class CompanyModel {
     private List<ProductModel> products;
     private Double valueGenerated;
     private Boolean inactive;
+    private String idLocalCompanyMaps;
 
     public CompanyModel() {
     }
@@ -123,16 +124,8 @@ public class CompanyModel {
         return sells;
     }
 
-    public void setSells(List<OrderModel> sells) {
-        this.sells = sells;
-    }
-
     public List<ProductModel> getProducts() {
         return products;
-    }
-
-    public void setProducts(List<ProductModel> products) {
-        this.products = products;
     }
 
     public Double getValueGenerated() {
@@ -173,6 +166,22 @@ public class CompanyModel {
 
     public void setNameContact(String nameContact) {
         this.nameContact = nameContact;
+    }
+
+    public AddressModel getAddressModel() {
+        return addressModel;
+    }
+
+    public void setAddressModel(AddressModel addressModel) {
+        this.addressModel = addressModel;
+    }
+
+    public String getIdLocalCompanyMaps() {
+        return idLocalCompanyMaps;
+    }
+
+    public void setIdLocalCompanyMaps(String idLocalCompanyMaps) {
+        this.idLocalCompanyMaps = idLocalCompanyMaps;
     }
 
     @Override
