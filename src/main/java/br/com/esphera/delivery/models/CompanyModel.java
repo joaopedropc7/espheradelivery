@@ -41,7 +41,7 @@ public class CompanyModel {
     public CompanyModel() {
     }
 
-    public CompanyModel(CompanyRecord dto, AddressModel addressModel) {
+    public CompanyModel(CompanyRecord dto, AddressModel addressModel, String placeId) {
         this.nomeFantasia = dto.nomeFantasia();
         this.razaoSocial = dto.razaoSocial();
         this.cnpj = dto.cnpj();
@@ -53,6 +53,7 @@ public class CompanyModel {
         this.addressModel = addressModel;
         this.defaulter = false;
         this.valueGenerated = 0.0;
+        this.idLocalCompanyMaps = placeId;
         this.inactive = false;
     }
 

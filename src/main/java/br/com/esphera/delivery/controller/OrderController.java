@@ -45,7 +45,7 @@ public class OrderController {
         return ResponseEntity.ok(sellCrated);
     }
 
-    @GetMapping
+    @GetMapping("/findall/{companyId}")
     @Operation(summary = "Get all Orders", description = "Get all Orders parsing company Id",
             tags = {"Order"},
             responses = {
@@ -62,8 +62,8 @@ public class OrderController {
                     @ApiResponse(description = "Internal Error", responseCode = "500", content = @Content),
             }
     )
-    public ResponseEntity<List<OrderModel>> findAllSells(){
-        List<OrderModel> sells = orderService.findAllSells();
+    public ResponseEntity<List<OrderModel>> findAllSells(@PathVariable(value = "companyId")Integer companyId){
+        List<OrderModel> sells = orderService.findAllSells(companyId);
         return ResponseEntity.ok(sells);
     }
 
@@ -133,7 +133,7 @@ public class OrderController {
         return ResponseEntity.ok(sells);
     }
 
-    @PostMapping("/prepared")
+    @PostMapping("/prepared/{idOrder}")
     @Operation(summary = "Parse orders for prepared", description = "Parse orders for prepared",
             tags = {"Order"},
             responses = {
@@ -150,12 +150,12 @@ public class OrderController {
                     @ApiResponse(description = "Internal Error", responseCode = "500", content = @Content),
             }
     )
-    public ResponseEntity setOrderPrepared(Integer id){
-        orderService.setOrderPrepared(id);
+    public ResponseEntity setOrderPrepared(@PathVariable(value = "idOrder") Integer idOrder){
+        orderService.setOrderPrepared(idOrder);
         return ResponseEntity.ok().build();
     }
 
-    @PostMapping("/ready")
+    @PostMapping("/ready/{idOrder}")
     @Operation(summary = "Parse orders for ready", description = "Parse orders for ready - Ready for take order",
             tags = {"Order"},
             responses = {
@@ -172,12 +172,12 @@ public class OrderController {
                     @ApiResponse(description = "Internal Error", responseCode = "500", content = @Content),
             }
     )
-    public ResponseEntity setOrderReady(Integer id){
-        orderService.setOrderReady(id);
+    public ResponseEntity setOrderReady(@PathVariable(value = "idOrder") Integer idOrder){
+        orderService.setOrderReady(idOrder);
         return ResponseEntity.ok().build();
     }
 
-    @PostMapping("/inroute")
+    @PostMapping("/inroute/{idOrder}")
     @Operation(summary = "Parse orders for in route", description = "Parse orders for in route",
             tags = {"Order"},
             responses = {
@@ -194,12 +194,12 @@ public class OrderController {
                     @ApiResponse(description = "Internal Error", responseCode = "500", content = @Content),
             }
     )
-    public ResponseEntity setOrderInRoute(Integer id){
-        orderService.setOrderRoute(id);
+    public ResponseEntity setOrderInRoute(@PathVariable(value = "idOrder") Integer idOrder){
+        orderService.setOrderRoute(idOrder);
         return ResponseEntity.ok().build();
     }
 
-    @PostMapping("/delivered")
+    @PostMapping("/delivered/{idOrder}")
     @Operation(summary = "Parse orders for delivered", description = "Parse orders for delivered",
             tags = {"Order"},
             responses = {
@@ -216,8 +216,8 @@ public class OrderController {
                     @ApiResponse(description = "Internal Error", responseCode = "500", content = @Content),
             }
     )
-    public ResponseEntity setOrderDelivered(Integer id){
-        orderService.setOrderPrepared(id);
+    public ResponseEntity setOrderDelivered(@PathVariable(value = "idOrder") Integer idOrder){
+        orderService.setOrderPrepared(idOrder);
         return ResponseEntity.ok().build();
     }
 

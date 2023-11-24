@@ -1,5 +1,7 @@
 package br.com.esphera.delivery.models;
 
+import br.com.esphera.delivery.models.DTOS.DeliveryRecord;
+import br.com.esphera.delivery.models.DTOS.DistanceDurationDTO;
 import br.com.esphera.delivery.models.Enums.StatusDelivery;
 import jakarta.persistence.*;
 
@@ -22,13 +24,22 @@ public class DeliveryModel {
     @OneToOne
     @JoinColumn(name = "address_id")
     private AddressModel addressModel;
-    private StatusDelivery statusDelivery;
     private LocalDateTime dateDeliveryStart;
     private LocalDateTime dateDeliveryFinished;
     private Double value;
     private Double distance;
 
     public DeliveryModel() {
+    }
+
+    public DeliveryModel(DeliveryRecord deliveryRecord, AddressModel addressModel, DistanceDurationDTO distanceDurationDTO, Double valueDelivery, Double distance) {
+        this.orderModel = deliveryRecord.orderModel();
+        this.motoboysModel = null;
+        this.addressModel = addressModel;
+        this.dateDeliveryStart = null;
+        this.dateDeliveryFinished = null;
+        this.value = valueDelivery;
+        this.distance = distance;
     }
 
     public Integer getId() {
@@ -57,14 +68,6 @@ public class DeliveryModel {
 
     public AddressModel getAddressModel() {
         return addressModel;
-    }
-
-    public StatusDelivery getStatusDelivery() {
-        return statusDelivery;
-    }
-
-    public void setStatusDelivery(StatusDelivery statusDelivery) {
-        this.statusDelivery = statusDelivery;
     }
 
     public void setAddressModel(AddressModel addressModel) {

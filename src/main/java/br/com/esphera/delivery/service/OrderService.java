@@ -36,12 +36,14 @@ public class OrderService {
     @Autowired
     private CompanyService companyService;
 
+    @Autowired
+    private DeliveryService deliveryService;
+
     public OrderModel createSell(OrderCreateRecord data, Integer companyId){
         CompanyModel companyModel = companyService.getCompanyById(companyId);
         ShoppingCartModel shoppingCartModel = shoppingCartRepository.findById(data.shoppingCartId()).orElseThrow(() -> new ResourceNotFoundException("No records found for this id"));
         validationSales.forEach(validationSales -> validationSales.valid(data, shoppingCartModel));
-        AddressModel addressModel = addressService.createAddress(data.addressRecord());
-        OrderModel orderModel = new OrderModel(data, addressModel, shoppingCartModel, companyModel);
+        OrderModel orderModel = new OrderModel(data, shoppingCartModel, companyModel);
         orderRepository.save(orderModel);
         shoppingCartModel.getProductCartItems().forEach(productCartItemModel -> {
             productService.sellProduct(productCartItemModel.getProduct().getId(), productCartItemModel.getQuantity());
@@ -49,8 +51,9 @@ public class OrderService {
         return orderModel;
     }
 
-    public List<OrderModel> findAllSells(){
-        List<OrderModel> sells = orderRepository.findAll();
+    public List<OrderModel> findAllSells(Integer idCompany){
+        CompanyModel companyModel = companyService.getCompanyById(idCompany);
+        List<OrderModel> sells = orderRepository.findOrderModelsByCompanyModel(companyModel);
         return sells;
     }
 

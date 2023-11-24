@@ -1,5 +1,7 @@
 package br.com.esphera.delivery.service;
 
+import br.com.esphera.delivery.ApiMaps.MapsAPi;
+import br.com.esphera.delivery.ApiMaps.ValidatesAddressDTO.response.ResponseAddressValidationMapsAPI;
 import br.com.esphera.delivery.exceptions.ResourceNotFoundException;
 import br.com.esphera.delivery.models.CompanyModel;
 import br.com.esphera.delivery.models.DTOS.CompanyRecord;
@@ -21,9 +23,13 @@ public class CompanyService {
     @Autowired
     private AddressService addressService;
 
+    @Autowired
+    private MapsAPi mapsAPi;
+
     public CompanyModel createCompany(CompanyRecord companyDTO){
+        ResponseAddressValidationMapsAPI responseAddressValidation = mapsAPi.validateAddress(companyDTO.addressRecord());
         AddressModel addressModel = addressService.createAddress(companyDTO.addressRecord());
-        CompanyModel companyModel = new CompanyModel(companyDTO, addressModel);
+        CompanyModel companyModel = new CompanyModel(companyDTO, addressModel, responseAddressValidation.result().geocode().placeId());
         companyRepository.save(companyModel);
         return companyModel;
     }
@@ -49,8 +55,10 @@ public class CompanyService {
 
     public CompanyModel putCompanyAddress(Integer id, AddressRecord addressRecord){
         CompanyModel companyModel = companyRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Nenhuma empresa encontrada com este ID!"));
-        AddressModel addressModel = new AddressModel(addressRecord);
+        AddressModel addressModel = addressService.putAddress(companyModel, addressRecord);
         companyModel.setEnderecoModel(addressModel);
+        String placeId = addressService.getPlaceIdApiMaps(addressRecord);
+        companyModel.setIdLocalCompanyMaps(placeId);
         companyRepository.save(companyModel);
         return companyModel;
     }

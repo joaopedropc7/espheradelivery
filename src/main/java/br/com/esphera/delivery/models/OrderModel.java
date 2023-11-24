@@ -23,9 +23,6 @@ public class OrderModel {
     private String clientName;
     private String cpf;
     private String numberCellphone;
-    @ManyToOne
-    @JoinColumn(name = "endereco_id")
-    private AddressModel addressModel;
     @OneToOne
     @JoinColumn(name = "shoppingcart_id")
     private ShoppingCartModel shoppingCartModel;
@@ -41,12 +38,11 @@ public class OrderModel {
     public OrderModel() {
     }
 
-    public OrderModel(OrderCreateRecord data, AddressModel addressModel, ShoppingCartModel shoppingCartModel, CompanyModel companyModel) {
+    public OrderModel(OrderCreateRecord data, ShoppingCartModel shoppingCartModel, CompanyModel companyModel) {
         this.clientName = data.clientName();
         this.companyModel = companyModel;
         this.cpf = data.cpf();
         this.numberCellphone = data.numberCellphone();
-        this.addressModel = addressModel;
         this.shoppingCartModel = shoppingCartModel;
         this.sellValue = shoppingCartModel.getTotalValue();
         this.statusOrder = StatusOrder.Recebido;
@@ -87,14 +83,6 @@ public class OrderModel {
 
     public void setNumberCellphone(String numberCellphone) {
         this.numberCellphone = numberCellphone;
-    }
-
-    public AddressModel getEnderecoModel() {
-        return addressModel;
-    }
-
-    public void setEnderecoModel(AddressModel addressModel) {
-        this.addressModel = addressModel;
     }
 
     public ShoppingCartModel getShoppingCartModel() {
@@ -181,12 +169,12 @@ public class OrderModel {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        OrderModel orderModel = (OrderModel) o;
-        return Objects.equals(id, orderModel.id) && Objects.equals(clientName, orderModel.clientName) && Objects.equals(cpf, orderModel.cpf) && Objects.equals(numberCellphone, orderModel.numberCellphone) && Objects.equals(addressModel, orderModel.addressModel) && Objects.equals(shoppingCartModel, orderModel.shoppingCartModel) && Objects.equals(sellValue, orderModel.sellValue) && Objects.equals(discount, orderModel.discount) && Objects.equals(sellValueWithDiscount, orderModel.sellValueWithDiscount) && Objects.equals(deliveryValue, orderModel.deliveryValue) && Objects.equals(orderDate, orderModel.orderDate) && statusOrder == orderModel.statusOrder && Objects.equals(orderCancelled, orderModel.orderCancelled);
+        OrderModel that = (OrderModel) o;
+        return Objects.equals(id, that.id) && Objects.equals(companyModel, that.companyModel) && Objects.equals(clientName, that.clientName) && Objects.equals(cpf, that.cpf) && Objects.equals(numberCellphone, that.numberCellphone) && Objects.equals(shoppingCartModel, that.shoppingCartModel) && Objects.equals(sellValue, that.sellValue) && Objects.equals(discount, that.discount) && Objects.equals(sellValueWithDiscount, that.sellValueWithDiscount) && Objects.equals(deliveryValue, that.deliveryValue) && Objects.equals(orderDate, that.orderDate) && statusOrder == that.statusOrder && Objects.equals(orderCancelled, that.orderCancelled) && typeDelivery == that.typeDelivery;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, clientName, cpf, numberCellphone, addressModel, shoppingCartModel, sellValue, discount, sellValueWithDiscount, deliveryValue, orderDate, statusOrder, orderCancelled);
+        return Objects.hash(id, clientName, cpf, numberCellphone, shoppingCartModel, sellValue, discount, sellValueWithDiscount, deliveryValue, orderDate, statusOrder, orderCancelled);
     }
 }
