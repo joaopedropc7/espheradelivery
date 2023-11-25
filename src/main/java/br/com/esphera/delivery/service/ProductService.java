@@ -79,16 +79,14 @@ public class ProductService {
         productRepository.save(product);
     }
 
-    public void sellProduct(Integer productId, Integer productQuantity){
-        ProductModel product = productRepository.findById(productId).orElseThrow(() -> new ResourceNotFoundException("Não existe produto com este ID!"));
+    public void sellProduct(ProductModel product, Integer productQuantity){
         product.setQuantity(product.getQuantity() - productQuantity);
         product.setSales(product.getSales() + productQuantity);
         product.setValueSellTotal(product.getValueSellTotal() + (product.getValueSell() * productQuantity));
         productRepository.save(product);
     }
 
-    public void revertSellProduct(Integer productId, Integer productQuantity){
-        ProductModel product = productRepository.findById(productId).orElseThrow(() -> new ResourceNotFoundException("Não existe produto com este ID!"));
+    public void revertSellProduct(ProductModel product, Integer productQuantity){
         product.setQuantity(product.getQuantity() + productQuantity);
         product.setSales(product.getSales() - productQuantity);
         product.setValueSellTotal(product.getValueSellTotal() - (product.getValueSell() * productQuantity));

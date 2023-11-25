@@ -42,8 +42,8 @@ public class CompanyService {
         return companyRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Nenhuma empresa encontrada com este ID!"));
     }
 
-    public CompanyModel putCompany(Integer id, CompanyUpdateRecord companyRecord){
-        CompanyModel companyModel = companyRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Nenhuma empresa encontrada com este ID!"));
+    public CompanyModel putCompany(Integer companyId, CompanyUpdateRecord companyRecord){
+        CompanyModel companyModel = getCompanyById(companyId);
         companyModel.setNomeFantasia(companyRecord.nomeFantasia());
         companyModel.setRazaoSocial(companyRecord.razaoSocial());
         companyModel.setNumberCompany1(companyRecord.numberCompany1());
@@ -53,8 +53,8 @@ public class CompanyService {
         return companyModel;
     }
 
-    public CompanyModel putCompanyAddress(Integer id, AddressRecord addressRecord){
-        CompanyModel companyModel = companyRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Nenhuma empresa encontrada com este ID!"));
+    public CompanyModel putCompanyAddress(Integer companyId, AddressRecord addressRecord){
+        CompanyModel companyModel = getCompanyById(companyId);
         AddressModel addressModel = addressService.putAddress(companyModel, addressRecord);
         companyModel.setEnderecoModel(addressModel);
         String placeId = addressService.getPlaceIdApiMaps(addressRecord);
@@ -63,15 +63,19 @@ public class CompanyService {
         return companyModel;
     }
 
-    public void inactiveCompany(Integer id){
-        CompanyModel companyModel = companyRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Nenhuma empresa encontrada com este ID!"));
+    public void inactiveCompany(Integer companyId){
+        CompanyModel companyModel = getCompanyById(companyId);
         companyModel.setInactive(true);
         companyRepository.save(companyModel);
     }
 
-    public void incrementValueGenerated(Integer companyId, Double value){
-        CompanyModel companyModel = companyRepository.findById(companyId).orElseThrow(() -> new ResourceNotFoundException("Nenhuma empresa encontrada com este ID!"));
+    public void incrementValueGenerated(CompanyModel companyModel, Double value){
         companyModel.setValueGenerated(companyModel.getValueGenerated() + value);
+        companyRepository.save(companyModel);
+    }
+
+    public void reverseValueGenerated(CompanyModel companyModel, Double value){
+        companyModel.setValueGenerated(companyModel.getValueGenerated() - value);
         companyRepository.save(companyModel);
     }
 }

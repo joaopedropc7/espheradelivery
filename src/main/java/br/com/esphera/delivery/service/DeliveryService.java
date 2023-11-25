@@ -1,6 +1,7 @@
 package br.com.esphera.delivery.service;
 
 import br.com.esphera.delivery.ApiMaps.MapsAPi;
+import br.com.esphera.delivery.exceptions.ResourceNotFoundException;
 import br.com.esphera.delivery.models.*;
 import br.com.esphera.delivery.models.DTOS.AddressRecord;
 import br.com.esphera.delivery.models.DTOS.DeliveryConsultValueDTO;
@@ -32,12 +33,13 @@ public class DeliveryService {
 
 
     public DeliveryModel createDelivery(CompanyModel companyModel, DeliveryRecord deliveryRecord){
+
         AddressModel addressModel = addressService.createAddress(deliveryRecord.addressRecord());
         String localId = addressService.getPlaceIdApiMaps(deliveryRecord.addressRecord());
         DistanceDurationDTO distanceDurationDTO = addressService.getDistanceDelivery(companyModel ,localId);
         ConfigsCompanyModel configsCompany = configsCompanyService.getConfigByCompany(companyModel.getId());
         Double valueDelivery = configsCompany.getValueKmDelivery() * distanceDurationDTO.distance();
-        DeliveryModel deliveryModel = new DeliveryModel(deliveryRecord, addressModel, distanceDurationDTO, valueDelivery, distanceDurationDTO.distance());
+        DeliveryModel deliveryModel = new DeliveryModel(deliveryRecord, addressModel, distanceDurationDTO, valueDelivery);
         deliveryRepository.save(deliveryModel);
         return deliveryModel;
     }
@@ -49,6 +51,14 @@ public class DeliveryService {
         deliveryRepository.save(deliveryModel);
     }
 
+    public void setDeliveryFinished(DeliveryModel deliveryModel){
+        deliveryModel.setDateDeliveryFinished(LocalDateTime.now());
+    }
+
+    public DeliveryModel findDeliveyById(Integer deliveryId){
+        return deliveryRepository.findById(deliveryId).orElseThrow(() -> new ResourceNotFoundException("Nenhuma entrega encontrada com este ID!"));
+    }
+
     public DeliveryConsultValueDTO consultValueDelivery(AddressRecord addressRecord, Integer companyId){
         CompanyModel companyModel = companyService.getCompanyById(companyId);
         ConfigsCompanyModel configsCompanyModel = configsCompanyService.getConfigByCompany(companyModel.getId());
@@ -57,6 +67,11 @@ public class DeliveryService {
         Double value = responseDTO.distance() * configsCompanyModel.getValueKmDelivery();
         DeliveryConsultValueDTO deliveryConsultValueDTO = new DeliveryConsultValueDTO(responseDTO.distance(), responseDTO.duration(), value);
         return deliveryConsultValueDTO;
+    }
+
+    public void cancelDelivery(DeliveryModel deliveryModel){
+        deliveryModel.setCancelled(true);
+        deliveryRepository.save(deliveryModel);
     }
 
 }

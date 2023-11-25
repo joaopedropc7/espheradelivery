@@ -26,6 +26,9 @@ public class OrderModel {
     @OneToOne
     @JoinColumn(name = "shoppingcart_id")
     private ShoppingCartModel shoppingCartModel;
+    @OneToOne
+    @JoinColumn(name = "delivery_id")
+    private DeliveryModel deliveryModel;
     private Double sellValue;
     private Double discount;
     private Double sellValueWithDiscount;
@@ -51,6 +54,11 @@ public class OrderModel {
         this.orderDate = LocalDateTime.now();
         this.orderCancelled = false;
         this.typeDelivery = data.typeDelivery();
+    }
+
+    public void ajustValueDelivery(Double deliveryValue){
+        this.deliveryValue = deliveryValue;
+        this.sellValueWithDiscount = (sellValue + deliveryValue) - discount;
     }
 
     public Integer getId() {
@@ -163,6 +171,14 @@ public class OrderModel {
 
     public void setTypeDelivery(TypeDelivery typeDelivery) {
         this.typeDelivery = typeDelivery;
+    }
+
+    public DeliveryModel getDeliveryModel() {
+        return deliveryModel;
+    }
+
+    public void setDeliveryModel(DeliveryModel deliveryModel) {
+        this.deliveryModel = deliveryModel;
     }
 
     @Override

@@ -3,6 +3,7 @@ package br.com.esphera.delivery.models;
 import br.com.esphera.delivery.models.DTOS.DeliveryRecord;
 import br.com.esphera.delivery.models.DTOS.DistanceDurationDTO;
 import br.com.esphera.delivery.models.Enums.StatusDelivery;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
@@ -17,6 +18,7 @@ public class DeliveryModel {
     private Integer id;
     @OneToOne
     @JoinColumn(name = "order_id")
+    @JsonIgnore
     private OrderModel orderModel;
     @OneToOne
     @JoinColumn(name = "motoboy_id")
@@ -28,18 +30,20 @@ public class DeliveryModel {
     private LocalDateTime dateDeliveryFinished;
     private Double value;
     private Double distance;
+    private Boolean cancelled;
 
     public DeliveryModel() {
     }
 
-    public DeliveryModel(DeliveryRecord deliveryRecord, AddressModel addressModel, DistanceDurationDTO distanceDurationDTO, Double valueDelivery, Double distance) {
+    public DeliveryModel(DeliveryRecord deliveryRecord, AddressModel addressModel, DistanceDurationDTO distanceDurationDTO, Double valueDelivery) {
         this.orderModel = deliveryRecord.orderModel();
         this.motoboysModel = null;
         this.addressModel = addressModel;
         this.dateDeliveryStart = null;
         this.dateDeliveryFinished = null;
         this.value = valueDelivery;
-        this.distance = distance;
+        this.distance = distanceDurationDTO.distance();
+        this.cancelled = false;
     }
 
     public Integer getId() {
@@ -104,6 +108,14 @@ public class DeliveryModel {
 
     public void setDistance(Double distance) {
         this.distance = distance;
+    }
+
+    public Boolean getCancelled() {
+        return cancelled;
+    }
+
+    public void setCancelled(Boolean cancelled) {
+        this.cancelled = cancelled;
     }
 
     @Override

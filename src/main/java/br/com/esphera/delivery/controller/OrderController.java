@@ -156,7 +156,7 @@ public class OrderController {
     }
 
     @PostMapping("/ready/{idOrder}")
-    @Operation(summary = "Parse orders for ready", description = "Parse orders for ready - Ready for take order",
+    @Operation(summary = "Parse order ready for collect", description = "Parse orders ready - Ready for take order (COLLECT, NOT DELIVERY)",
             tags = {"Order"},
             responses = {
                     @ApiResponse(description = "Success", responseCode = "200",
@@ -172,13 +172,13 @@ public class OrderController {
                     @ApiResponse(description = "Internal Error", responseCode = "500", content = @Content),
             }
     )
-    public ResponseEntity setOrderReady(@PathVariable(value = "idOrder") Integer idOrder){
-        orderService.setOrderReady(idOrder);
+    public ResponseEntity setOrderReadyForCollect(@PathVariable(value = "idOrder") Integer idOrder){
+        orderService.setOrderReadyForCollect(idOrder);
         return ResponseEntity.ok().build();
     }
 
-    @PostMapping("/inroute/{idOrder}")
-    @Operation(summary = "Parse orders for in route", description = "Parse orders for in route",
+    @PostMapping("/inroute/{idOrder}/{motoboyId}")
+    @Operation(summary = "Parse orders for in route (DELIVERY ONLY)", description = "Parse orders for in route (DELIVERY ONLY)",
             tags = {"Order"},
             responses = {
                     @ApiResponse(description = "Success", responseCode = "200",
@@ -194,13 +194,13 @@ public class OrderController {
                     @ApiResponse(description = "Internal Error", responseCode = "500", content = @Content),
             }
     )
-    public ResponseEntity setOrderInRoute(@PathVariable(value = "idOrder") Integer idOrder){
-        orderService.setOrderRoute(idOrder);
+    public ResponseEntity setOrderInRoute(@PathVariable(value = "idOrder") Integer idOrder, @PathVariable(value = "motoboyId") Integer motoboyId){
+        orderService.setOrderDelivery(idOrder, motoboyId);
         return ResponseEntity.ok().build();
     }
 
-    @PostMapping("/delivered/{idOrder}")
-    @Operation(summary = "Parse orders for delivered", description = "Parse orders for delivered",
+    @PostMapping("/finished/{idOrder}")
+    @Operation(summary = "Parse orders for finished", description = "Parse orders for finished",
             tags = {"Order"},
             responses = {
                     @ApiResponse(description = "Success", responseCode = "200",
@@ -217,7 +217,7 @@ public class OrderController {
             }
     )
     public ResponseEntity setOrderDelivered(@PathVariable(value = "idOrder") Integer idOrder){
-        orderService.setOrderPrepared(idOrder);
+        orderService.setOrderFinished(idOrder);
         return ResponseEntity.ok().build();
     }
 

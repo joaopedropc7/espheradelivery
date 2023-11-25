@@ -3,9 +3,8 @@ package br.com.esphera.delivery.models.Enums;
 public enum StatusOrder {
     Recebido,
     EmPreparo,
-    Pronto,
+    ProntoRetirada,
     Rota,
-    Entregue,
+    Finalizado,
     Cancelado,
-    Finalizado
 }
