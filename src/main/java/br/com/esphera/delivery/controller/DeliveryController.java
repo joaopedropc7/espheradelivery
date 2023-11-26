@@ -24,9 +24,7 @@ public class DeliveryController {
     @Autowired
     private DeliveryService deliveryService;
 
-
-
-    @PostMapping("/value/{companyId}]")
+    @PostMapping("/value/{companyId}")
     @Operation(summary = "Consult value delivery", description = "Consult value delivery",
             tags = {"Delivery"},
             responses = {
