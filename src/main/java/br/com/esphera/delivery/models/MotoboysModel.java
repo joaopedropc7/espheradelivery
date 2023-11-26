@@ -1,6 +1,7 @@
 package br.com.esphera.delivery.models;
 
 import br.com.esphera.delivery.models.DTOS.MotoboyRecord;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
 import java.util.Objects;
@@ -17,6 +18,7 @@ public class MotoboysModel {
     private String email;
     @ManyToOne
     @JoinColumn(name = "company_id")
+    @JsonIgnore
     private CompanyModel companyModel;
     private Integer quantityDelivered;
     private Boolean inactive;

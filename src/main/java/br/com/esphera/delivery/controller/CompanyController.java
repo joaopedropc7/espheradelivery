@@ -6,6 +6,7 @@ import br.com.esphera.delivery.models.DTOS.CompanyUpdateRecord;
 import br.com.esphera.delivery.models.DTOS.AddressRecord;
 import br.com.esphera.delivery.models.ProductModel;
 import br.com.esphera.delivery.service.CompanyService;
+import br.com.esphera.delivery.service.ConfigsCompanyService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -23,6 +24,9 @@ public class CompanyController {
 
     @Autowired
     private CompanyService companyService;
+
+    @Autowired
+    private ConfigsCompanyService configsCompanyService;
 
     @PostMapping
     @Operation(summary = "Create a company", description = "Create a company",
@@ -43,7 +47,8 @@ public class CompanyController {
     )
     public ResponseEntity<CompanyModel> createCompany(@RequestBody CompanyRecord companyRecord){
         CompanyModel companyModel = companyService.createCompany(companyRecord);
-        return ResponseEntity.ok(companyModel);
+        configsCompanyService.createConfigForCompany(companyModel);
+        return ResponseEntity.ok().body(companyModel);
     }
 
     @GetMapping
@@ -65,7 +70,7 @@ public class CompanyController {
     )
     public ResponseEntity<List<CompanyModel>> getAllCompanies(){
         List<CompanyModel> companyModelList = companyService.getAllCompanies();
-        return ResponseEntity.ok(companyModelList);
+        return ResponseEntity.ok().body(companyModelList);
     }
 
     @GetMapping("/{id}")
@@ -87,7 +92,7 @@ public class CompanyController {
     )
     public ResponseEntity<CompanyModel> getCompanyById(@PathVariable(value = "id") Integer id){
         CompanyModel companyModel = companyService.getCompanyById(id);
-        return ResponseEntity.ok(companyModel);
+        return ResponseEntity.ok().body(companyModel);
     }
 
     @PutMapping("/{id}")
@@ -109,10 +114,10 @@ public class CompanyController {
     )
     public ResponseEntity<CompanyModel> putCompany(@PathVariable(value = "id") Integer id, CompanyUpdateRecord companyUpdateRecord){
         CompanyModel companyModel = companyService.putCompany(id, companyUpdateRecord);
-        return ResponseEntity.ok(companyModel);
+        return ResponseEntity.ok().body(companyModel);
     }
 
-    @PutMapping("/adcress/{id}")
+    @PutMapping("/address/{id}")
     @Operation(summary = "Put a company address by id and body", description = "Put a company address by id and body",
             tags = {"Company"},
             responses = {
@@ -131,7 +136,7 @@ public class CompanyController {
     )
     public ResponseEntity<CompanyModel> putCompanyAddress(@PathVariable(value = "id") Integer id, AddressRecord addressRecord){
         CompanyModel companyModel = companyService.putCompanyAddress(id, addressRecord);
-        return ResponseEntity.ok(companyModel);
+        return ResponseEntity.ok().body(companyModel);
     }
 
     @PutMapping("/inactive/{id}")
@@ -142,7 +147,7 @@ public class CompanyController {
                             content = {
                                     @Content(
                                             mediaType = "application/json",
-                                            array = @ArraySchema(schema = @Schema(implementation = ProductModel.class))
+                                            array = @ArraySchema(schema = @Schema(implementation = void.class))
                                     )
                             }),
                     @ApiResponse(description = "Bad Request", responseCode = "400", content = @Content),
@@ -153,7 +158,7 @@ public class CompanyController {
     )
     public ResponseEntity inactiveCompany(@PathVariable(value = "id") Integer id){
         companyService.inactiveCompany(id);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.noContent().build();
     }
 
 

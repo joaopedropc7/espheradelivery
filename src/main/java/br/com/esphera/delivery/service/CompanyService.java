@@ -15,7 +15,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Service
-public class CompanyService {
+public class  CompanyService {
 
     @Autowired
     private CompanyRepository companyRepository;
@@ -25,6 +25,8 @@ public class CompanyService {
 
     @Autowired
     private MapsAPi mapsAPi;
+
+
 
     public CompanyModel createCompany(CompanyRecord companyDTO){
         ResponseAddressValidationMapsAPI responseAddressValidation = mapsAPi.validateAddress(companyDTO.addressRecord());

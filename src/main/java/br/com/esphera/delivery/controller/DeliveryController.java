@@ -14,6 +14,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -33,7 +34,7 @@ public class DeliveryController {
                             content = {
                                     @Content(
                                             mediaType = "application/json",
-                                            array = @ArraySchema(schema = @Schema(implementation = ProductModel.class))
+                                            array = @ArraySchema(schema = @Schema(implementation = DeliveryConsultValueDTO.class))
                                     )
                             }),
                     @ApiResponse(description = "Bad Request", responseCode = "400", content = @Content),
@@ -42,9 +43,9 @@ public class DeliveryController {
                     @ApiResponse(description = "Internal Error", responseCode = "500", content = @Content),
             }
     )
-    public DeliveryConsultValueDTO consultingValueDelivery(@PathVariable(value = "companyId") Integer companyId, @RequestBody AddressRecord addressRecord){
+    public ResponseEntity<DeliveryConsultValueDTO> consultingValueDelivery(@PathVariable(value = "companyId") Integer companyId, @RequestBody AddressRecord addressRecord){
         DeliveryConsultValueDTO deliveryConsultValueDTO = deliveryService.consultValueDelivery(addressRecord, companyId);
-        return deliveryConsultValueDTO;
+        return ResponseEntity.ok().body(deliveryConsultValueDTO);
     }
 
 }

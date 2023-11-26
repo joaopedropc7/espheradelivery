@@ -25,6 +25,7 @@ public class ProductService {
     @Autowired
     private CompanyService companyService;
 
+
     public ProductModel createProduct(ProductRecord dto, Integer companyId){
         CompanyModel companyModel = companyService.getCompanyById(companyId);
         CategoryModel categoryModel = categoryService.findById(dto.idCategory());
@@ -53,8 +54,8 @@ public class ProductService {
         return product;
     }
 
-    public ProductModel updateProduct(Integer id, ProductRecord dto){
-        ProductModel product = productRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Não existe produto com este ID!"));
+    public ProductModel updateProduct(Integer productId, ProductRecord dto){
+        ProductModel product = findById(productId);
         CategoryModel category = categoryService.findById(dto.idCategory());
 
         product.setName(dto.name());
@@ -67,16 +68,27 @@ public class ProductService {
         return product;
     }
 
-    public void inactiveProduct(Integer id){
-        ProductModel product = productRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Não existe produto com este ID!"));
+    public void inactiveProduct(Integer productId){
+        ProductModel product = findById(productId);
+        if(product.getQuantity() > 0){
+            throw new ResourceNotFoundException("Não é possível inativar um produto com estoque!");
+        }
         product.setInactive(true);
         productRepository.save(product);
     }
 
-    public void activeProduct(Integer id){
-        ProductModel product = productRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Não existe produto com este ID!"));
+    public void activeProduct(Integer productId){
+        ProductModel product = findById(productId);
         product.setInactive(false);
         productRepository.save(product);
+    }
+
+    public void deleteProduct(Integer productId){
+        ProductModel productModel = findById(productId);
+        if(productModel.getQuantity() > 0 && productModel.getSales() > 0 && productModel.getValueBuyTotal() > 0 && productModel.getValueSellTotal() > 0){
+            throw new ResourceNotFoundException("Não é possível deletar um produto que haja movimentacoes, tente inativar o mesmo!");
+        }
+        productRepository.delete(productModel);
     }
 
     public void sellProduct(ProductModel product, Integer productQuantity){
@@ -95,7 +107,7 @@ public class ProductService {
 
     public void addQuantityInProduct(List<ProductEntryItemModel> productsList){
         productsList.forEach(product -> {
-            ProductModel productModel = productRepository.findById(product.getProduct().getId()).orElseThrow(() -> new ResourceNotFoundException("Não existe produto com este ID!"));
+            ProductModel productModel = product.getProduct();
             productModel.setQuantity(productModel.getQuantity() + product.getQuantity());
             productModel.setValueBuyTotal(productModel.getValueBuyTotal() + (product.getPriceBuy() * product.getQuantity()));
             productRepository.save(productModel);
@@ -104,7 +116,7 @@ public class ProductService {
 
     public void cancelEntryById(List<ProductEntryItemModel> products) {
         products.forEach(product -> {
-            ProductModel productModel = productRepository.findById(product.getProduct().getId()).orElseThrow(() -> new ResourceNotFoundException("Não existe produto com este ID!"));
+            ProductModel productModel = product.getProduct();
             productModel.setQuantity(productModel.getQuantity() - product.getQuantity());
             productModel.setValueBuyTotal(productModel.getValueBuyTotal() - (product.getPriceBuy() * product.getQuantity()));
             productRepository.save(productModel);

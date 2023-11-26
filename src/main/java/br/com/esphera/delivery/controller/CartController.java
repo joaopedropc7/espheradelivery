@@ -34,7 +34,7 @@ public class CartController {
                             content = {
                                     @Content(
                                             mediaType = "application/json",
-                                            array = @ArraySchema(schema = @Schema(implementation = ShoppingCartModel.class))
+                                            array = @ArraySchema(schema = @Schema(implementation = ProductCartItemModel.class))
                                     )
                             }),
                     @ApiResponse(description = "Bad Request", responseCode = "400", content = @Content),
@@ -43,10 +43,10 @@ public class CartController {
                     @ApiResponse(description = "Internal Error", responseCode = "500", content = @Content),
             }
     )
-    public ProductCartItemModel addToCart(@PathVariable(value = "id") Integer productID, @PathVariable(value = "quantity") Integer quantity){
+    public ResponseEntity<ProductCartItemModel> addToCart(@PathVariable(value = "id") Integer productID, @PathVariable(value = "quantity") Integer quantity){
        ProductModel productModel = productService.findById(productID);
        ProductCartItemModel productCartItemModel = new ProductCartItemModel(productModel, quantity);
-       return shoppingCartService.addToCart(productCartItemModel);
+       return ResponseEntity.ok().body(shoppingCartService.addToCart(productCartItemModel));
     }
 
     @PostMapping("/remove/{id}")
@@ -57,7 +57,7 @@ public class CartController {
                             content = {
                                     @Content(
                                             mediaType = "application/json",
-                                            array = @ArraySchema(schema = @Schema(implementation = ShoppingCartModel.class))
+                                            array = @ArraySchema(schema = @Schema(implementation = void.class))
                                     )
                             }),
                     @ApiResponse(description = "Bad Request", responseCode = "400", content = @Content),
@@ -79,7 +79,7 @@ public class CartController {
                             content = {
                                     @Content(
                                             mediaType = "application/json",
-                                            array = @ArraySchema(schema = @Schema(implementation = ShoppingCartModel.class))
+                                            array = @ArraySchema(schema = @Schema(implementation = void.class))
                                     )
                             }),
                     @ApiResponse(description = "Bad Request", responseCode = "400", content = @Content),
@@ -101,7 +101,7 @@ public class CartController {
                             content = {
                                     @Content(
                                             mediaType = "application/json",
-                                            array = @ArraySchema(schema = @Schema(implementation = ShoppingCartModel.class))
+                                            array = @ArraySchema(schema = @Schema(implementation = Integer.class))
                                     )
                             }),
                     @ApiResponse(description = "Bad Request", responseCode = "400", content = @Content),
@@ -110,8 +110,8 @@ public class CartController {
                     @ApiResponse(description = "Internal Error", responseCode = "500", content = @Content),
             }
     )
-    public Integer getQuantityTotalInCart(){
-        return shoppingCartService.getQuantityTotalInCart();
+    public ResponseEntity<Integer> getQuantityTotalInCart(){
+        return ResponseEntity.ok().body(shoppingCartService.getQuantityTotalInCart());
     }
 
     @GetMapping("/value")
@@ -122,7 +122,7 @@ public class CartController {
                             content = {
                                     @Content(
                                             mediaType = "application/json",
-                                            array = @ArraySchema(schema = @Schema(implementation = ShoppingCartModel.class))
+                                            array = @ArraySchema(schema = @Schema(implementation = Double.class))
                                     )
                             }),
                     @ApiResponse(description = "Bad Request", responseCode = "400", content = @Content),
@@ -131,8 +131,8 @@ public class CartController {
                     @ApiResponse(description = "Internal Error", responseCode = "500", content = @Content),
             }
     )
-    public Double getPriceTotalInCart(){
-        return shoppingCartService.getPriceTotalCart();
+    public ResponseEntity<Double> getPriceTotalInCart(){
+        return ResponseEntity.ok().body(shoppingCartService.getPriceTotalCart());
     }
 
     @GetMapping("/cartproducts")
@@ -143,7 +143,7 @@ public class CartController {
                             content = {
                                     @Content(
                                             mediaType = "application/json",
-                                            array = @ArraySchema(schema = @Schema(implementation = ShoppingCartModel.class))
+                                            array = @ArraySchema(schema = @Schema(implementation = ProductCartItemModel.class))
                                     )
                             }),
                     @ApiResponse(description = "Bad Request", responseCode = "400", content = @Content),
@@ -152,8 +152,8 @@ public class CartController {
                     @ApiResponse(description = "Internal Error", responseCode = "500", content = @Content),
             }
     )
-    public List<ProductCartItemModel> productsInCart(){
-        return shoppingCartService.getProductsInCart();
+    public ResponseEntity<List<ProductCartItemModel>> productsInCart(){
+        return ResponseEntity.ok().body(shoppingCartService.getProductsInCart());
     }
 
     @PostMapping("/clearcart")
@@ -163,8 +163,7 @@ public class CartController {
                     @ApiResponse(description = "Success", responseCode = "200",
                             content = {
                                     @Content(
-                                            mediaType = "application/json",
-                                            array = @ArraySchema(schema = @Schema(implementation = ShoppingCartModel.class))
+                                            mediaType = "application/json"
                                     )
                             }),
                     @ApiResponse(description = "Bad Request", responseCode = "400", content = @Content),
@@ -195,9 +194,9 @@ public class CartController {
                     @ApiResponse(description = "Internal Error", responseCode = "500", content = @Content),
             }
     )
-    public ShoppingCartModel getShoppingCartById(@PathVariable(value = "id")Integer id){
+    public ResponseEntity<ShoppingCartModel> getShoppingCartById(@PathVariable(value = "id")Integer id){
         ShoppingCartModel shoppingCart = shoppingCartService.getShoppingCartInDBById(id);
-        return shoppingCart;
+        return ResponseEntity.ok().body(shoppingCart);
     }
 
 

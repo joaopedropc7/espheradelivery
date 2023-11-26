@@ -58,4 +58,13 @@ public class MotoboyService {
         motoboyRepository.save(motoboysModel);
     }
 
+    public void deleteMotoboy(Integer motoboyId){
+        MotoboysModel motoboysModel = findMotoboyById(motoboyId);
+        motoboyRepository.delete(motoboysModel);
+    }
+
+    public void incrementDeliveryQuantity(MotoboysModel motoboysModel){
+        motoboysModel.setQuantityDelivered(motoboysModel.getQuantityDelivered() + 1);
+        motoboyRepository.save(motoboysModel);
+    }
 }

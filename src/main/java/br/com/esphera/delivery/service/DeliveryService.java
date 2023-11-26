@@ -53,6 +53,7 @@ public class DeliveryService {
 
     public void setDeliveryFinished(DeliveryModel deliveryModel){
         deliveryModel.setDateDeliveryFinished(LocalDateTime.now());
+        motoboyService.incrementDeliveryQuantity(deliveryModel.getMotoboysModel());
     }
 
     public DeliveryModel findDeliveyById(Integer deliveryId){

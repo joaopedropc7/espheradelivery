@@ -10,6 +10,8 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -38,9 +40,9 @@ public class ProductController {
                     @ApiResponse(description = "Internal Error", responseCode = "500", content = @Content),
             }
     )
-    public ProductModel createProduct(@RequestBody ProductRecord dto, @PathVariable(value = "companyId")Integer companyId){
+    public ResponseEntity<ProductModel> createProduct(@RequestBody ProductRecord dto, @PathVariable(value = "companyId")Integer companyId){
         ProductModel productModel = productService.createProduct(dto, companyId);
-        return productModel;
+        return ResponseEntity.ok().body(productModel);
     }
 
     @GetMapping("/find/{companyId}")
@@ -60,8 +62,8 @@ public class ProductController {
                     @ApiResponse(description = "Internal Error", responseCode = "500", content = @Content),
             }
     )
-    public List<ProductModel> findAllProducts(@PathVariable(value = "companyId")Integer companyId){
-        return productService.findAllProducts(companyId);
+    public ResponseEntity<List<ProductModel>> findAllProducts(@PathVariable(value = "companyId")Integer companyId){
+        return ResponseEntity.ok().body(productService.findAllProducts(companyId));
     }
 
     @GetMapping("/category/{companyId}/{categoryId}")
@@ -81,8 +83,8 @@ public class ProductController {
                     @ApiResponse(description = "Internal Error", responseCode = "500", content = @Content),
             }
     )
-    public List<ProductModel> findAllProductsByCategory(@PathVariable(value = "companyId")Integer companyId, @PathVariable(value = "categoryId")Integer categoryId){
-        return productService.findProductsByCategory(companyId, categoryId);
+    public ResponseEntity<List<ProductModel>> findAllProductsByCategory(@PathVariable(value = "companyId")Integer companyId, @PathVariable(value = "categoryId")Integer categoryId){
+        return ResponseEntity.ok().body(productService.findProductsByCategory(companyId, categoryId));
     }
 
     @GetMapping("/{id}")
@@ -102,8 +104,8 @@ public class ProductController {
                     @ApiResponse(description = "Internal Error", responseCode = "500", content = @Content),
             }
     )
-    public ProductModel findProductById(@PathVariable(value = "id") Integer id){
-        return productService.findById(id);
+    public ResponseEntity<ProductModel> findProductById(@PathVariable(value = "id") Integer id){
+        return ResponseEntity.ok().body(productService.findById(id));
     }
 
     @PutMapping("/{id}")
@@ -123,19 +125,19 @@ public class ProductController {
                     @ApiResponse(description = "Internal Error", responseCode = "500", content = @Content),
             }
     )
-    public ProductModel updateProduct(@PathVariable(value = "id")Integer id, @RequestBody ProductRecord productRecord){
-        return productService.updateProduct(id, productRecord);
+    public ResponseEntity<ProductModel> updateProduct(@PathVariable(value = "id")Integer id, @RequestBody ProductRecord productRecord){
+        return ResponseEntity.ok().body(productService.updateProduct(id, productRecord));
     }
 
-    @DeleteMapping("/{id}")
-    @Operation(summary = "Delete product by idproduct", description = "Delete product by idProduct",
+    @PutMapping("/inactive/{productId}")
+    @Operation(summary = "Inactive product by idproduct", description = "Inactive product by idProduct",
             tags = {"Product"},
             responses = {
                     @ApiResponse(description = "Success", responseCode = "200",
                             content = {
                                     @Content(
                                             mediaType = "application/json",
-                                            array = @ArraySchema(schema = @Schema(implementation = ProductModel.class))
+                                            array = @ArraySchema(schema = @Schema(implementation = void.class))
                                     )
                             }),
                     @ApiResponse(description = "Bad Request", responseCode = "400", content = @Content),
@@ -144,9 +146,53 @@ public class ProductController {
                     @ApiResponse(description = "Internal Error", responseCode = "500", content = @Content),
             }
     )
-    public void inactiveProduct(@PathVariable(value = "id")Integer id){
-        productService.inactiveProduct(id);
+    public ResponseEntity inactiveProduct(@PathVariable(value = "productId")Integer productId){
+        productService.inactiveProduct(productId);
+        return ResponseEntity.noContent().build();
     }
 
+    @PutMapping("/active/{productId}")
+    @Operation(summary = "Active product by idproduct", description = "Active product by idProduct",
+            tags = {"Product"},
+            responses = {
+                    @ApiResponse(description = "Success", responseCode = "200",
+                            content = {
+                                    @Content(
+                                            mediaType = "application/json",
+                                            array = @ArraySchema(schema = @Schema(implementation = void.class))
+                                    )
+                            }),
+                    @ApiResponse(description = "Bad Request", responseCode = "400", content = @Content),
+                    @ApiResponse(description = "Unauthorized", responseCode = "401", content = @Content),
+                    @ApiResponse(description = "Not Found", responseCode = "404", content = @Content),
+                    @ApiResponse(description = "Internal Error", responseCode = "500", content = @Content),
+            }
+    )
+    public ResponseEntity activeProduct(@PathVariable(value = "productId")Integer productId){
+        productService.activeProduct(productId);
+        return ResponseEntity.noContent().build();
+    }
+
+    @DeleteMapping("/{productId}")
+    @Operation(summary = "Delete product by idproduct", description = "Delete product by idProduct",
+            tags = {"Product"},
+            responses = {
+                    @ApiResponse(description = "Success", responseCode = "200",
+                            content = {
+                                    @Content(
+                                            mediaType = "application/json",
+                                            array = @ArraySchema(schema = @Schema(implementation = void.class))
+                                    )
+                            }),
+                    @ApiResponse(description = "Bad Request", responseCode = "400", content = @Content),
+                    @ApiResponse(description = "Unauthorized", responseCode = "401", content = @Content),
+                    @ApiResponse(description = "Not Found", responseCode = "404", content = @Content),
+                    @ApiResponse(description = "Internal Error", responseCode = "500", content = @Content),
+            }
+    )
+    public ResponseEntity deleteProduct(@PathVariable(value = "productId")Integer productId){
+        productService.deleteProduct(productId);
+        return ResponseEntity.noContent().build();
+    }
 
 }

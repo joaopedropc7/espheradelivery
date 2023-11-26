@@ -9,6 +9,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -30,7 +31,7 @@ public class ViaCepController {
                             content = {
                                     @Content(
                                             mediaType = "application/json",
-                                            array = @ArraySchema(schema = @Schema(implementation = AddressModel.class))
+                                            array = @ArraySchema(schema = @Schema(implementation = ViaCepDTO.class))
                                     )
                             }),
                     @ApiResponse(description = "Bad Request", responseCode = "400", content = @Content),
@@ -39,9 +40,9 @@ public class ViaCepController {
                     @ApiResponse(description = "Internal Error", responseCode = "500", content = @Content),
             }
     )
-    public ViaCepDTO getCep(@PathVariable String cep) {
+    public ResponseEntity<ViaCepDTO> getCep(@PathVariable String cep) {
         ViaCepDTO newCep = restTemplate.getForObject("https://viacep.com.br/ws/" + cep + "/json/", ViaCepDTO.class);
-        return newCep;
+        return ResponseEntity.ok().body(newCep);
     }
 
 

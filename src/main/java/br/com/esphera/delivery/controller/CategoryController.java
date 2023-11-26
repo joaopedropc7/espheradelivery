@@ -39,9 +39,9 @@ public class CategoryController {
                     @ApiResponse(description = "Internal Error", responseCode = "500", content = @Content),
             }
     )
-    public CategoryModel createCategory(@RequestBody CategoryRecord nameCategory, @PathVariable(value = "companyId") Integer companyId){
+    public ResponseEntity<CategoryModel> createCategory(@RequestBody CategoryRecord nameCategory, @PathVariable(value = "companyId") Integer companyId){
         CategoryModel categoryModel = categoryService.createCategory(nameCategory, companyId);
-        return  categoryModel;
+        return  ResponseEntity.ok().body(categoryModel);
     }
 
     @GetMapping("/find/{idCompany}")
@@ -61,9 +61,9 @@ public class CategoryController {
                     @ApiResponse(description = "Internal Error", responseCode = "500", content = @Content),
             }
     )
-    public List<CategoryModel> findAllCategorys(@PathVariable(value = "idCompany")Integer idCompany){
+    public ResponseEntity<List<CategoryModel>> findAllCategorys(@PathVariable(value = "idCompany")Integer idCompany){
         List<CategoryModel> categorys = categoryService.findAllCategorys(idCompany);
-        return categorys;
+        return ResponseEntity.ok().body(categorys);
     }
 
     @GetMapping("/{id}")
@@ -83,9 +83,9 @@ public class CategoryController {
                     @ApiResponse(description = "Internal Error", responseCode = "500", content = @Content),
             }
     )
-    public CategoryModel findById(@PathVariable(value = "id") Integer id){
+    public ResponseEntity<CategoryModel> findById(@PathVariable(value = "id") Integer id){
         CategoryModel categoryModel = categoryService.findById(id);
-        return categoryModel;
+        return ResponseEntity.ok().body(categoryModel);
     }
 
     @PutMapping("/{id}")
@@ -105,9 +105,9 @@ public class CategoryController {
                     @ApiResponse(description = "Internal Error", responseCode = "500", content = @Content),
             }
     )
-    public CategoryModel updateCategory(@PathVariable(value = "id")Integer categoryId, @RequestBody String categoryName){
+    public ResponseEntity<CategoryModel> updateCategory(@PathVariable(value = "id")Integer categoryId, @RequestBody String categoryName){
         CategoryModel categoryModel = categoryService.updateCategory(categoryId, categoryName);
-        return categoryModel;
+        return ResponseEntity.ok().body(categoryModel);
     }
 
     @DeleteMapping("/{id}")
@@ -118,7 +118,7 @@ public class CategoryController {
                             content = {
                                     @Content(
                                             mediaType = "application/json",
-                                            array = @ArraySchema(schema = @Schema(implementation = CategoryModel.class))
+                                            array = @ArraySchema(schema = @Schema(implementation = void.class))
                                     )
                             }),
                     @ApiResponse(description = "Bad Request", responseCode = "400", content = @Content),
@@ -129,7 +129,7 @@ public class CategoryController {
     )
     public ResponseEntity inactiveCategory(@PathVariable(value = "id")Integer id){
         categoryService.inactiveProduct(id);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.noContent().build();
     }
 
 }

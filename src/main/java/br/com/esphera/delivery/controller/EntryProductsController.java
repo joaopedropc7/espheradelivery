@@ -42,7 +42,7 @@ public class EntryProductsController {
     )
     public ResponseEntity<ProductEntryModel> createEntryProduct(@RequestBody ProductEntryRecord data, @PathVariable(value = "companyId") Integer companyId){
         ProductEntryModel entryModel = entryService.createEntryProduct(data, companyId);
-        return ResponseEntity.ok(entryModel);
+        return ResponseEntity.ok().body(entryModel);
     }
 
     @GetMapping("/find/{companyId}")
@@ -64,7 +64,7 @@ public class EntryProductsController {
     )
     public ResponseEntity<List<ProductEntryModel>> getAllEntrys(@PathVariable(value = "companyId")Integer companyId){
         List<ProductEntryModel> entryModels = entryService.findByCompanyId(companyId);
-        return ResponseEntity.ok(entryModels);
+        return ResponseEntity.ok().body(entryModels);
     }
 
     @GetMapping("/{id}")
@@ -86,7 +86,7 @@ public class EntryProductsController {
     )
     public ResponseEntity<ProductEntryModel> getEntryById(@PathVariable(value = "id") Integer id){
         ProductEntryModel entryModel = entryService.findById(id);
-        return ResponseEntity.ok(entryModel);
+        return ResponseEntity.ok().body(entryModel);
     }
 
     @GetMapping("/products/{companyId}/{entryId}")
@@ -108,7 +108,7 @@ public class EntryProductsController {
     )
     public ResponseEntity<List<ProductEntryItemModel>> getProductsInEntry(@PathVariable(value = "companyId")Integer companyId, @PathVariable(value = "entryId") Integer entryId){
         List<ProductEntryItemModel> productsInEntry = entryService.findAllProductsInEntry(companyId, entryId);
-        return ResponseEntity.ok(productsInEntry);
+        return ResponseEntity.ok().body(productsInEntry);
     }
 
     @PostMapping("/cancel/{id}")
@@ -130,7 +130,7 @@ public class EntryProductsController {
     )
     public ResponseEntity cancelEntryById(@PathVariable Integer id){
         entryService.cancelEntryById(id);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.noContent().build();
     }
 
 }

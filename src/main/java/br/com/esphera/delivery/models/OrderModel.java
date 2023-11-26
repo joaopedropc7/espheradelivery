@@ -37,6 +37,8 @@ public class OrderModel {
     private StatusOrder statusOrder;
     private Boolean orderCancelled;
     private TypeDelivery typeDelivery;
+    private LocalDateTime dateStartOrder;
+    private LocalDateTime dateFinishOrder;
 
     public OrderModel() {
     }
@@ -54,6 +56,8 @@ public class OrderModel {
         this.orderDate = LocalDateTime.now();
         this.orderCancelled = false;
         this.typeDelivery = data.typeDelivery();
+        this.dateStartOrder = LocalDateTime.now();
+        this.dateFinishOrder = null;
     }
 
     public void ajustValueDelivery(Double deliveryValue){
@@ -181,16 +185,32 @@ public class OrderModel {
         this.deliveryModel = deliveryModel;
     }
 
+    public LocalDateTime getDateStartOrder() {
+        return dateStartOrder;
+    }
+
+    public void setDateStartOrder(LocalDateTime dateStartOrder) {
+        this.dateStartOrder = dateStartOrder;
+    }
+
+    public LocalDateTime getDateFinishOrder() {
+        return dateFinishOrder;
+    }
+
+    public void setDateFinishOrder(LocalDateTime dateFinishOrder) {
+        this.dateFinishOrder = dateFinishOrder;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         OrderModel that = (OrderModel) o;
-        return Objects.equals(id, that.id) && Objects.equals(companyModel, that.companyModel) && Objects.equals(clientName, that.clientName) && Objects.equals(cpf, that.cpf) && Objects.equals(numberCellphone, that.numberCellphone) && Objects.equals(shoppingCartModel, that.shoppingCartModel) && Objects.equals(sellValue, that.sellValue) && Objects.equals(discount, that.discount) && Objects.equals(sellValueWithDiscount, that.sellValueWithDiscount) && Objects.equals(deliveryValue, that.deliveryValue) && Objects.equals(orderDate, that.orderDate) && statusOrder == that.statusOrder && Objects.equals(orderCancelled, that.orderCancelled) && typeDelivery == that.typeDelivery;
+        return Objects.equals(id, that.id) && Objects.equals(companyModel, that.companyModel) && Objects.equals(clientName, that.clientName) && Objects.equals(cpf, that.cpf) && Objects.equals(numberCellphone, that.numberCellphone) && Objects.equals(shoppingCartModel, that.shoppingCartModel) && Objects.equals(deliveryModel, that.deliveryModel) && Objects.equals(sellValue, that.sellValue) && Objects.equals(discount, that.discount) && Objects.equals(sellValueWithDiscount, that.sellValueWithDiscount) && Objects.equals(deliveryValue, that.deliveryValue) && Objects.equals(orderDate, that.orderDate) && statusOrder == that.statusOrder && Objects.equals(orderCancelled, that.orderCancelled) && typeDelivery == that.typeDelivery && Objects.equals(dateStartOrder, that.dateStartOrder) && Objects.equals(dateFinishOrder, that.dateFinishOrder);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, clientName, cpf, numberCellphone, shoppingCartModel, sellValue, discount, sellValueWithDiscount, deliveryValue, orderDate, statusOrder, orderCancelled);
+        return Objects.hash(id, companyModel, clientName, cpf, numberCellphone, shoppingCartModel, deliveryModel, sellValue, discount, sellValueWithDiscount, deliveryValue, orderDate, statusOrder, orderCancelled, typeDelivery, dateStartOrder, dateFinishOrder);
     }
 }

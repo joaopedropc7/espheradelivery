@@ -13,6 +13,7 @@ import jakarta.persistence.criteria.Order;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -41,6 +42,7 @@ public class OrderService {
         ShoppingCartModel shoppingCartModel = shoppingCartRepository.findById(data.shoppingCartId()).orElseThrow(() -> new ResourceNotFoundException("No records found for this id"));
         validationSales.forEach(validationSales -> validationSales.valid(data, shoppingCartModel));
         OrderModel orderModel = new OrderModel(data, shoppingCartModel, companyModel);
+        orderRepository.save(orderModel);
         if(data.typeDelivery() == TypeDelivery.DELIVERY){
             DeliveryRecord deliveryRecord = new DeliveryRecord(orderModel, data.addressRecord());
             DeliveryModel deliveryModel = deliveryService.createDelivery(companyModel,deliveryRecord);
@@ -109,7 +111,7 @@ public class OrderService {
     public void setOrderReadyForCollect(Integer idOrder){
         OrderModel orderModel = findByIdSell(idOrder);
         if(orderModel.getTypeDelivery() == TypeDelivery.DELIVERY){
-            throw new ResourceNotFoundException("Este pedido é para entrega, não é posível colocar para entrega!");
+            throw new ResourceNotFoundException("Este pedido é para entrega, não é posível colocar para retirada!");
         }
         orderModel.setStatusOrder(StatusOrder.ProntoRetirada);
         orderRepository.save(orderModel);
@@ -120,6 +122,7 @@ public class OrderService {
         if(orderModel.getTypeDelivery() == TypeDelivery.DELIVERY){
             deliveryService.setDeliveryFinished(orderModel.getDeliveryModel());
         }
+        orderModel.setDateFinishOrder(LocalDateTime.now());
         orderModel.setStatusOrder(StatusOrder.Finalizado);
         orderRepository.save(orderModel);
     }

@@ -42,7 +42,7 @@ public class OrderController {
     )
     public ResponseEntity<OrderModel> createSell(@RequestBody OrderCreateRecord data, @PathVariable(value = "idCompany") Integer idCompany){
         OrderModel sellCrated = orderService.createSell(data, idCompany);
-        return ResponseEntity.ok(sellCrated);
+        return ResponseEntity.ok().body(sellCrated);
     }
 
     @GetMapping("/findall/{companyId}")
@@ -64,7 +64,7 @@ public class OrderController {
     )
     public ResponseEntity<List<OrderModel>> findAllSells(@PathVariable(value = "companyId")Integer companyId){
         List<OrderModel> sells = orderService.findAllSells(companyId);
-        return ResponseEntity.ok(sells);
+        return ResponseEntity.ok().body(sells);
     }
 
     @GetMapping("/{id}")
@@ -86,7 +86,7 @@ public class OrderController {
     )
     public ResponseEntity<OrderModel> findSellById(@PathVariable(value = "id")Integer id){
         OrderModel orderModel = orderService.findByIdSell(id);
-        return ResponseEntity.ok(orderModel);
+        return ResponseEntity.ok().body(orderModel);
     }
 
     @DeleteMapping("/{id}")
@@ -97,7 +97,7 @@ public class OrderController {
                             content = {
                                     @Content(
                                             mediaType = "application/json",
-                                            array = @ArraySchema(schema = @Schema(implementation = OrderModel.class))
+                                            array = @ArraySchema(schema = @Schema(implementation = void.class))
                                     )
                             }),
                     @ApiResponse(description = "Bad Request", responseCode = "400", content = @Content),
@@ -108,7 +108,7 @@ public class OrderController {
     )
     public ResponseEntity cancelSell(@PathVariable(value = "id") Integer id){
         orderService.cancelSell(id);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.noContent().build();
     }
 
     @GetMapping("/{statusOrder}/{companyId}")
@@ -130,7 +130,7 @@ public class OrderController {
     )
     public ResponseEntity<List<OrderModel>> findByStatusOrder(@PathVariable(value = "statusOrder") StatusOrder statusOrder, @PathVariable(value = "companyId")Integer companyId){
         List<OrderModel> sells = orderService.findByStatusOrder(statusOrder, companyId);
-        return ResponseEntity.ok(sells);
+        return ResponseEntity.ok().body(sells);
     }
 
     @PostMapping("/prepared/{idOrder}")
@@ -141,7 +141,7 @@ public class OrderController {
                             content = {
                                     @Content(
                                             mediaType = "application/json",
-                                            array = @ArraySchema(schema = @Schema(implementation = OrderModel.class))
+                                            array = @ArraySchema(schema = @Schema(implementation = void.class))
                                     )
                             }),
                     @ApiResponse(description = "Bad Request", responseCode = "400", content = @Content),
@@ -152,7 +152,7 @@ public class OrderController {
     )
     public ResponseEntity setOrderPrepared(@PathVariable(value = "idOrder") Integer idOrder){
         orderService.setOrderPrepared(idOrder);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.noContent().build();
     }
 
     @PostMapping("/ready/{idOrder}")
@@ -163,7 +163,7 @@ public class OrderController {
                             content = {
                                     @Content(
                                             mediaType = "application/json",
-                                            array = @ArraySchema(schema = @Schema(implementation = OrderModel.class))
+                                            array = @ArraySchema(schema = @Schema(implementation = void.class))
                                     )
                             }),
                     @ApiResponse(description = "Bad Request", responseCode = "400", content = @Content),
@@ -174,7 +174,7 @@ public class OrderController {
     )
     public ResponseEntity setOrderReadyForCollect(@PathVariable(value = "idOrder") Integer idOrder){
         orderService.setOrderReadyForCollect(idOrder);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.noContent().build();
     }
 
     @PostMapping("/inroute/{idOrder}/{motoboyId}")
@@ -185,7 +185,7 @@ public class OrderController {
                             content = {
                                     @Content(
                                             mediaType = "application/json",
-                                            array = @ArraySchema(schema = @Schema(implementation = OrderModel.class))
+                                            array = @ArraySchema(schema = @Schema(implementation = void.class))
                                     )
                             }),
                     @ApiResponse(description = "Bad Request", responseCode = "400", content = @Content),
@@ -196,7 +196,7 @@ public class OrderController {
     )
     public ResponseEntity setOrderInRoute(@PathVariable(value = "idOrder") Integer idOrder, @PathVariable(value = "motoboyId") Integer motoboyId){
         orderService.setOrderDelivery(idOrder, motoboyId);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.noContent().build();
     }
 
     @PostMapping("/finished/{idOrder}")
@@ -207,7 +207,7 @@ public class OrderController {
                             content = {
                                     @Content(
                                             mediaType = "application/json",
-                                            array = @ArraySchema(schema = @Schema(implementation = OrderModel.class))
+                                            array = @ArraySchema(schema = @Schema(implementation = void.class))
                                     )
                             }),
                     @ApiResponse(description = "Bad Request", responseCode = "400", content = @Content),
@@ -218,7 +218,7 @@ public class OrderController {
     )
     public ResponseEntity setOrderDelivered(@PathVariable(value = "idOrder") Integer idOrder){
         orderService.setOrderFinished(idOrder);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.noContent().build();
     }
 
     
