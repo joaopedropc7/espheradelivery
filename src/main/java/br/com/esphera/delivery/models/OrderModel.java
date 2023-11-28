@@ -43,7 +43,7 @@ public class OrderModel {
     public OrderModel() {
     }
 
-    public OrderModel(OrderCreateRecord data, ShoppingCartModel shoppingCartModel, CompanyModel companyModel) {
+    public OrderModel(OrderCreateRecord data, ShoppingCartModel shoppingCartModel, CompanyModel companyModel, Double discount) {
         this.clientName = data.clientName();
         this.companyModel = companyModel;
         this.cpf = data.cpf();
@@ -51,8 +51,8 @@ public class OrderModel {
         this.shoppingCartModel = shoppingCartModel;
         this.sellValue = shoppingCartModel.getTotalValue();
         this.statusOrder = StatusOrder.Recebido;
-        this.discount = data.discount();
-        this.sellValueWithDiscount = shoppingCartModel.getTotalValue() - data.discount();
+        this.discount = discount;
+        this.sellValueWithDiscount = sellValue - ((sellValue * discount) / 100);
         this.orderDate = LocalDateTime.now();
         this.orderCancelled = false;
         this.typeDelivery = data.typeDelivery();

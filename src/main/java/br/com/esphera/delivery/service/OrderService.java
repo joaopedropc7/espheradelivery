@@ -37,11 +37,16 @@ public class OrderService {
     @Autowired
     private DeliveryService deliveryService;
 
+    @Autowired
+    private CouponService couponService;
+
     public OrderModel createSell(OrderCreateRecord data, Integer companyId){
         CompanyModel companyModel = companyService.getCompanyById(companyId);
         ShoppingCartModel shoppingCartModel = shoppingCartRepository.findById(data.shoppingCartId()).orElseThrow(() -> new ResourceNotFoundException("No records found for this id"));
         validationSales.forEach(validationSales -> validationSales.valid(data, shoppingCartModel));
-        OrderModel orderModel = new OrderModel(data, shoppingCartModel, companyModel);
+        Double discount = couponService.getDiscountByCoupon(data.couponName(), companyId);
+        if(discount == null)throw new ResourceNotFoundException("Cupom inválido");
+        OrderModel orderModel = new OrderModel(data, shoppingCartModel, companyModel, discount);
         orderRepository.save(orderModel);
         if(data.typeDelivery() == TypeDelivery.DELIVERY){
             DeliveryRecord deliveryRecord = new DeliveryRecord(orderModel, data.addressRecord());
@@ -51,6 +56,7 @@ public class OrderService {
         }else{
             orderModel.setDeliveryModel(null);
         }
+
         orderRepository.save(orderModel);
         shoppingCartModel.getProductCartItems().forEach(productCartItemModel -> {
             productService.sellProduct(productCartItemModel.getProduct(), productCartItemModel.getQuantity());

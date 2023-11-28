@@ -14,6 +14,6 @@ public record OrderCreateRecord(
         AddressRecord addressRecord,
         @NotNull
         Integer shoppingCartId,
-        Double discount,
+        String couponName,
         TypeDelivery typeDelivery) {
 }
