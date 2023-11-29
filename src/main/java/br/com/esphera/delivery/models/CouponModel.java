@@ -1,6 +1,7 @@
 package br.com.esphera.delivery.models;
 
 import br.com.esphera.delivery.models.DTOS.CreateCouponDTO;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
@@ -16,6 +17,7 @@ public class CouponModel {
     private Integer id;
     @ManyToOne
     @JoinColumn(name = "company_id")
+    @JsonIgnore
     private CompanyModel companyModel;
     private String name;
     private Double percentDiscount;

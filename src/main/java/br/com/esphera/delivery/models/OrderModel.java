@@ -5,6 +5,7 @@ import br.com.esphera.delivery.models.Enums.StatusOrder;
 import br.com.esphera.delivery.models.Enums.TypeDelivery;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 
 import java.time.LocalDateTime;
 import java.util.Objects;
@@ -20,15 +21,19 @@ public class OrderModel {
     @JoinColumn(name = "company_id")
     @JsonIgnore
     private CompanyModel companyModel;
+    @NotNull
     private String clientName;
     private String cpf;
+    @NotNull
     private String numberCellphone;
     @OneToOne
     @JoinColumn(name = "shoppingcart_id")
+    @NotNull
     private ShoppingCartModel shoppingCartModel;
     @OneToOne
     @JoinColumn(name = "delivery_id")
     private DeliveryModel deliveryModel;
+    @NotNull
     private Double sellValue;
     private Double discount;
     private Double sellValueWithDiscount;
@@ -62,7 +67,7 @@ public class OrderModel {
 
     public void ajustValueDelivery(Double deliveryValue){
         this.deliveryValue = deliveryValue;
-        this.sellValueWithDiscount = (sellValue + deliveryValue) - discount;
+        this.sellValueWithDiscount = (sellValue + deliveryValue) - (((sellValue + deliveryValue) * discount) / 100);
     }
 
     public Integer getId() {

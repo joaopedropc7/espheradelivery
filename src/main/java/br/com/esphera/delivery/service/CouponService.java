@@ -21,8 +21,8 @@ public class CouponService {
     private CompanyService companyService;
 
     public CouponModel createdCoupon(CreateCouponDTO dto, Integer companyId){
-        if (getDiscountByCoupon(dto.name(), companyId) != null) throw new ResourceNotFoundException("Já existe um cupom come este nome.");
         CompanyModel companyModel = companyService.getCompanyById(companyId);
+        if (couponRespository.findCouponModelByNameAndCompanyModel(dto.name(), companyModel) != null) throw new ResourceNotFoundException("Já existe um cupom come este nome.");
         CouponModel couponModel = new CouponModel(dto, companyModel);
         return couponRespository.save(couponModel);
     }
