@@ -30,6 +30,13 @@ public class ShoppingCartService {
         return shoppingCart;
     }
 
+    public ProductCartItemModel alterQuantityProductInCart(Integer productCartId, Integer quantityAdd){
+        ShoppingCartModel shoppingCartModel = getShoppingCartInSession();
+        ProductCartItemModel productInCart = shoppingCartModel.alterQuantityProductInCart(productCartId, quantityAdd);
+        calculateAmount();
+        return productInCart;
+    }
+
     public ProductCartItemModel addToCart(ProductCartItemModel productCartItemModel){
         ShoppingCartModel shoppingCartModel = getShoppingCartInSession();
         ProductCartItemModel producInCart = shoppingCartModel.addToCart(productCartItemModel);

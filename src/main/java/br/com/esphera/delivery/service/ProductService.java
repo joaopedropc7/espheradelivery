@@ -1,12 +1,16 @@
 package br.com.esphera.delivery.service;
 
+import br.com.esphera.delivery.controller.ProductController;
 import br.com.esphera.delivery.exceptions.ResourceNotFoundException;
 import br.com.esphera.delivery.models.CompanyModel;
 import br.com.esphera.delivery.models.DTOS.ProductRecord;
 import br.com.esphera.delivery.models.CategoryModel;
+import br.com.esphera.delivery.models.DTOS.responseDtos.ProductResponseDTO;
 import br.com.esphera.delivery.models.ProductEntryItemModel;
 import br.com.esphera.delivery.models.ProductModel;
 import br.com.esphera.delivery.repository.CategoryRepository;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 import br.com.esphera.delivery.repository.ProductRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -31,6 +35,7 @@ public class ProductService {
         CategoryModel categoryModel = categoryService.findById(dto.idCategory());
         ProductModel product = new ProductModel(dto, categoryModel, companyModel);
         productRepository.save(product);
+        // product.add(linkTo(methodOn(ProductController.class).createProduct(dto, companyId)).withSelfRel());
         return product;
     }
 
@@ -46,11 +51,13 @@ public class ProductService {
     public List<ProductModel> findAllProducts(Integer companyId){
         CompanyModel companyModel = companyService.getCompanyById(companyId);
         List<ProductModel> products = productRepository.finddProductByComapanyId(companyModel);
+        products.stream().forEach(product -> product.add(linkTo(methodOn(ProductController.class).findAllProducts(companyId)).withSelfRel()));
         return products;
     }
 
     public ProductModel findById(Integer id){
         ProductModel product = productRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Não existe produto com este ID!"));
+        product.add(linkTo(methodOn(ProductController.class).findProductById(id)).withSelfRel());
         return product;
     }
 
@@ -65,6 +72,7 @@ public class ProductService {
         product.setCostValue(dto.costValue());
         product.setValueSell(dto.valueSell());
         productRepository.save(product);
+        product.add(linkTo(methodOn(ProductController.class).updateProduct(productId ,dto)).withSelfRel());
         return product;
     }
 

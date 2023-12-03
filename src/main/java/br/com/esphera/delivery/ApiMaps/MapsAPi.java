@@ -8,7 +8,9 @@ import br.com.esphera.delivery.exceptions.ResourceNotFoundException;
 import br.com.esphera.delivery.models.DTOS.AddressRecord;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Service;
@@ -25,8 +27,15 @@ public class MapsAPi {
     @Autowired
     private RestTemplate restTemplate;
 
-    String postUrl = "https://addressvalidation.googleapis.com/v1:validateAddress?key=AIzaSyBqUk0RuC1TpLWLwYlKYbGU2EAZrOluNDA";
+    @Value("${key.maps}")
+    private String keyMaps;
 
+    private String postUrl;
+
+    @PostConstruct
+    private void init() {
+        this.postUrl = "https://addressvalidation.googleapis.com/v1:validateAddress?key=" + keyMaps;
+    }
 
     public ResponseAddressValidationMapsAPI validateAddress(AddressRecord addressRecord) {
         String address = addressRecord.logradouro() + ", " + addressRecord.numberHouse();

@@ -3,13 +3,14 @@ package br.com.esphera.delivery.models;
 import br.com.esphera.delivery.models.DTOS.CategoryRecord;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
+import org.springframework.hateoas.RepresentationModel;
 
 import java.util.List;
 import java.util.Objects;
 
 @Entity
 @Table(name = "categoryproduct")
-public class CategoryModel {
+public class CategoryModel extends RepresentationModel<CategoryModel> {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

@@ -1,5 +1,6 @@
 package br.com.esphera.delivery.models;
 
+import br.com.esphera.delivery.exceptions.ResourceNotFoundException;
 import jakarta.persistence.*;
 
 import javax.annotation.processing.Generated;
@@ -43,22 +44,11 @@ public class ShoppingCartModel {
     }
 
     public ProductCartItemModel addToCart(ProductCartItemModel productCartItemModel){
-        if(productCartItems != null && productCartItems.contains(productCartItemModel)){
-            ProductCartItemModel oldProduct =
-                    productCartItems.stream()
-                            .filter(s -> s.getProduct().getId() == productCartItemModel.getProduct().getId())
-                            .findFirst().orElse(null);
-
-            oldProduct.setQuantity(oldProduct.getQuantity() + productCartItemModel.getQuantity());
-            return oldProduct;
-        }
-        else{
             if(productCartItems == null){
                 productCartItems = new ArrayList<>();
             }
             productCartItems.add(productCartItemModel);
             return productCartItemModel;
-        }
     }
 
     public void removeProductFromCart(Integer productId){
@@ -69,6 +59,19 @@ public class ShoppingCartModel {
         if (productCartItemModel != null){
             productCartItems.remove(productCartItemModel);
         }
+    }
+
+    public ProductCartItemModel alterQuantityProductInCart(Integer productId, Integer quantityAdd){
+            ProductCartItemModel oldProduct =
+                    productCartItems.stream()
+                            .filter(s -> s.getProduct().getId() == productId)
+                            .findFirst().orElse(null);
+            if (oldProduct != null){
+            oldProduct.setQuantity(oldProduct.getQuantity() + quantityAdd);
+            return oldProduct;}
+            else {
+                throw new ResourceNotFoundException("Product não encontrado no carrinho!");
+            }
     }
 
     @Override

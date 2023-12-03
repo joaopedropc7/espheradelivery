@@ -1,10 +1,9 @@
 package br.com.esphera.delivery.controller;
 
-import br.com.esphera.delivery.models.ProductCartItemModel;
 import br.com.esphera.delivery.models.ProductModel;
-import br.com.esphera.delivery.models.ShoppingCartModel;
-import br.com.esphera.delivery.service.ProductService;
-import br.com.esphera.delivery.service.ShoppingCartService;
+import br.com.esphera.delivery.models.ProductTableModel;
+import br.com.esphera.delivery.models.TableModel;
+import br.com.esphera.delivery.service.TableService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -17,24 +16,21 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/cart")
-public class CartController {
+@RequestMapping("/api/table")
+public class TableController {
 
     @Autowired
-    private ShoppingCartService shoppingCartService;
+    private TableService tableService;
 
-    @Autowired
-    private ProductService productService;
-
-    @PostMapping("/add/{id}/{quantity}")
-    @Operation(summary = "Insert in cart", description = "Insert product in cart",
-            tags = {"Cart"},
+    @PostMapping("/create/{companyId}/{tableNumber}")
+    @Operation(summary = "create a table parsing body and idCompany", description = "create table parsing body and idCompany",
+            tags = {"Table"},
             responses = {
                     @ApiResponse(description = "Success", responseCode = "200",
                             content = {
                                     @Content(
                                             mediaType = "application/json",
-                                            array = @ArraySchema(schema = @Schema(implementation = ProductCartItemModel.class))
+                                            array = @ArraySchema(schema = @Schema(implementation = TableModel.class))
                                     )
                             }),
                     @ApiResponse(description = "Bad Request", responseCode = "400", content = @Content),
@@ -43,21 +39,19 @@ public class CartController {
                     @ApiResponse(description = "Internal Error", responseCode = "500", content = @Content),
             }
     )
-    public ResponseEntity<ProductCartItemModel> addToCart(@PathVariable(value = "id") Integer productID, @PathVariable(value = "quantity") Integer quantity){
-       ProductModel productModel = productService.findById(productID);
-       ProductCartItemModel productCartItemModel = new ProductCartItemModel(productModel, quantity);
-       return ResponseEntity.ok().body(shoppingCartService.addToCart(productCartItemModel));
+    public ResponseEntity<TableModel> createTable(@PathVariable(value = "companyId") Integer companyId, @PathVariable(value = "tableNumber") Integer tableNumber){
+        return ResponseEntity.ok().body(tableService.inserTableInRest(tableNumber, companyId));
     }
 
-    @PutMapping("/alter/{id}/{quantity}")
-    @Operation(summary = "Alter product quantity in cart", description = "Insert product in cart",
-            tags = {"Cart"},
+    @GetMapping("/find/{tableId}")
+    @Operation(summary = "Get a table parsing id table", description = "create table parsing id table",
+            tags = {"Table"},
             responses = {
                     @ApiResponse(description = "Success", responseCode = "200",
                             content = {
                                     @Content(
                                             mediaType = "application/json",
-                                            array = @ArraySchema(schema = @Schema(implementation = ProductCartItemModel.class))
+                                            array = @ArraySchema(schema = @Schema(implementation = TableModel.class))
                                     )
                             }),
                     @ApiResponse(description = "Bad Request", responseCode = "400", content = @Content),
@@ -66,20 +60,19 @@ public class CartController {
                     @ApiResponse(description = "Internal Error", responseCode = "500", content = @Content),
             }
     )
-    public ResponseEntity<ProductCartItemModel> alterProductInCart(@PathVariable(value = "id") Integer productID, @PathVariable(value = "quantity") Integer quantityAdd){
-        return ResponseEntity.ok().body(shoppingCartService.alterQuantityProductInCart(productID, quantityAdd));
+    public ResponseEntity<TableModel> getTableById(@PathVariable(value = "tableId") Integer tableId){
+        return ResponseEntity.ok().body(tableService.getTableById(tableId));
     }
 
-
-    @PostMapping("/remove/{id}")
-    @Operation(summary = "remove in cart", description = "remove product in cart",
-            tags = {"Cart"},
+    @GetMapping("/findtables/{companyId}")
+    @Operation(summary = "find all tables parsing idCompany", description = "find all tables parsing idCompany",
+            tags = {"Table"},
             responses = {
                     @ApiResponse(description = "Success", responseCode = "200",
                             content = {
                                     @Content(
                                             mediaType = "application/json",
-                                            array = @ArraySchema(schema = @Schema(implementation = void.class))
+                                            array = @ArraySchema(schema = @Schema(implementation = TableModel.class))
                                     )
                             }),
                     @ApiResponse(description = "Bad Request", responseCode = "400", content = @Content),
@@ -88,20 +81,20 @@ public class CartController {
                     @ApiResponse(description = "Internal Error", responseCode = "500", content = @Content),
             }
     )
-    public ResponseEntity removeToCart(@PathVariable(value = "id") Integer productID){
-        shoppingCartService.removeFromCart(productID);
-        return ResponseEntity.ok().build();
+    public ResponseEntity<List<TableModel>> getTablesByCompany(@PathVariable(value = "companyId") Integer companyId){
+        List<TableModel> tables = tableService.getAllTablesByCompany(companyId);
+        return ResponseEntity.ok().body(tables);
     }
 
-    @PostMapping("/checkout")
-    @Operation(summary = "Checkout in cart", description = "Checkout in cart",
-            tags = {"Cart"},
+    @PostMapping("/addproduct/{tableId}/{productId}/{productQuantity}")
+    @Operation(summary = "add product in table parsing id table, id product and quantity", description = "add product in table parsing id table, id product and quantity",
+            tags = {"Table"},
             responses = {
                     @ApiResponse(description = "Success", responseCode = "200",
                             content = {
                                     @Content(
                                             mediaType = "application/json",
-                                            array = @ArraySchema(schema = @Schema(implementation = void.class))
+                                            array = @ArraySchema(schema = @Schema(implementation = TableModel.class))
                                     )
                             }),
                     @ApiResponse(description = "Bad Request", responseCode = "400", content = @Content),
@@ -110,20 +103,19 @@ public class CartController {
                     @ApiResponse(description = "Internal Error", responseCode = "500", content = @Content),
             }
     )
-    public ResponseEntity<Integer> checkout(){
-        ShoppingCartModel shoppingCartModel = shoppingCartService.checkout();
-        return ResponseEntity.ok(shoppingCartModel.getId());
+    public ResponseEntity<ProductTableModel> addProductInTable(@PathVariable(value = "tableId") Integer tableId, @PathVariable(value = "productId") Integer productId, @PathVariable(value = "productQuantity") Integer productQuantity){
+        return ResponseEntity.ok().body(tableService.insertProductInTable(tableId, productId, productQuantity));
     }
 
-    @GetMapping("/quantity")
-    @Operation(summary = "Get quantity products in cart", description = "Get quantitu products in cart",
-            tags = {"Cart"},
+    @PutMapping("/alterquantityproduct/{tableId}/{productId}/{productQuantity}")
+    @Operation(summary = "alter product in table parsing id table, id product and quantity", description = "alter product in table parsing id table, id product and quantity",
+            tags = {"Table"},
             responses = {
                     @ApiResponse(description = "Success", responseCode = "200",
                             content = {
                                     @Content(
                                             mediaType = "application/json",
-                                            array = @ArraySchema(schema = @Schema(implementation = Integer.class))
+                                            array = @ArraySchema(schema = @Schema(implementation = TableModel.class))
                                     )
                             }),
                     @ApiResponse(description = "Bad Request", responseCode = "400", content = @Content),
@@ -132,19 +124,19 @@ public class CartController {
                     @ApiResponse(description = "Internal Error", responseCode = "500", content = @Content),
             }
     )
-    public ResponseEntity<Integer> getQuantityTotalInCart(){
-        return ResponseEntity.ok().body(shoppingCartService.getQuantityTotalInCart());
+    public ResponseEntity<ProductTableModel> alterQuantityProductInTable(@PathVariable(value = "tableId") Integer tableId, @PathVariable(value = "productId") Integer productId, @PathVariable(value = "productQuantity") Integer productQuantity){
+        return ResponseEntity.ok().body(tableService.alterQuantityProductInTable(tableId, productId, productQuantity));
     }
 
-    @GetMapping("/value")
-    @Operation(summary = "Total value in cart", description = "Total value in cart",
-            tags = {"Cart"},
+    @PutMapping("/removeproduct/{tableId}/{productId}")
+    @Operation(summary = "remove product in table parsing id table, id product", description = "remove product in table parsing id table, id product",
+            tags = {"Table"},
             responses = {
                     @ApiResponse(description = "Success", responseCode = "200",
                             content = {
                                     @Content(
                                             mediaType = "application/json",
-                                            array = @ArraySchema(schema = @Schema(implementation = Double.class))
+                                            array = @ArraySchema(schema = @Schema(implementation = TableModel.class))
                                     )
                             }),
                     @ApiResponse(description = "Bad Request", responseCode = "400", content = @Content),
@@ -153,19 +145,20 @@ public class CartController {
                     @ApiResponse(description = "Internal Error", responseCode = "500", content = @Content),
             }
     )
-    public ResponseEntity<Double> getPriceTotalInCart(){
-        return ResponseEntity.ok().body(shoppingCartService.getPriceTotalCart());
+    public ResponseEntity<String> removeProductFromTable(@PathVariable(value = "tableId") Integer tableId, @PathVariable(value = "productId") Integer productId){
+        tableService.removeProductFromTable(tableId, productId);
+        return ResponseEntity.ok().body("Produto removido da mesa!");
     }
 
-    @GetMapping("/cartproducts")
-    @Operation(summary = "Get products in cart", description = "Get products product in cart",
-            tags = {"Cart"},
+    @GetMapping("/quantityproducts/{tableId}")
+    @Operation(summary = "get quantity products in table", description = "get quantity products in table",
+            tags = {"Table"},
             responses = {
                     @ApiResponse(description = "Success", responseCode = "200",
                             content = {
                                     @Content(
                                             mediaType = "application/json",
-                                            array = @ArraySchema(schema = @Schema(implementation = ProductCartItemModel.class))
+                                            array = @ArraySchema(schema = @Schema(implementation = TableModel.class))
                                     )
                             }),
                     @ApiResponse(description = "Bad Request", responseCode = "400", content = @Content),
@@ -174,40 +167,19 @@ public class CartController {
                     @ApiResponse(description = "Internal Error", responseCode = "500", content = @Content),
             }
     )
-    public ResponseEntity<List<ProductCartItemModel>> productsInCart(){
-        return ResponseEntity.ok().body(shoppingCartService.getProductsInCart());
+    public ResponseEntity<Integer> getQuantityProductsInTable(@PathVariable(value = "tableId") Integer tableId){
+        return ResponseEntity.ok().body(tableService.getQuantityProductsInTable(tableId));
     }
 
-    @PostMapping("/clearcart")
-    @Operation(summary = "Clear cart", description = "Clear cart",
-            tags = {"Cart"},
-            responses = {
-                    @ApiResponse(description = "Success", responseCode = "200",
-                            content = {
-                                    @Content(
-                                            mediaType = "application/json"
-                                    )
-                            }),
-                    @ApiResponse(description = "Bad Request", responseCode = "400", content = @Content),
-                    @ApiResponse(description = "Unauthorized", responseCode = "401", content = @Content),
-                    @ApiResponse(description = "Not Found", responseCode = "404", content = @Content),
-                    @ApiResponse(description = "Internal Error", responseCode = "500", content = @Content),
-            }
-    )
-    public ResponseEntity clearCart(){
-        shoppingCartService.clearCart();
-        return ResponseEntity.ok().build();
-    }
-
-    @GetMapping("/{id}")
-    @Operation(summary = "Get cart by in DB", description = "Get cart by id in DB",
-            tags = {"Cart"},
+    @GetMapping("/amounttable/{tableId}")
+    @Operation(summary = "get value commands table", description = "get value commands table",
+            tags = {"Table"},
             responses = {
                     @ApiResponse(description = "Success", responseCode = "200",
                             content = {
                                     @Content(
                                             mediaType = "application/json",
-                                            array = @ArraySchema(schema = @Schema(implementation = ShoppingCartModel.class))
+                                            array = @ArraySchema(schema = @Schema(implementation = TableModel.class))
                                     )
                             }),
                     @ApiResponse(description = "Bad Request", responseCode = "400", content = @Content),
@@ -216,10 +188,54 @@ public class CartController {
                     @ApiResponse(description = "Internal Error", responseCode = "500", content = @Content),
             }
     )
-    public ResponseEntity<ShoppingCartModel> getShoppingCartById(@PathVariable(value = "id")Integer id){
-        ShoppingCartModel shoppingCart = shoppingCartService.getShoppingCartInDBById(id);
-        return ResponseEntity.ok().body(shoppingCart);
+    public ResponseEntity<Double> getAmountTable(@PathVariable(value = "tableId") Integer tableId){
+        return ResponseEntity.ok().body(tableService.getCommandValueTable(tableId));
     }
+
+    @PutMapping("/altertable/{tableId}/{tableNumber}")
+    @Operation(summary = "alter number table", description = "alter number table",
+            tags = {"Table"},
+            responses = {
+                    @ApiResponse(description = "Success", responseCode = "200",
+                            content = {
+                                    @Content(
+                                            mediaType = "application/json",
+                                            array = @ArraySchema(schema = @Schema(implementation = TableModel.class))
+                                    )
+                            }),
+                    @ApiResponse(description = "Bad Request", responseCode = "400", content = @Content),
+                    @ApiResponse(description = "Unauthorized", responseCode = "401", content = @Content),
+                    @ApiResponse(description = "Not Found", responseCode = "404", content = @Content),
+                    @ApiResponse(description = "Internal Error", responseCode = "500", content = @Content),
+            }
+    )
+    public ResponseEntity<TableModel> alterTable(@PathVariable(value = "tableId") Integer tableId, @PathVariable(value = "tableNumber") Integer tableNumber){
+        return ResponseEntity.ok().body(tableService.putTable(tableId, tableNumber));
+    }
+
+    @PutMapping("/inactivetable/{tableId}")
+    @Operation(summary = "inactive table by id", description = "inactive table by id",
+            tags = {"Table"},
+            responses = {
+                    @ApiResponse(description = "Success", responseCode = "200",
+                            content = {
+                                    @Content(
+                                            mediaType = "application/json",
+                                            array = @ArraySchema(schema = @Schema(implementation = TableModel.class))
+                                    )
+                            }),
+                    @ApiResponse(description = "Bad Request", responseCode = "400", content = @Content),
+                    @ApiResponse(description = "Unauthorized", responseCode = "401", content = @Content),
+                    @ApiResponse(description = "Not Found", responseCode = "404", content = @Content),
+                    @ApiResponse(description = "Internal Error", responseCode = "500", content = @Content),
+            }
+    )
+    public ResponseEntity<TableModel> inactivateTable(@PathVariable(value = "tableId") Integer tableId){
+        tableService.inactiveTable(tableId);
+        return ResponseEntity.noContent().build();
+    }
+
+
 
 
 }

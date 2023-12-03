@@ -2,6 +2,7 @@ package br.com.esphera.delivery.controller;
 
 import br.com.esphera.delivery.models.CategoryModel;
 import br.com.esphera.delivery.models.DTOS.ProductRecord;
+import br.com.esphera.delivery.models.DTOS.responseDtos.ProductResponseDTO;
 import br.com.esphera.delivery.models.ProductModel;
 import br.com.esphera.delivery.service.ProductService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -40,11 +41,13 @@ public class ProductController {
                     @ApiResponse(description = "Internal Error", responseCode = "500", content = @Content),
             }
     )
-    public ResponseEntity<ProductModel> createProduct(@RequestBody ProductRecord dto, @PathVariable(value = "companyId")Integer companyId){
+    public ResponseEntity<ProductResponseDTO> createProduct(@RequestBody ProductRecord dto, @PathVariable(value = "companyId")Integer companyId){
         ProductModel productModel = productService.createProduct(dto, companyId);
-        return ResponseEntity.ok().body(productModel);
+        ProductResponseDTO productResponseDTO = new ProductResponseDTO(productModel);
+        return ResponseEntity.ok().body(productResponseDTO);
     }
 
+    @CrossOrigin(origins = "http://localhost:3000/")
     @GetMapping("/find/{companyId}")
     @Operation(summary = "find products parsing idCompany", description = "find products parsing idCompany",
             tags = {"Product"},
@@ -62,9 +65,12 @@ public class ProductController {
                     @ApiResponse(description = "Internal Error", responseCode = "500", content = @Content),
             }
     )
-    public ResponseEntity<List<ProductModel>> findAllProducts(@PathVariable(value = "companyId")Integer companyId){
-        return ResponseEntity.ok().body(productService.findAllProducts(companyId));
+    public ResponseEntity<List<ProductResponseDTO>> findAllProducts(@PathVariable(value = "companyId")Integer companyId){
+        List<ProductModel> productModel = productService.findAllProducts(companyId);
+        List<ProductResponseDTO> products = ProductResponseDTO.convert(productModel);
+        return ResponseEntity.ok().body(products);
     }
+
 
     @GetMapping("/category/{companyId}/{categoryId}")
     @Operation(summary = "find products by category parsing categoryId and companyId", description = "find products by category parsing categoryId and companyId",
@@ -83,8 +89,10 @@ public class ProductController {
                     @ApiResponse(description = "Internal Error", responseCode = "500", content = @Content),
             }
     )
-    public ResponseEntity<List<ProductModel>> findAllProductsByCategory(@PathVariable(value = "companyId")Integer companyId, @PathVariable(value = "categoryId")Integer categoryId){
-        return ResponseEntity.ok().body(productService.findProductsByCategory(companyId, categoryId));
+    public ResponseEntity<List<ProductResponseDTO>> findAllProductsByCategory(@PathVariable(value = "companyId")Integer companyId, @PathVariable(value = "categoryId")Integer categoryId){
+        List<ProductModel> productModel = productService.findProductsByCategory(companyId, categoryId);
+        List<ProductResponseDTO> products = ProductResponseDTO.convert(productModel);
+        return ResponseEntity.ok().body(products);
     }
 
     @GetMapping("/{id}")

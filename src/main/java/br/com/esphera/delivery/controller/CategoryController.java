@@ -2,6 +2,7 @@ package br.com.esphera.delivery.controller;
 
 import br.com.esphera.delivery.models.CategoryModel;
 import br.com.esphera.delivery.models.DTOS.CategoryRecord;
+import br.com.esphera.delivery.models.DTOS.responseDtos.CategoryResponseDTO;
 import br.com.esphera.delivery.models.ShoppingCartModel;
 import br.com.esphera.delivery.service.CategoryService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -40,8 +41,8 @@ public class CategoryController {
             }
     )
     public ResponseEntity<CategoryModel> createCategory(@RequestBody CategoryRecord nameCategory, @PathVariable(value = "companyId") Integer companyId){
-        CategoryModel categoryModel = categoryService.createCategory(nameCategory, companyId);
-        return  ResponseEntity.ok().body(categoryModel);
+        CategoryModel category = categoryService.createCategory(nameCategory, companyId);
+        return  ResponseEntity.ok().body(category);
     }
 
     @GetMapping("/find/{idCompany}")
@@ -84,8 +85,8 @@ public class CategoryController {
             }
     )
     public ResponseEntity<CategoryModel> findById(@PathVariable(value = "id") Integer id){
-        CategoryModel categoryModel = categoryService.findById(id);
-        return ResponseEntity.ok().body(categoryModel);
+        CategoryModel category = categoryService.findCategoryById(id);
+        return ResponseEntity.ok().body(category);
     }
 
     @PutMapping("/{id}")
@@ -106,8 +107,8 @@ public class CategoryController {
             }
     )
     public ResponseEntity<CategoryModel> updateCategory(@PathVariable(value = "id")Integer categoryId, @RequestBody String categoryName){
-        CategoryModel categoryModel = categoryService.updateCategory(categoryId, categoryName);
-        return ResponseEntity.ok().body(categoryModel);
+        CategoryModel category = categoryService.updateCategory(categoryId, categoryName);
+        return ResponseEntity.ok().body(category);
     }
 
     @DeleteMapping("/{id}")
