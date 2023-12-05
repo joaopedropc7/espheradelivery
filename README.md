@@ -16,3 +16,22 @@ Conta também com um módulo para descontos, onde o estabelecimento pode cadastr
 ## Arquitetura
 
 Este projeto contará com um banco de dados centralizado para armazenar os dados de todas as empresas, onde cada registro no banco de dados contará com o ID da empresa para diferenciar os dados, foi optado por essa arquitetura para facilidade de manutenção e versionamento, sendo assim cada requisição tem de ser passado o ID da empresa, mas quando a autenticação for implementada será armazenado o ID da empresa através do token JWT.
+
+## Instalação
+
+1. Clone o repositório:
+
+```bash
+git clone https://github.com/joaopedropc7/espheradelivery.git
+```
+
+2. Instale as dependências com o Maven
+
+3. Instale [PostgreSql](https://www.postgresql.org/download/)
+
+
+## Inicio
+
+1. Gere o .jar ou compile o projeto usando o maven.
+2. A API ficará acessível em http://localhost:8080
+3. Teste os endpoints através do swagger, ficará disponível em http://localhost:8080/swagger-ui/index.html
