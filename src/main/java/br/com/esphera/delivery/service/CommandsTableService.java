@@ -26,10 +26,16 @@ public class CommandsTableService {
     @Autowired
     private TableService tableService;
 
+    @Autowired
+    private ProductService productService;
+
     public CommandsTableModel createCommandsTable(CommandsTableRecord commandsTableRecord) {
         TableModel tableModel = tableService.getTableById(commandsTableRecord.tableId());
         CommandsTableModel commandsTableModel = new CommandsTableModel(tableModel.getCompanyModel(), tableModel, commandsTableRecord.paymentsMethod(), commandsTableRecord.observation());
         tableService.clearTable(tableModel.getId());
+        commandsTableModel.getProductsTable().stream().forEach(productTable -> {
+            productService.sellProduct(productTable.getProduct(), productTable.getQuantity());
+        });
         return commandsTableRepository.save(commandsTableModel);
     }
 
@@ -37,7 +43,8 @@ public class CommandsTableService {
         return commandsTableRepository.findById(commandsTableId).orElseThrow(() -> new ResourceNotFoundException("Comanda não encontrada!"));
     }
 
-    public List<CommandsTableModel> getCommandsTableByCompany(CompanyModel companyModel) {
+    public List<CommandsTableModel> getCommandsTableByCompany(Integer companyId) {
+        CompanyModel companyModel = companyService.getCompanyById(companyId);
         return commandsTableRepository.findCommandsTableModelByCompanyModel(companyModel);
     }
 

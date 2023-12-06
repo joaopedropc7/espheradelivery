@@ -20,7 +20,9 @@ public class ProductModel extends RepresentationModel<ProductModel> {
     @JoinColumn(name = "category_id")
     private CategoryModel categoryModel;
     private String description;
-    private String image;
+    @OneToOne
+    @JoinColumn(name = "image_id")
+    private FileEntity image;
     private Double costValue;
     private Double valueSell;
     private Integer quantity;
@@ -43,7 +45,6 @@ public class ProductModel extends RepresentationModel<ProductModel> {
         this.name = dto.name();
         this.categoryModel = category;
         this.description = dto.description();
-        this.image = dto.image();
         this.costValue = dto.costValue();
         this.valueSell = dto.valueSell();
         this.valueBuyTotal = 0.0;
@@ -79,11 +80,11 @@ public class ProductModel extends RepresentationModel<ProductModel> {
         this.description = description;
     }
 
-    public String getImage() {
+    public FileEntity getImage() {
         return image;
     }
 
-    public void setImage(String image) {
+    public void setImage(FileEntity image) {
         this.image = image;
     }
 
@@ -167,16 +168,18 @@ public class ProductModel extends RepresentationModel<ProductModel> {
         this.companyModel = companyModel;
     }
 
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        ProductModel productModel = (ProductModel) o;
-        return Objects.equals(id, productModel.id) && Objects.equals(name, productModel.name) && Objects.equals(description, productModel.description) && Objects.equals(image, productModel.image) && Objects.equals(costValue, productModel.costValue) && Objects.equals(valueSell, productModel.valueSell) && Objects.equals(quantity, productModel.quantity) && Objects.equals(sales, productModel.sales) && Objects.equals(dateCreate, productModel.dateCreate);
+        if (!super.equals(o)) return false;
+        ProductModel that = (ProductModel) o;
+        return Objects.equals(id, that.id) && Objects.equals(name, that.name) && Objects.equals(categoryModel, that.categoryModel) && Objects.equals(description, that.description) && Objects.equals(image, that.image) && Objects.equals(costValue, that.costValue) && Objects.equals(valueSell, that.valueSell) && Objects.equals(quantity, that.quantity) && Objects.equals(sales, that.sales) && Objects.equals(dateCreate, that.dateCreate) && Objects.equals(valueBuyTotal, that.valueBuyTotal) && Objects.equals(valueSellTotal, that.valueSellTotal) && Objects.equals(inactive, that.inactive) && Objects.equals(companyModel, that.companyModel);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, name, description, image, costValue, valueSell, quantity, sales, dateCreate);
+        return Objects.hash(super.hashCode(), id, name, categoryModel, description, image, costValue, valueSell, quantity, sales, dateCreate, valueBuyTotal, valueSellTotal, inactive, companyModel);
     }
 }

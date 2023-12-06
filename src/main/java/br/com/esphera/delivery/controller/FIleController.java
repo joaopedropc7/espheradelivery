@@ -1,12 +1,20 @@
 package br.com.esphera.delivery.controller;
 
 import br.com.esphera.delivery.exceptions.MyFileNotFoundException;
+import br.com.esphera.delivery.models.CommandsTableModel;
 import br.com.esphera.delivery.models.DTOS.responseDtos.UploadFileResponse;
+import br.com.esphera.delivery.models.FileEntity;
 import br.com.esphera.delivery.service.FileStorageService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import org.apache.juli.logging.Log;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -31,7 +39,23 @@ public class FIleController {
     private FileStorageService fileStorageService;
 
 
-    @PostMapping("/uploadFile")
+    @PostMapping("/uploadFile/{idProduct}")
+    @Operation(summary = "Upload image product", description = "Upload image product",
+            tags = {"Files"},
+            responses = {
+                    @ApiResponse(description = "Success", responseCode = "200",
+                            content = {
+                                    @Content(
+                                            mediaType = "application/json",
+                                            array = @ArraySchema(schema = @Schema(implementation = FileEntity.class))
+                                    )
+                            }),
+                    @ApiResponse(description = "Bad Request", responseCode = "400", content = @Content),
+                    @ApiResponse(description = "Unauthorized", responseCode = "401", content = @Content),
+                    @ApiResponse(description = "Not Found", responseCode = "404", content = @Content),
+                    @ApiResponse(description = "Internal Error", responseCode = "500", content = @Content),
+            }
+    )
     public UploadFileResponse uploadFile(@RequestParam("file")MultipartFile file) {
         logger.info("Armazenando arquivo em disco...");
         String fileName = fileStorageService.storeFile(file);
@@ -42,30 +66,34 @@ public class FIleController {
         return new UploadFileResponse(fileName, fileDownloadUri, file.getContentType(), file.getSize());
     }
 
-    @PostMapping("/uploadMultipleFiles")
-    public List<UploadFileResponse> uploadMultipleFile(@RequestParam("file")MultipartFile[] files) {
-        logger.info("Armazenando arquivos em disco...");
-        return Arrays.asList(files)
-                .stream()
-                .map(file -> uploadFile(file))
-                .collect(Collectors.toList());
-    }
-
-    @GetMapping("/downloadFile/{filename:.+}")
-    public ResponseEntity<Resource> downloadFile(@PathVariable String filename, HttpServletRequest request) {
+    @GetMapping("/requestProductImage/{productId}")
+    @Operation(summary = "Request image product passing productId", description = "Request image product passing productId",
+            tags = {"Files"},
+            responses = {
+                    @ApiResponse(description = "Success", responseCode = "200",
+                            content = {
+                                    @Content(
+                                            mediaType = "application/json",
+                                            array = @ArraySchema(schema = @Schema(implementation = FileEntity.class))
+                                    )
+                            }),
+                    @ApiResponse(description = "Bad Request", responseCode = "400", content = @Content),
+                    @ApiResponse(description = "Unauthorized", responseCode = "401", content = @Content),
+                    @ApiResponse(description = "Not Found", responseCode = "404", content = @Content),
+                    @ApiResponse(description = "Internal Error", responseCode = "500", content = @Content),
+            }
+    )
+    public ResponseEntity<Resource> downloadFile(@PathVariable(value = "productId") Integer productId, HttpServletRequest request) {
         logger.info("Lendo arquivo em disco...");
 
-        Resource resource = fileStorageService.loadFileAsResource(filename);
-        String contentType = "";
-        try{
-            contentType = request.getServletContext().getMimeType(resource.getFile().getAbsolutePath());
-        }catch (Exception e){
-            logger.info("Não foi possivel determinar o tipo de arquivo!");
-        }
-        if(contentType.isBlank()) contentType = "application/octet-stream";
+        FileEntity fileEntity = fileStorageService.loadFileAsResource(productId);
+        Resource resource = new ByteArrayResource(fileEntity.getData());
+        System.out.println(resource.getFilename());
+        String contentType = fileEntity.getFileType();
+
         return ResponseEntity.ok()
                 .contentType(MediaType.parseMediaType(contentType))
-                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + resource.getFilename() + "\"" )
+                .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"" + resource.getFilename() + "\"")
                 .body(resource);
     }
 

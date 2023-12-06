@@ -2,12 +2,9 @@ package br.com.esphera.delivery.service;
 
 import br.com.esphera.delivery.controller.ProductController;
 import br.com.esphera.delivery.exceptions.ResourceNotFoundException;
-import br.com.esphera.delivery.models.CompanyModel;
+import br.com.esphera.delivery.models.*;
 import br.com.esphera.delivery.models.DTOS.ProductRecord;
-import br.com.esphera.delivery.models.CategoryModel;
 import br.com.esphera.delivery.models.DTOS.responseDtos.ProductResponseDTO;
-import br.com.esphera.delivery.models.ProductEntryItemModel;
-import br.com.esphera.delivery.models.ProductModel;
 import br.com.esphera.delivery.repository.CategoryRepository;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
@@ -68,7 +65,6 @@ public class ProductService {
         product.setName(dto.name());
         product.setCategoryModel(category);
         product.setDescription(dto.description());
-        product.setImage(dto.image());
         product.setCostValue(dto.costValue());
         product.setValueSell(dto.valueSell());
         productRepository.save(product);
@@ -129,5 +125,16 @@ public class ProductService {
             productModel.setValueBuyTotal(productModel.getValueBuyTotal() - (product.getPriceBuy() * product.getQuantity()));
             productRepository.save(productModel);
         });
+    }
+
+    public void setImageProduct(Integer productId, FileEntity fileEntity){
+        ProductModel product = findById(productId);
+        product.setImage(fileEntity);
+        productRepository.save(product);
+    }
+
+    public FileEntity getImageProduct(Integer productId){
+        ProductModel product = findById(productId);
+        return product.getImage();
     }
 }
