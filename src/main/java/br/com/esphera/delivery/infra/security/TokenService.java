@@ -36,6 +36,7 @@ public class TokenService {
             String token = JWT.create()
                     .withIssuer("auth-api")
                     .withSubject(user.getEmail())
+                    .withClaim("company", user.getCompany().getId())
                     .withExpiresAt(genExpirationDate())
                     .sign(algorithm);
             return token;
@@ -79,6 +80,17 @@ public class TokenService {
         var authHeader = request.getHeader("Authorization");
         if(authHeader == null) return null;
         return authHeader.replace("Bearer ", "");
+    }
+
+    public Long getCompanyIdFromToken(String token){
+        try {
+            Algorithm algorithm = Algorithm.HMAC256(secret);
+            JWTVerifier verifier = JWT.require(algorithm).build();
+            DecodedJWT decodedJWT = verifier.verify(token);
+            return decodedJWT.getClaim("company").asLong();
+        } catch (JWTVerificationException exception) {
+            throw new RuntimeException("Error while decoding token", exception);
+        }
     }
 
 }
