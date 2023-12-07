@@ -8,6 +8,7 @@ import br.com.esphera.delivery.models.DTOS.CompanyRecord;
 import br.com.esphera.delivery.models.DTOS.CompanyUpdateRecord;
 import br.com.esphera.delivery.models.DTOS.AddressRecord;
 import br.com.esphera.delivery.models.AddressModel;
+import br.com.esphera.delivery.models.FileEntity;
 import br.com.esphera.delivery.repository.CompanyRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -79,5 +80,33 @@ public class  CompanyService {
     public void reverseValueGenerated(CompanyModel companyModel, Double value){
         companyModel.setValueGenerated(companyModel.getValueGenerated() - value);
         companyRepository.save(companyModel);
+    }
+
+    public void setBannerImageCompany(FileEntity fileEntity, Integer companyId){
+        CompanyModel companyModel = getCompanyById(companyId);
+        companyModel.setBannerImage(fileEntity);
+        companyRepository.save(companyModel);
+    }
+
+    public void setLogoImageCompany(FileEntity fileEntity, Integer companyId){
+        CompanyModel companyModel = getCompanyById(companyId);
+        companyModel.setLogoImage(fileEntity);
+        companyRepository.save(companyModel);
+    }
+
+
+    public FileEntity getBannerImageCompany(Integer companyId){
+        CompanyModel companyModel = getCompanyById(companyId);
+        FileEntity fileEntity = companyModel.getBannerImage();
+        if (fileEntity == null) throw new ResourceNotFoundException("Nenhuma imagem encontrada para esta empresa!");
+
+        return fileEntity;
+    }
+
+    public FileEntity getLogoImageCompany(Integer companyId){
+        CompanyModel companyModel = getCompanyById(companyId);
+        FileEntity fileEntity = companyModel.getLogoImage();
+        if (fileEntity == null) throw new ResourceNotFoundException("Nenhuma imagem encontrada para esta empresa!");
+        return fileEntity;
     }
 }

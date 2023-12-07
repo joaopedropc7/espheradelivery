@@ -38,6 +38,12 @@ public class CompanyModel extends RepresentationModel<CompanyModel> {
     private Double valueGenerated;
     private Boolean inactive;
     private String idLocalCompanyMaps;
+    @OneToOne
+    @JoinColumn(name = "banner_image_id")
+    private FileEntity bannerImage;
+    @OneToOne
+    @JoinColumn(name = "logo_image_id")
+    private FileEntity logoImage;
 
     public CompanyModel() {
     }
@@ -186,16 +192,41 @@ public class CompanyModel extends RepresentationModel<CompanyModel> {
         this.idLocalCompanyMaps = idLocalCompanyMaps;
     }
 
+    public void setSells(List<OrderModel> sells) {
+        this.sells = sells;
+    }
+
+    public void setProducts(List<ProductModel> products) {
+        this.products = products;
+    }
+
+    public FileEntity getBannerImage() {
+        return bannerImage;
+    }
+
+    public void setBannerImage(FileEntity bannerImage) {
+        this.bannerImage = bannerImage;
+    }
+
+    public FileEntity getLogoImage() {
+        return logoImage;
+    }
+
+    public void setLogoImage(FileEntity logoImage) {
+        this.logoImage = logoImage;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
         CompanyModel that = (CompanyModel) o;
-        return Objects.equals(id, that.id) && Objects.equals(nomeFantasia, that.nomeFantasia) && Objects.equals(razaoSocial, that.razaoSocial) && Objects.equals(numberCompany1, that.numberCompany1) && Objects.equals(NumberCompany2, that.NumberCompany2) && Objects.equals(addressModel, that.addressModel) && Objects.equals(emailCompany, that.emailCompany) && Objects.equals(defaulter, that.defaulter) && Objects.equals(sells, that.sells) && Objects.equals(products, that.products) && Objects.equals(valueGenerated, that.valueGenerated) && Objects.equals(inactive, that.inactive);
+        return Objects.equals(id, that.id) && Objects.equals(nomeFantasia, that.nomeFantasia) && Objects.equals(razaoSocial, that.razaoSocial) && Objects.equals(cpf, that.cpf) && Objects.equals(cnpj, that.cnpj) && Objects.equals(nameContact, that.nameContact) && Objects.equals(numberCompany1, that.numberCompany1) && Objects.equals(NumberCompany2, that.NumberCompany2) && Objects.equals(addressModel, that.addressModel) && Objects.equals(emailCompany, that.emailCompany) && Objects.equals(defaulter, that.defaulter) && Objects.equals(sells, that.sells) && Objects.equals(products, that.products) && Objects.equals(valueGenerated, that.valueGenerated) && Objects.equals(inactive, that.inactive) && Objects.equals(idLocalCompanyMaps, that.idLocalCompanyMaps) && Objects.equals(bannerImage, that.bannerImage) && Objects.equals(logoImage, that.logoImage);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, nomeFantasia, razaoSocial, numberCompany1, NumberCompany2, addressModel, emailCompany, defaulter, sells, products, valueGenerated, inactive);
+        return Objects.hash(super.hashCode(), id, nomeFantasia, razaoSocial, cpf, cnpj, nameContact, numberCompany1, NumberCompany2, addressModel, emailCompany, defaulter, sells, products, valueGenerated, inactive, idLocalCompanyMaps, bannerImage, logoImage);
     }
 }

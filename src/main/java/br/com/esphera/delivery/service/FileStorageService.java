@@ -3,6 +3,7 @@ package br.com.esphera.delivery.service;
 import br.com.esphera.delivery.config.FileStorageConfig;
 import br.com.esphera.delivery.exceptions.FileStorageException;
 import br.com.esphera.delivery.exceptions.MyFileNotFoundException;
+import br.com.esphera.delivery.models.Enums.EntityRequestImage;
 import br.com.esphera.delivery.models.FileEntity;
 import br.com.esphera.delivery.repository.FileRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,7 +32,10 @@ public class FileStorageService {
     @Autowired
     private ProductService productService;
 
-    public String storeFile(MultipartFile file){
+    @Autowired
+    private CompanyService companyService;
+
+    public String storeFile(MultipartFile file, Integer id, EntityRequestImage entityRequestImage){
         String fileName = StringUtils.cleanPath(file.getOriginalFilename());
         try{
             if(fileName.contains("..")){
@@ -43,23 +47,35 @@ public class FileStorageService {
             fileEntity.setData(file.getBytes());
             fileRepository.save(fileEntity);
 
+            if (entityRequestImage == EntityRequestImage.PRODUCT) {
+                productService.setImageProduct(id, fileEntity);
+            } else if (entityRequestImage == EntityRequestImage.COMPANYBANNER) {
+                companyService.setBannerImageCompany(fileEntity ,id);
+            } else if (entityRequestImage == EntityRequestImage.COMPANYLOGO) {
+                companyService.setLogoImageCompany(fileEntity ,id);
+            }
+
             return fileName;
         }catch (Exception e){
             throw new FileStorageException("Não foi possivel armazenar o arquivo " + fileName + ". Por favor tente novamente!", e);
         }
     }
 
-    public FileEntity loadFileAsResource(Integer productId) {
+    public FileEntity loadFileAsResource(Integer idEntity, EntityRequestImage entityRequestImage) {
         try {
-            FileEntity fileEntity = productService.getImageProduct(productId);
-            if (fileEntity != null) {
-                return fileEntity;
-            } else {
-                throw new MyFileNotFoundException("Arquivo não encontrado");
+            if (entityRequestImage == EntityRequestImage.PRODUCT) {
+                return productService.getImageProduct(idEntity);
+            } else if (entityRequestImage == EntityRequestImage.COMPANYBANNER) {
+                return companyService.getBannerImageCompany(idEntity);
+            } else if (entityRequestImage == EntityRequestImage.COMPANYLOGO) {
+                return companyService.getLogoImageCompany(idEntity);
+            }else{
+                throw new MyFileNotFoundException("Erro na requisicao do arquivo");
             }
         } catch (Exception e) {
             throw new MyFileNotFoundException("Arquivo não encontrado ");
         }
+
     }
 
 }
