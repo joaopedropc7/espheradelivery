@@ -38,10 +38,9 @@ public class CompanyModel extends RepresentationModel<CompanyModel> {
     private Double valueGenerated;
     private Boolean inactive;
     private String idLocalCompanyMaps;
-    @OneToOne
-    @JoinColumn(name = "banner_image_id")
+    @OneToOne(fetch = FetchType.LAZY)    @JoinColumn(name = "banner_image_id")
     private FileEntity bannerImage;
-    @OneToOne
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "logo_image_id")
     private FileEntity logoImage;
 
