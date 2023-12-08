@@ -1,5 +1,6 @@
 package br.com.esphera.delivery.controller;
 
+import br.com.esphera.delivery.infra.security.TokenService;
 import br.com.esphera.delivery.models.CategoryModel;
 import br.com.esphera.delivery.models.DTOS.CategoryRecord;
 import br.com.esphera.delivery.models.DTOS.responseDtos.CategoryResponseDTO;
@@ -10,8 +11,11 @@ import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -23,7 +27,10 @@ public class CategoryController {
     @Autowired
     private CategoryService categoryService;
 
-    @PostMapping("/{companyId}")
+    @Autowired
+    private TokenService tokenService;
+
+    @PostMapping
     @Operation(summary = "Create a category", description = "Create a category",
             tags = {"Category"},
             responses = {
@@ -40,7 +47,10 @@ public class CategoryController {
                     @ApiResponse(description = "Internal Error", responseCode = "500", content = @Content),
             }
     )
-    public ResponseEntity<CategoryModel> createCategory(@RequestBody CategoryRecord nameCategory, @PathVariable(value = "companyId") Integer companyId){
+    @SecurityRequirement(name = "Bearer Authentication")
+    public ResponseEntity<CategoryModel> createCategory(@RequestBody CategoryRecord nameCategory, HttpServletRequest request){
+        String token = tokenService.recoverToken(request);
+        Integer companyId = tokenService.getCompanyIdFromToken(token);
         CategoryModel category = categoryService.createCategory(nameCategory, companyId);
         return  ResponseEntity.ok().body(category);
     }

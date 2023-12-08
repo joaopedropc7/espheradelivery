@@ -1,5 +1,6 @@
 package br.com.esphera.delivery.controller;
 
+import br.com.esphera.delivery.infra.security.TokenService;
 import br.com.esphera.delivery.models.ProductModel;
 import br.com.esphera.delivery.models.ProductTableModel;
 import br.com.esphera.delivery.models.TableModel;
@@ -9,6 +10,7 @@ import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -21,8 +23,10 @@ public class TableController {
 
     @Autowired
     private TableService tableService;
+    @Autowired
+    private TokenService tokenService;
 
-    @PostMapping("/create/{companyId}/{tableNumber}")
+    @PostMapping("/create/{tableNumber}")
     @Operation(summary = "create a table parsing body and idCompany", description = "create table parsing body and idCompany",
             tags = {"Table"},
             responses = {
@@ -39,7 +43,9 @@ public class TableController {
                     @ApiResponse(description = "Internal Error", responseCode = "500", content = @Content),
             }
     )
-    public ResponseEntity<TableModel> createTable(@PathVariable(value = "companyId") Integer companyId, @PathVariable(value = "tableNumber") Integer tableNumber){
+    public ResponseEntity<TableModel> createTable(HttpServletRequest request, @PathVariable(value = "tableNumber") Integer tableNumber){
+        String token = tokenService.recoverToken(request);
+        Integer companyId = tokenService.getCompanyIdFromToken(token);
         return ResponseEntity.ok().body(tableService.inserTableInRest(tableNumber, companyId));
     }
 
@@ -60,11 +66,13 @@ public class TableController {
                     @ApiResponse(description = "Internal Error", responseCode = "500", content = @Content),
             }
     )
-    public ResponseEntity<TableModel> getTableById(@PathVariable(value = "tableId") Integer tableId){
+    public ResponseEntity<TableModel> getTableById(@PathVariable(value = "tableId") Integer tableId, HttpServletRequest request){
+        String token = tokenService.recoverToken(request);
+        Integer companyId = tokenService.getCompanyIdFromToken(token);
         return ResponseEntity.ok().body(tableService.getTableById(tableId));
     }
 
-    @GetMapping("/findtables/{companyId}")
+    @GetMapping("/findtables")
     @Operation(summary = "find all tables parsing idCompany", description = "find all tables parsing idCompany",
             tags = {"Table"},
             responses = {
@@ -81,7 +89,9 @@ public class TableController {
                     @ApiResponse(description = "Internal Error", responseCode = "500", content = @Content),
             }
     )
-    public ResponseEntity<List<TableModel>> getTablesByCompany(@PathVariable(value = "companyId") Integer companyId){
+    public ResponseEntity<List<TableModel>> getTablesByCompany(HttpServletRequest request){
+        String token = tokenService.recoverToken(request);
+        Integer companyId = tokenService.getCompanyIdFromToken(token);
         List<TableModel> tables = tableService.getAllTablesByCompany(companyId);
         return ResponseEntity.ok().body(tables);
     }
@@ -103,7 +113,9 @@ public class TableController {
                     @ApiResponse(description = "Internal Error", responseCode = "500", content = @Content),
             }
     )
-    public ResponseEntity<ProductTableModel> addProductInTable(@PathVariable(value = "tableId") Integer tableId, @PathVariable(value = "productId") Integer productId, @PathVariable(value = "productQuantity") Integer productQuantity){
+    public ResponseEntity<ProductTableModel> addProductInTable(@PathVariable(value = "tableId") Integer tableId, @PathVariable(value = "productId") Integer productId, @PathVariable(value = "productQuantity") Integer productQuantity, HttpServletRequest request){
+        String token = tokenService.recoverToken(request);
+        Integer companyId = tokenService.getCompanyIdFromToken(token);
         return ResponseEntity.ok().body(tableService.insertProductInTable(tableId, productId, productQuantity));
     }
 
@@ -124,7 +136,9 @@ public class TableController {
                     @ApiResponse(description = "Internal Error", responseCode = "500", content = @Content),
             }
     )
-    public ResponseEntity<ProductTableModel> alterQuantityProductInTable(@PathVariable(value = "tableId") Integer tableId, @PathVariable(value = "productId") Integer productId, @PathVariable(value = "productQuantity") Integer productQuantity){
+    public ResponseEntity<ProductTableModel> alterQuantityProductInTable(HttpServletRequest request,@PathVariable(value = "tableId") Integer tableId, @PathVariable(value = "productId") Integer productId, @PathVariable(value = "productQuantity") Integer productQuantity){
+        String token = tokenService.recoverToken(request);
+        Integer companyId = tokenService.getCompanyIdFromToken(token);
         return ResponseEntity.ok().body(tableService.alterQuantityProductInTable(tableId, productId, productQuantity));
     }
 
@@ -145,7 +159,9 @@ public class TableController {
                     @ApiResponse(description = "Internal Error", responseCode = "500", content = @Content),
             }
     )
-    public ResponseEntity<String> removeProductFromTable(@PathVariable(value = "tableId") Integer tableId, @PathVariable(value = "productId") Integer productId){
+    public ResponseEntity<String> removeProductFromTable(HttpServletRequest request ,@PathVariable(value = "tableId") Integer tableId, @PathVariable(value = "productId") Integer productId){
+        String token = tokenService.recoverToken(request);
+        Integer companyId = tokenService.getCompanyIdFromToken(token);
         tableService.removeProductFromTable(tableId, productId);
         return ResponseEntity.ok().body("Produto removido da mesa!");
     }
@@ -167,7 +183,9 @@ public class TableController {
                     @ApiResponse(description = "Internal Error", responseCode = "500", content = @Content),
             }
     )
-    public ResponseEntity<Integer> getQuantityProductsInTable(@PathVariable(value = "tableId") Integer tableId){
+    public ResponseEntity<Integer> getQuantityProductsInTable(HttpServletRequest request ,@PathVariable(value = "tableId") Integer tableId){
+        String token = tokenService.recoverToken(request);
+        Integer companyId = tokenService.getCompanyIdFromToken(token);
         return ResponseEntity.ok().body(tableService.getQuantityProductsInTable(tableId));
     }
 
@@ -188,7 +206,9 @@ public class TableController {
                     @ApiResponse(description = "Internal Error", responseCode = "500", content = @Content),
             }
     )
-    public ResponseEntity<Double> getAmountTable(@PathVariable(value = "tableId") Integer tableId){
+    public ResponseEntity<Double> getAmountTable(HttpServletRequest request,@PathVariable(value = "tableId") Integer tableId){
+        String token = tokenService.recoverToken(request);
+        Integer companyId = tokenService.getCompanyIdFromToken(token);
         return ResponseEntity.ok().body(tableService.getCommandValueTable(tableId));
     }
 
@@ -209,7 +229,9 @@ public class TableController {
                     @ApiResponse(description = "Internal Error", responseCode = "500", content = @Content),
             }
     )
-    public ResponseEntity<TableModel> alterTable(@PathVariable(value = "tableId") Integer tableId, @PathVariable(value = "tableNumber") Integer tableNumber){
+    public ResponseEntity<TableModel> alterTable(HttpServletRequest request ,@PathVariable(value = "tableId") Integer tableId, @PathVariable(value = "tableNumber") Integer tableNumber){
+        String token = tokenService.recoverToken(request);
+        Integer companyId = tokenService.getCompanyIdFromToken(token);
         return ResponseEntity.ok().body(tableService.putTable(tableId, tableNumber));
     }
 
@@ -230,7 +252,9 @@ public class TableController {
                     @ApiResponse(description = "Internal Error", responseCode = "500", content = @Content),
             }
     )
-    public ResponseEntity<TableModel> inactivateTable(@PathVariable(value = "tableId") Integer tableId){
+    public ResponseEntity<TableModel> inactivateTable(HttpServletRequest request,@PathVariable(value = "tableId") Integer tableId){
+        String token = tokenService.recoverToken(request);
+        Integer companyId = tokenService.getCompanyIdFromToken(token);
         tableService.inactiveTable(tableId);
         return ResponseEntity.noContent().build();
     }

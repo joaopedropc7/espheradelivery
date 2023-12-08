@@ -1,5 +1,6 @@
 package br.com.esphera.delivery.controller;
 
+import br.com.esphera.delivery.infra.security.TokenService;
 import br.com.esphera.delivery.models.CategoryModel;
 import br.com.esphera.delivery.models.DTOS.ProductRecord;
 import br.com.esphera.delivery.models.DTOS.responseDtos.ProductResponseDTO;
@@ -10,6 +11,7 @@ import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
@@ -23,8 +25,10 @@ public class ProductController {
 
     @Autowired
     private ProductService productService;
+    @Autowired
+    private TokenService tokenService;
 
-    @PostMapping("/{companyId}")
+    @PostMapping
     @Operation(summary = "create product parsing body and idCompany", description = "create product parsing body and idCompany",
             tags = {"Product"},
             responses = {
@@ -41,14 +45,15 @@ public class ProductController {
                     @ApiResponse(description = "Internal Error", responseCode = "500", content = @Content),
             }
     )
-    public ResponseEntity<ProductResponseDTO> createProduct(@RequestBody ProductRecord dto, @PathVariable(value = "companyId")Integer companyId){
+    public ResponseEntity<ProductResponseDTO> createProduct(@RequestBody ProductRecord dto, HttpServletRequest request){
+        String token = tokenService.recoverToken(request);
+        Integer companyId = tokenService.getCompanyIdFromToken(token);
         ProductModel productModel = productService.createProduct(dto, companyId);
         ProductResponseDTO productResponseDTO = new ProductResponseDTO(productModel);
         return ResponseEntity.ok().body(productResponseDTO);
     }
 
-    @CrossOrigin(origins = "http://localhost:3000/")
-    @GetMapping("/find/{companyId}")
+    @GetMapping("/find")
     @Operation(summary = "find products parsing idCompany", description = "find products parsing idCompany",
             tags = {"Product"},
             responses = {
@@ -65,14 +70,16 @@ public class ProductController {
                     @ApiResponse(description = "Internal Error", responseCode = "500", content = @Content),
             }
     )
-    public ResponseEntity<List<ProductResponseDTO>> findAllProducts(@PathVariable(value = "companyId")Integer companyId){
+    public ResponseEntity<List<ProductResponseDTO>> findAllProducts(HttpServletRequest request){
+        String token = tokenService.recoverToken(request);
+        Integer companyId = tokenService.getCompanyIdFromToken(token);
         List<ProductModel> productModel = productService.findAllProducts(companyId);
         List<ProductResponseDTO> products = ProductResponseDTO.convert(productModel);
         return ResponseEntity.ok().body(products);
     }
 
 
-    @GetMapping("/category/{companyId}/{categoryId}")
+    @GetMapping("/category/{categoryId}")
     @Operation(summary = "find products by category parsing categoryId and companyId", description = "find products by category parsing categoryId and companyId",
             tags = {"Product"},
             responses = {
@@ -89,7 +96,9 @@ public class ProductController {
                     @ApiResponse(description = "Internal Error", responseCode = "500", content = @Content),
             }
     )
-    public ResponseEntity<List<ProductResponseDTO>> findAllProductsByCategory(@PathVariable(value = "companyId")Integer companyId, @PathVariable(value = "categoryId")Integer categoryId){
+    public ResponseEntity<List<ProductResponseDTO>> findAllProductsByCategory(HttpServletRequest request, @PathVariable(value = "categoryId")Integer categoryId){
+        String token = tokenService.recoverToken(request);
+        Integer companyId = tokenService.getCompanyIdFromToken(token);
         List<ProductModel> productModel = productService.findProductsByCategory(companyId, categoryId);
         List<ProductResponseDTO> products = ProductResponseDTO.convert(productModel);
         return ResponseEntity.ok().body(products);
@@ -112,7 +121,9 @@ public class ProductController {
                     @ApiResponse(description = "Internal Error", responseCode = "500", content = @Content),
             }
     )
-    public ResponseEntity<ProductModel> findProductById(@PathVariable(value = "id") Integer id){
+    public ResponseEntity<ProductModel> findProductById(@PathVariable(value = "id") Integer id, HttpServletRequest request){
+        String token = tokenService.recoverToken(request);
+        Integer companyId = tokenService.getCompanyIdFromToken(token);
         return ResponseEntity.ok().body(productService.findById(id));
     }
 
@@ -133,7 +144,9 @@ public class ProductController {
                     @ApiResponse(description = "Internal Error", responseCode = "500", content = @Content),
             }
     )
-    public ResponseEntity<ProductModel> updateProduct(@PathVariable(value = "id")Integer id, @RequestBody ProductRecord productRecord){
+    public ResponseEntity<ProductModel> updateProduct(@PathVariable(value = "id")Integer id, @RequestBody ProductRecord productRecord, HttpServletRequest request){
+        String token = tokenService.recoverToken(request);
+        Integer companyId = tokenService.getCompanyIdFromToken(token);
         return ResponseEntity.ok().body(productService.updateProduct(id, productRecord));
     }
 
@@ -154,7 +167,9 @@ public class ProductController {
                     @ApiResponse(description = "Internal Error", responseCode = "500", content = @Content),
             }
     )
-    public ResponseEntity inactiveProduct(@PathVariable(value = "productId")Integer productId){
+    public ResponseEntity inactiveProduct(@PathVariable(value = "productId")Integer productId, HttpServletRequest request){
+        String token = tokenService.recoverToken(request);
+        Integer companyId = tokenService.getCompanyIdFromToken(token);
         productService.inactiveProduct(productId);
         return ResponseEntity.noContent().build();
     }
@@ -176,7 +191,9 @@ public class ProductController {
                     @ApiResponse(description = "Internal Error", responseCode = "500", content = @Content),
             }
     )
-    public ResponseEntity activeProduct(@PathVariable(value = "productId")Integer productId){
+    public ResponseEntity activeProduct(@PathVariable(value = "productId")Integer productId, HttpServletRequest request){
+        String token = tokenService.recoverToken(request);
+        Integer companyId = tokenService.getCompanyIdFromToken(token);
         productService.activeProduct(productId);
         return ResponseEntity.noContent().build();
     }
@@ -198,7 +215,9 @@ public class ProductController {
                     @ApiResponse(description = "Internal Error", responseCode = "500", content = @Content),
             }
     )
-    public ResponseEntity deleteProduct(@PathVariable(value = "productId")Integer productId){
+    public ResponseEntity deleteProduct(@PathVariable(value = "productId")Integer productId, HttpServletRequest request){
+        String token = tokenService.recoverToken(request);
+        Integer companyId = tokenService.getCompanyIdFromToken(token);
         productService.deleteProduct(productId);
         return ResponseEntity.noContent().build();
     }

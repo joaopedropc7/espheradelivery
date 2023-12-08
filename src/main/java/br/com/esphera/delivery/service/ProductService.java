@@ -48,13 +48,11 @@ public class ProductService {
     public List<ProductModel> findAllProducts(Integer companyId){
         CompanyModel companyModel = companyService.getCompanyById(companyId);
         List<ProductModel> products = productRepository.finddProductByComapanyId(companyModel);
-        products.stream().forEach(product -> product.add(linkTo(methodOn(ProductController.class).findAllProducts(companyId)).withSelfRel()));
         return products;
     }
 
     public ProductModel findById(Integer id){
         ProductModel product = productRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Não existe produto com este ID!"));
-        product.add(linkTo(methodOn(ProductController.class).findProductById(id)).withSelfRel());
         return product;
     }
 
@@ -68,7 +66,6 @@ public class ProductService {
         product.setCostValue(dto.costValue());
         product.setValueSell(dto.valueSell());
         productRepository.save(product);
-        product.add(linkTo(methodOn(ProductController.class).updateProduct(productId ,dto)).withSelfRel());
         return product;
     }
 

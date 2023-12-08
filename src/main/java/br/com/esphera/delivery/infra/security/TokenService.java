@@ -82,12 +82,12 @@ public class TokenService {
         return authHeader.replace("Bearer ", "");
     }
 
-    public Long getCompanyIdFromToken(String token){
+    public Integer getCompanyIdFromToken(String token){
         try {
             Algorithm algorithm = Algorithm.HMAC256(secret);
             JWTVerifier verifier = JWT.require(algorithm).build();
             DecodedJWT decodedJWT = verifier.verify(token);
-            return decodedJWT.getClaim("company").asLong();
+            return decodedJWT.getClaim("company").asInt();
         } catch (JWTVerificationException exception) {
             throw new RuntimeException("Error while decoding token", exception);
         }

@@ -1,5 +1,6 @@
 package br.com.esphera.delivery.controller;
 
+import br.com.esphera.delivery.infra.security.TokenService;
 import br.com.esphera.delivery.models.DTOS.OrderCreateRecord;
 import br.com.esphera.delivery.models.Enums.StatusOrder;
 import br.com.esphera.delivery.models.OrderModel;
@@ -10,6 +11,7 @@ import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -22,6 +24,8 @@ public class OrderController {
 
     @Autowired
     private OrderService orderService;
+    @Autowired
+    private TokenService tokenService;
 
     @PostMapping("/{idCompany}")
     @Operation(summary = "Create Order", description = "Create Order parsing company Id",
@@ -45,7 +49,7 @@ public class OrderController {
         return ResponseEntity.ok().body(sellCrated);
     }
 
-    @GetMapping("/findall/{companyId}")
+    @GetMapping("/findall")
     @Operation(summary = "Get all Orders", description = "Get all Orders parsing company Id",
             tags = {"Order"},
             responses = {
@@ -62,7 +66,9 @@ public class OrderController {
                     @ApiResponse(description = "Internal Error", responseCode = "500", content = @Content),
             }
     )
-    public ResponseEntity<List<OrderModel>> findAllSells(@PathVariable(value = "companyId")Integer companyId){
+    public ResponseEntity<List<OrderModel>> findAllSells(HttpServletRequest request){
+        String token = tokenService.recoverToken(request);
+        Integer companyId = tokenService.getCompanyIdFromToken(token);
         List<OrderModel> sells = orderService.findAllSells(companyId);
         return ResponseEntity.ok().body(sells);
     }
@@ -84,7 +90,9 @@ public class OrderController {
                     @ApiResponse(description = "Internal Error", responseCode = "500", content = @Content),
             }
     )
-    public ResponseEntity<OrderModel> findSellById(@PathVariable(value = "id")Integer id){
+    public ResponseEntity<OrderModel> findSellById(@PathVariable(value = "id")Integer id, HttpServletRequest request){
+        String token = tokenService.recoverToken(request);
+        Integer companyId = tokenService.getCompanyIdFromToken(token);
         OrderModel orderModel = orderService.findByIdSell(id);
         return ResponseEntity.ok().body(orderModel);
     }
@@ -106,12 +114,14 @@ public class OrderController {
                     @ApiResponse(description = "Internal Error", responseCode = "500", content = @Content),
             }
     )
-    public ResponseEntity cancelSell(@PathVariable(value = "id") Integer id){
+    public ResponseEntity cancelSell(@PathVariable(value = "id") Integer id, HttpServletRequest request){
+        String token = tokenService.recoverToken(request);
+        Integer companyId = tokenService.getCompanyIdFromToken(token);
         orderService.cancelSell(id);
         return ResponseEntity.noContent().build();
     }
 
-    @GetMapping("/{statusOrder}/{companyId}")
+    @GetMapping("/{statusOrder}")
     @Operation(summary = "Find orders by status", description = "Find orders by status",
             tags = {"Order"},
             responses = {
@@ -128,7 +138,9 @@ public class OrderController {
                     @ApiResponse(description = "Internal Error", responseCode = "500", content = @Content),
             }
     )
-    public ResponseEntity<List<OrderModel>> findByStatusOrder(@PathVariable(value = "statusOrder") StatusOrder statusOrder, @PathVariable(value = "companyId")Integer companyId){
+    public ResponseEntity<List<OrderModel>> findByStatusOrder(@PathVariable(value = "statusOrder") StatusOrder statusOrder, HttpServletRequest request){
+        String token = tokenService.recoverToken(request);
+        Integer companyId = tokenService.getCompanyIdFromToken(token);
         List<OrderModel> sells = orderService.findByStatusOrder(statusOrder, companyId);
         return ResponseEntity.ok().body(sells);
     }
@@ -150,7 +162,9 @@ public class OrderController {
                     @ApiResponse(description = "Internal Error", responseCode = "500", content = @Content),
             }
     )
-    public ResponseEntity setOrderPrepared(@PathVariable(value = "idOrder") Integer idOrder){
+    public ResponseEntity setOrderPrepared(@PathVariable(value = "idOrder") Integer idOrder, HttpServletRequest request){
+        String token = tokenService.recoverToken(request);
+        Integer companyId = tokenService.getCompanyIdFromToken(token);
         orderService.setOrderPrepared(idOrder);
         return ResponseEntity.noContent().build();
     }
@@ -172,7 +186,9 @@ public class OrderController {
                     @ApiResponse(description = "Internal Error", responseCode = "500", content = @Content),
             }
     )
-    public ResponseEntity setOrderReadyForCollect(@PathVariable(value = "idOrder") Integer idOrder){
+    public ResponseEntity setOrderReadyForCollect(@PathVariable(value = "idOrder") Integer idOrder, HttpServletRequest request){
+        String token = tokenService.recoverToken(request);
+        Integer companyId = tokenService.getCompanyIdFromToken(token);
         orderService.setOrderReadyForCollect(idOrder);
         return ResponseEntity.noContent().build();
     }
@@ -194,7 +210,9 @@ public class OrderController {
                     @ApiResponse(description = "Internal Error", responseCode = "500", content = @Content),
             }
     )
-    public ResponseEntity setOrderInRoute(@PathVariable(value = "idOrder") Integer idOrder, @PathVariable(value = "motoboyId") Integer motoboyId){
+    public ResponseEntity setOrderInRoute(@PathVariable(value = "idOrder") Integer idOrder, @PathVariable(value = "motoboyId") Integer motoboyId, HttpServletRequest request){
+        String token = tokenService.recoverToken(request);
+        Integer companyId = tokenService.getCompanyIdFromToken(token);
         orderService.setOrderDelivery(idOrder, motoboyId);
         return ResponseEntity.noContent().build();
     }
@@ -216,7 +234,9 @@ public class OrderController {
                     @ApiResponse(description = "Internal Error", responseCode = "500", content = @Content),
             }
     )
-    public ResponseEntity setOrderDelivered(@PathVariable(value = "idOrder") Integer idOrder){
+    public ResponseEntity setOrderDelivered(@PathVariable(value = "idOrder") Integer idOrder, HttpServletRequest request){
+        String token = tokenService.recoverToken(request);
+        Integer companyId = tokenService.getCompanyIdFromToken(token);
         orderService.setOrderFinished(idOrder);
         return ResponseEntity.noContent().build();
     }

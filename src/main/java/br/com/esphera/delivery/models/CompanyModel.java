@@ -5,6 +5,9 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import org.springframework.hateoas.RepresentationModel;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 
@@ -22,6 +25,11 @@ public class CompanyModel extends RepresentationModel<CompanyModel> {
     private String nameContact;
     private String numberCompany1;
     private String NumberCompany2;
+    private LocalDate dateRegister;
+    private LocalDate dateLastPayment;
+    private LocalDate dateNextPayment;
+    private LocalDate expirationDateSignature;
+    private Boolean signatureActive;
     @ManyToOne
     @JoinColumn(name = "endereco_id")
     private AddressModel addressModel;
@@ -61,6 +69,10 @@ public class CompanyModel extends RepresentationModel<CompanyModel> {
         this.valueGenerated = 0.0;
         this.idLocalCompanyMaps = placeId;
         this.inactive = false;
+        this.dateRegister = LocalDate.now();
+        this.dateLastPayment = null;
+        this.dateNextPayment = null;
+        this.signatureActive = false;
     }
 
     public Integer getId() {
@@ -213,6 +225,46 @@ public class CompanyModel extends RepresentationModel<CompanyModel> {
 
     public void setLogoImage(FileEntity logoImage) {
         this.logoImage = logoImage;
+    }
+
+    public LocalDate getDateRegister() {
+        return dateRegister;
+    }
+
+    public void setDateRegister(LocalDate dateRegister) {
+        this.dateRegister = dateRegister;
+    }
+
+    public LocalDate getDateLastPayment() {
+        return dateLastPayment;
+    }
+
+    public void setDateLastPayment(LocalDate dateLastPayment) {
+        this.dateLastPayment = dateLastPayment;
+    }
+
+    public LocalDate getDateNextPayment() {
+        return dateNextPayment;
+    }
+
+    public void setDateNextPayment(LocalDate dateNextPayment) {
+        this.dateNextPayment = dateNextPayment;
+    }
+
+    public LocalDate getExpirationDateSignature() {
+        return expirationDateSignature;
+    }
+
+    public void setExpirationDateSignature(LocalDate expirationDateSignature) {
+        this.expirationDateSignature = expirationDateSignature;
+    }
+
+    public Boolean getSignatureActive() {
+        return signatureActive;
+    }
+
+    public void setSignatureActive(Boolean signatureActive) {
+        this.signatureActive = signatureActive;
     }
 
     @Override

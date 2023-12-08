@@ -1,5 +1,6 @@
 package br.com.esphera.delivery.controller;
 
+import br.com.esphera.delivery.infra.security.TokenService;
 import br.com.esphera.delivery.models.CompanyModel;
 import br.com.esphera.delivery.models.DTOS.MotoboyRecord;
 import br.com.esphera.delivery.models.MotoboysModel;
@@ -10,6 +11,7 @@ import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -23,7 +25,10 @@ public class MotoboyController {
     @Autowired
     private MotoboyService motoboyService;
 
-    @PostMapping("/{companyId}")
+    @Autowired
+    private TokenService tokenService;
+
+    @PostMapping
     @Operation(summary = "Create motoboy", description = "Create motoboy",
             tags = {"Motoboy"},
             responses = {
@@ -40,12 +45,14 @@ public class MotoboyController {
                     @ApiResponse(description = "Internal Error", responseCode = "500", content = @Content),
             }
     )
-    public ResponseEntity<MotoboysModel> createMotoboy(@PathVariable(value = "companyId")Integer companyId, @RequestBody MotoboyRecord motoboyRecord){
+    public ResponseEntity<MotoboysModel> createMotoboy(@RequestBody MotoboyRecord motoboyRecord, HttpServletRequest request){
+        String token = tokenService.recoverToken(request);
+        Integer companyId = tokenService.getCompanyIdFromToken(token);
         MotoboysModel motoboysModel = motoboyService.createMotoboy(motoboyRecord, companyId);
         return ResponseEntity.ok(motoboysModel);
     };
 
-    @GetMapping("findall/{companyId}")
+    @GetMapping("/findall")
     @Operation(summary = "Get all motoboys in company", description = "Get all motoboys in company",
             tags = {"Motoboy"},
             responses = {
@@ -62,7 +69,9 @@ public class MotoboyController {
                     @ApiResponse(description = "Internal Error", responseCode = "500", content = @Content),
             }
     )
-    public ResponseEntity<List<MotoboysModel>> findMotoboysByIdCompany(@PathVariable(value = "companyId")Integer companyId){
+    public ResponseEntity<List<MotoboysModel>> findMotoboysByIdCompany(HttpServletRequest request){
+        String token = tokenService.recoverToken(request);
+        Integer companyId = tokenService.getCompanyIdFromToken(token);
         List<MotoboysModel> motoboys = motoboyService.findAllMotoboysByCompanyId(companyId);
         return ResponseEntity.ok(motoboys);
     }
@@ -106,7 +115,9 @@ public class MotoboyController {
                     @ApiResponse(description = "Internal Error", responseCode = "500", content = @Content),
             }
     )
-    public ResponseEntity<MotoboysModel> putMotoboy(@PathVariable(value = "motoboyId")Integer motoboyId, @RequestBody MotoboyRecord motoboyRecord){
+    public ResponseEntity<MotoboysModel> putMotoboy(@PathVariable(value = "motoboyId")Integer motoboyId, @RequestBody MotoboyRecord motoboyRecord, HttpServletRequest request){
+        String token = tokenService.recoverToken(request);
+        Integer companyId = tokenService.getCompanyIdFromToken(token);
         MotoboysModel motoboysModel = motoboyService.putMotoboy(motoboyId, motoboyRecord);
         return ResponseEntity.ok(motoboysModel);
     }
@@ -128,7 +139,9 @@ public class MotoboyController {
                     @ApiResponse(description = "Internal Error", responseCode = "500", content = @Content),
             }
     )
-    public ResponseEntity activeMotoboy(@PathVariable(value = "motoboyId")Integer motoboyId){
+    public ResponseEntity activeMotoboy(@PathVariable(value = "motoboyId")Integer motoboyId, HttpServletRequest request){
+        String token = tokenService.recoverToken(request);
+        Integer companyId = tokenService.getCompanyIdFromToken(token);
          motoboyService.activeMotoboy(motoboyId);
          return ResponseEntity.ok().build();
     }
@@ -150,7 +163,9 @@ public class MotoboyController {
                     @ApiResponse(description = "Internal Error", responseCode = "500", content = @Content),
             }
     )
-    public ResponseEntity inactiveMotoboy(@PathVariable(value = "motoboyId")Integer motoboyId){
+    public ResponseEntity inactiveMotoboy(@PathVariable(value = "motoboyId")Integer motoboyId, HttpServletRequest request){
+        String token = tokenService.recoverToken(request);
+        Integer companyId = tokenService.getCompanyIdFromToken(token);
         motoboyService.inactiveMotoboy(motoboyId);
         return ResponseEntity.noContent().build();
     }
@@ -172,7 +187,9 @@ public class MotoboyController {
                     @ApiResponse(description = "Internal Error", responseCode = "500", content = @Content),
             }
     )
-    public ResponseEntity deleteMotoboy(@PathVariable(value = "motoboyId")Integer motoboyId){
+    public ResponseEntity deleteMotoboy(@PathVariable(value = "motoboyId")Integer motoboyId, HttpServletRequest request){
+        String token = tokenService.recoverToken(request);
+        Integer companyId = tokenService.getCompanyIdFromToken(token);
         motoboyService.deleteMotoboy(motoboyId);
         return ResponseEntity.noContent().build();
     }

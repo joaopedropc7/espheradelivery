@@ -1,5 +1,6 @@
 package br.com.esphera.delivery.controller;
 
+import br.com.esphera.delivery.infra.security.TokenService;
 import br.com.esphera.delivery.models.CompanyModel;
 import br.com.esphera.delivery.models.CouponModel;
 import br.com.esphera.delivery.models.DTOS.CreateCouponDTO;
@@ -9,6 +10,7 @@ import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -21,6 +23,9 @@ public class CouponController {
 
     @Autowired
     private CouponService couponService;
+
+    @Autowired
+    private TokenService tokenService;
 
     @GetMapping("/{couponId}")
     @Operation(summary = "Get a coupon by Id", description = "Get a coupon by Id",
@@ -43,7 +48,7 @@ public class CouponController {
         return couponService.getCouponById(couponId);
     }
 
-    @PostMapping("/{companyId}")
+    @PostMapping
     @Operation(summary = "Create a coupon by Id company", description = "Create a coupon by id company",
             tags = {"Coupon"},
             responses = {
@@ -60,7 +65,9 @@ public class CouponController {
                     @ApiResponse(description = "Internal Error", responseCode = "500", content = @Content),
             }
     )
-    public CouponModel createCoupon(@PathVariable(value = "companyId")Integer companyId, @RequestBody CreateCouponDTO createCouponDTO){
+    public CouponModel createCoupon(HttpServletRequest request, @RequestBody CreateCouponDTO createCouponDTO){
+        String token = tokenService.recoverToken(request);
+        Integer companyId = tokenService.getCompanyIdFromToken(token);
         return couponService.createdCoupon(createCouponDTO, companyId);
     }
 
@@ -81,12 +88,14 @@ public class CouponController {
                     @ApiResponse(description = "Internal Error", responseCode = "500", content = @Content),
             }
     )
-    public ResponseEntity inactiveCoupon(@PathVariable(value = "couponId") Integer couponId){
+    public ResponseEntity inactiveCoupon(@PathVariable(value = "couponId") Integer couponId, HttpServletRequest request){
+        String token = tokenService.recoverToken(request);
+        Integer companyId = tokenService.getCompanyIdFromToken(token);
         couponService.inactiveCoupon(couponId);
         return ResponseEntity.noContent().build();
     }
 
-    @GetMapping("/find/{companyId}")
+    @GetMapping("/find")
     @Operation(summary = "Find all coupons by company", description = "Find all coupons by company",
             tags = {"Coupon"},
             responses = {
@@ -103,7 +112,9 @@ public class CouponController {
                     @ApiResponse(description = "Internal Error", responseCode = "500", content = @Content),
             }
     )
-    public ResponseEntity<List<CouponModel>> findCouponsByCompany(@PathVariable(value = "companyId")Integer companyId){
+    public ResponseEntity<List<CouponModel>> findCouponsByCompany(HttpServletRequest request){
+        String token = tokenService.recoverToken(request);
+        Integer companyId = tokenService.getCompanyIdFromToken(token);
         List<CouponModel> coupons = couponService.findCouponsByCompany(companyId);
         return ResponseEntity.ok().body(coupons);
     }

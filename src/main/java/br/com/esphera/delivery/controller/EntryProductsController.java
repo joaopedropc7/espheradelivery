@@ -1,5 +1,6 @@
 package br.com.esphera.delivery.controller;
 
+import br.com.esphera.delivery.infra.security.TokenService;
 import br.com.esphera.delivery.models.DTOS.ProductEntryRecord;
 import br.com.esphera.delivery.models.ProductEntryItemModel;
 import br.com.esphera.delivery.models.ProductEntryModel;
@@ -10,6 +11,7 @@ import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -22,8 +24,10 @@ public class EntryProductsController {
 
     @Autowired
     private ProductEntryService entryService;
+    @Autowired
+    private TokenService tokenService;
 
-    @PostMapping("/{companyId}")
+    @PostMapping
     @Operation(summary = "Create a entry", description = "Create a entry parsing company ID and body",
             tags = {"Entry Products"},
             responses = {
@@ -40,12 +44,14 @@ public class EntryProductsController {
                     @ApiResponse(description = "Internal Error", responseCode = "500", content = @Content),
             }
     )
-    public ResponseEntity<ProductEntryModel> createEntryProduct(@RequestBody ProductEntryRecord data, @PathVariable(value = "companyId") Integer companyId){
+    public ResponseEntity<ProductEntryModel> createEntryProduct(@RequestBody ProductEntryRecord data, HttpServletRequest request){
+        String token = tokenService.recoverToken(request);
+        Integer companyId = tokenService.getCompanyIdFromToken(token);
         ProductEntryModel entryModel = entryService.createEntryProduct(data, companyId);
         return ResponseEntity.ok().body(entryModel);
     }
 
-    @GetMapping("/find/{companyId}")
+    @GetMapping("/find")
     @Operation(summary = "Find all entry", description = "Find all entrys",
             tags = {"Entry Products"},
             responses = {
@@ -62,7 +68,9 @@ public class EntryProductsController {
                     @ApiResponse(description = "Internal Error", responseCode = "500", content = @Content),
             }
     )
-    public ResponseEntity<List<ProductEntryModel>> getAllEntrys(@PathVariable(value = "companyId")Integer companyId){
+    public ResponseEntity<List<ProductEntryModel>> getAllEntrys(HttpServletRequest request){
+        String token = tokenService.recoverToken(request);
+        Integer companyId = tokenService.getCompanyIdFromToken(token);
         List<ProductEntryModel> entryModels = entryService.findByCompanyId(companyId);
         return ResponseEntity.ok().body(entryModels);
     }
@@ -84,12 +92,14 @@ public class EntryProductsController {
                     @ApiResponse(description = "Internal Error", responseCode = "500", content = @Content),
             }
     )
-    public ResponseEntity<ProductEntryModel> getEntryById(@PathVariable(value = "id") Integer id){
+    public ResponseEntity<ProductEntryModel> getEntryById(@PathVariable(value = "id") Integer id, HttpServletRequest request){
+        String token = tokenService.recoverToken(request);
+        Integer companyId = tokenService.getCompanyIdFromToken(token);
         ProductEntryModel entryModel = entryService.findById(id);
         return ResponseEntity.ok().body(entryModel);
     }
 
-    @GetMapping("/products/{companyId}/{entryId}")
+    @GetMapping("/products{entryId}")
     @Operation(summary = "Get all products in entry", description = "Get all products in entry",
             tags = {"Entry Products"},
             responses = {
@@ -106,7 +116,9 @@ public class EntryProductsController {
                     @ApiResponse(description = "Internal Error", responseCode = "500", content = @Content),
             }
     )
-    public ResponseEntity<List<ProductEntryItemModel>> getProductsInEntry(@PathVariable(value = "companyId")Integer companyId, @PathVariable(value = "entryId") Integer entryId){
+    public ResponseEntity<List<ProductEntryItemModel>> getProductsInEntry(HttpServletRequest request, @PathVariable(value = "entryId") Integer entryId){
+        String token = tokenService.recoverToken(request);
+        Integer companyId = tokenService.getCompanyIdFromToken(token);
         List<ProductEntryItemModel> productsInEntry = entryService.findAllProductsInEntry(companyId, entryId);
         return ResponseEntity.ok().body(productsInEntry);
     }
@@ -128,7 +140,9 @@ public class EntryProductsController {
                     @ApiResponse(description = "Internal Error", responseCode = "500", content = @Content),
             }
     )
-    public ResponseEntity cancelEntryById(@PathVariable Integer id){
+    public ResponseEntity cancelEntryById(@PathVariable Integer id, HttpServletRequest request){
+        String token = tokenService.recoverToken(request);
+        Integer companyId = tokenService.getCompanyIdFromToken(token);
         entryService.cancelEntryById(id);
         return ResponseEntity.noContent().build();
     }

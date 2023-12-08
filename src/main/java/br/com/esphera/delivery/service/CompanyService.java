@@ -11,8 +11,10 @@ import br.com.esphera.delivery.models.AddressModel;
 import br.com.esphera.delivery.models.FileEntity;
 import br.com.esphera.delivery.repository.CompanyRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Service
@@ -109,4 +111,5 @@ public class  CompanyService {
         if (fileEntity == null) throw new ResourceNotFoundException("Nenhuma imagem encontrada para esta empresa!");
         return fileEntity;
     }
+
 }

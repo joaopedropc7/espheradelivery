@@ -12,6 +12,7 @@ import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import org.apache.commons.io.FilenameUtils;
@@ -59,6 +60,7 @@ public class FIleController {
                     @ApiResponse(description = "Internal Error", responseCode = "500", content = @Content),
             }
     )
+    @SecurityRequirement(name = "Bearer Authentication")
     public UploadFileResponse uploadFile(@RequestParam("file")MultipartFile file, @PathVariable(value = "EntityRequestImage") EntityRequestImage entityRequestImage, @PathVariable(value = "idEntity") Integer idEntity) {
         String fileExtension = FilenameUtils.getExtension(file.getOriginalFilename()).toLowerCase();
         if (!fileExtension.equals("jpg") && !fileExtension.equals("jpeg") && !fileExtension.equals("png")) {
@@ -88,6 +90,7 @@ public class FIleController {
                     @ApiResponse(description = "Internal Error", responseCode = "500", content = @Content),
             }
     )
+    @SecurityRequirement(name = "Bearer Authentication")
     public ResponseEntity<Resource> downloadFile(@PathVariable(value = "EntityRequestImage")EntityRequestImage entityRequestImage ,@PathVariable(value = "entityId") Integer entityId) {
         FileEntity fileEntity = fileStorageService.loadFileAsResource(entityId, entityRequestImage);
         Resource resource = new ByteArrayResource(fileEntity.getData());
