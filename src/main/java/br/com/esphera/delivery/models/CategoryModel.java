@@ -15,6 +15,7 @@ public class CategoryModel extends RepresentationModel<CategoryModel> {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
+    private Integer idLocalCategory;
     private String categoryName;
     @ManyToOne
     @JoinColumn(name = "company_id")
@@ -25,7 +26,8 @@ public class CategoryModel extends RepresentationModel<CategoryModel> {
     public CategoryModel() {
     }
 
-    public CategoryModel(CategoryRecord categoryRecord, CompanyModel companyModel) {
+    public CategoryModel(CategoryRecord categoryRecord, CompanyModel companyModel, Integer idLocalCategory) {
+        this.idLocalCategory = idLocalCategory + 1;
         this.categoryName = categoryRecord.categoryName();
         this.companyModel = companyModel;
         this.inactive = false;
@@ -61,6 +63,14 @@ public class CategoryModel extends RepresentationModel<CategoryModel> {
 
     public void setCompanyModel(CompanyModel companyModel) {
         this.companyModel = companyModel;
+    }
+
+    public Integer getIdLocalCategory() {
+        return idLocalCategory;
+    }
+
+    public void setIdLocalCategory(Integer idLocalCategory) {
+        this.idLocalCategory = idLocalCategory;
     }
 
     @Override

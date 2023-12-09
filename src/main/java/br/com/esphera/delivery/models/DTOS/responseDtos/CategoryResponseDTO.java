@@ -6,6 +6,7 @@ import java.util.List;
 
 public record CategoryResponseDTO(
         Integer id,
+        Integer idLocalCategory,
         String categoryName,
         Boolean inactive,
         Integer companyId
@@ -14,6 +15,7 @@ public record CategoryResponseDTO(
     public CategoryResponseDTO(CategoryModel categoryModel) {
         this(
                 categoryModel.getId(),
+                categoryModel.getIdLocalCategory(),
                 categoryModel.getCategoryName(),
                 categoryModel.getInactive(),
                 categoryModel.getCompanyModel().getId()

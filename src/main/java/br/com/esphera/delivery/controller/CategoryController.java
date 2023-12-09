@@ -48,14 +48,15 @@ public class CategoryController {
             }
     )
     @SecurityRequirement(name = "Bearer Authentication")
-    public ResponseEntity<CategoryModel> createCategory(@RequestBody CategoryRecord nameCategory, HttpServletRequest request){
+    public ResponseEntity<CategoryResponseDTO> createCategory(@RequestBody CategoryRecord nameCategory, HttpServletRequest request){
         String token = tokenService.recoverToken(request);
         Integer companyId = tokenService.getCompanyIdFromToken(token);
         CategoryModel category = categoryService.createCategory(nameCategory, companyId);
-        return  ResponseEntity.ok().body(category);
+        CategoryResponseDTO categoryResponseDTO = new CategoryResponseDTO(category);
+        return  ResponseEntity.ok().body(categoryResponseDTO);
     }
 
-    @GetMapping("/find/{idCompany}")
+    @GetMapping("/find/")
     @Operation(summary = "find categorys", description = "find categorys parsing id Company",
             tags = {"Category"},
             responses = {
@@ -72,9 +73,13 @@ public class CategoryController {
                     @ApiResponse(description = "Internal Error", responseCode = "500", content = @Content),
             }
     )
-    public ResponseEntity<List<CategoryModel>> findAllCategorys(@PathVariable(value = "idCompany")Integer idCompany){
-        List<CategoryModel> categorys = categoryService.findAllCategorys(idCompany);
-        return ResponseEntity.ok().body(categorys);
+    @SecurityRequirement(name = "Bearer Authentication")
+    public ResponseEntity<List<CategoryResponseDTO>> findAllCategorys(HttpServletRequest request){
+        String token = tokenService.recoverToken(request);
+        Integer companyId = tokenService.getCompanyIdFromToken(token);
+        List<CategoryModel> categorys = categoryService.findAllCategorys(companyId);
+        List<CategoryResponseDTO> categoryResponseDTOS = CategoryResponseDTO.convert(categorys);
+        return ResponseEntity.ok().body(categoryResponseDTOS);
     }
 
     @GetMapping("/{id}")
@@ -94,9 +99,10 @@ public class CategoryController {
                     @ApiResponse(description = "Internal Error", responseCode = "500", content = @Content),
             }
     )
-    public ResponseEntity<CategoryModel> findById(@PathVariable(value = "id") Integer id){
-        CategoryModel category = categoryService.findCategoryById(id);
-        return ResponseEntity.ok().body(category);
+    public ResponseEntity<CategoryResponseDTO> findById(@PathVariable(value = "id") Integer id){
+        CategoryModel category = categoryService.findById(id);
+        CategoryResponseDTO categoryResponseDTO = new CategoryResponseDTO(category);
+        return ResponseEntity.ok().body(categoryResponseDTO);
     }
 
     @PutMapping("/{id}")
@@ -116,9 +122,13 @@ public class CategoryController {
                     @ApiResponse(description = "Internal Error", responseCode = "500", content = @Content),
             }
     )
-    public ResponseEntity<CategoryModel> updateCategory(@PathVariable(value = "id")Integer categoryId, @RequestBody String categoryName){
-        CategoryModel category = categoryService.updateCategory(categoryId, categoryName);
-        return ResponseEntity.ok().body(category);
+    @SecurityRequirement(name = "Bearer Authentication")
+    public ResponseEntity<CategoryResponseDTO> updateCategory(@PathVariable(value = "id")Integer categoryId, @RequestBody String categoryName, HttpServletRequest request){
+        String token = tokenService.recoverToken(request);
+        Integer companyId = tokenService.getCompanyIdFromToken(token);
+        CategoryModel category = categoryService.updateCategory(categoryId, categoryName, companyId);
+        CategoryResponseDTO categoryResponseDTO = new CategoryResponseDTO(category);
+        return ResponseEntity.ok().body(categoryResponseDTO);
     }
 
     @DeleteMapping("/{id}")
@@ -138,9 +148,38 @@ public class CategoryController {
                     @ApiResponse(description = "Internal Error", responseCode = "500", content = @Content),
             }
     )
-    public ResponseEntity inactiveCategory(@PathVariable(value = "id")Integer id){
-        categoryService.inactiveProduct(id);
+    @SecurityRequirement(name = "Bearer Authentication")
+    public ResponseEntity inactiveCategory(@PathVariable(value = "id")Integer id, HttpServletRequest request){
+        String token = tokenService.recoverToken(request);
+        Integer companyId = tokenService.getCompanyIdFromToken(token);
+        categoryService.inactiveProduct(id, companyId);
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("local/{idLocal}")
+    @Operation(summary = "find category by idLocal", description = "find category by idLocal",
+            tags = {"Category"},
+            responses = {
+                    @ApiResponse(description = "Success", responseCode = "200",
+                            content = {
+                                    @Content(
+                                            mediaType = "application/json",
+                                            array = @ArraySchema(schema = @Schema(implementation = CategoryModel.class))
+                                    )
+                            }),
+                    @ApiResponse(description = "Bad Request", responseCode = "400", content = @Content),
+                    @ApiResponse(description = "Unauthorized", responseCode = "401", content = @Content),
+                    @ApiResponse(description = "Not Found", responseCode = "404", content = @Content),
+                    @ApiResponse(description = "Internal Error", responseCode = "500", content = @Content),
+            }
+    )
+    @SecurityRequirement(name = "Bearer Authentication")
+    public ResponseEntity<CategoryResponseDTO> findByLocalIdAndCompanyId(@PathVariable(value = "idLocal") Integer idLocal, HttpServletRequest request){
+        String token = tokenService.recoverToken(request);
+        Integer companyId = tokenService.getCompanyIdFromToken(token);
+        CategoryModel category = categoryService.findCategoryByIdLocalCategoryAndCompanyModel(idLocal, companyId);
+        CategoryResponseDTO categoryResponseDTO = new CategoryResponseDTO(category);
+        return ResponseEntity.ok().body(categoryResponseDTO);
     }
 
 }

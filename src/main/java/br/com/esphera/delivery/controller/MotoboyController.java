@@ -3,6 +3,7 @@ package br.com.esphera.delivery.controller;
 import br.com.esphera.delivery.infra.security.TokenService;
 import br.com.esphera.delivery.models.CompanyModel;
 import br.com.esphera.delivery.models.DTOS.MotoboyRecord;
+import br.com.esphera.delivery.models.DTOS.responseDtos.MotoboyResponseDTO;
 import br.com.esphera.delivery.models.MotoboysModel;
 import br.com.esphera.delivery.models.ShoppingCartModel;
 import br.com.esphera.delivery.service.MotoboyService;
@@ -11,6 +12,7 @@ import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -45,11 +47,13 @@ public class MotoboyController {
                     @ApiResponse(description = "Internal Error", responseCode = "500", content = @Content),
             }
     )
-    public ResponseEntity<MotoboysModel> createMotoboy(@RequestBody MotoboyRecord motoboyRecord, HttpServletRequest request){
+    @SecurityRequirement(name = "Bearer Authentication")
+    public ResponseEntity<MotoboyResponseDTO> createMotoboy(@RequestBody MotoboyRecord motoboyRecord, HttpServletRequest request){
         String token = tokenService.recoverToken(request);
         Integer companyId = tokenService.getCompanyIdFromToken(token);
         MotoboysModel motoboysModel = motoboyService.createMotoboy(motoboyRecord, companyId);
-        return ResponseEntity.ok(motoboysModel);
+        MotoboyResponseDTO motoboyResponseDTO = new MotoboyResponseDTO(motoboysModel);
+        return ResponseEntity.ok(motoboyResponseDTO);
     };
 
     @GetMapping("/findall")
@@ -69,11 +73,13 @@ public class MotoboyController {
                     @ApiResponse(description = "Internal Error", responseCode = "500", content = @Content),
             }
     )
-    public ResponseEntity<List<MotoboysModel>> findMotoboysByIdCompany(HttpServletRequest request){
+    @SecurityRequirement(name = "Bearer Authentication")
+    public ResponseEntity<List<MotoboyResponseDTO>> findMotoboysByIdCompany(HttpServletRequest request){
         String token = tokenService.recoverToken(request);
         Integer companyId = tokenService.getCompanyIdFromToken(token);
         List<MotoboysModel> motoboys = motoboyService.findAllMotoboysByCompanyId(companyId);
-        return ResponseEntity.ok(motoboys);
+        List<MotoboyResponseDTO> motoboyResponseDTO = MotoboyResponseDTO.convert(motoboys);
+        return ResponseEntity.ok(motoboyResponseDTO);
     }
 
     @GetMapping("/{motoboyId}")
@@ -93,9 +99,10 @@ public class MotoboyController {
                     @ApiResponse(description = "Internal Error", responseCode = "500", content = @Content),
             }
     )
-    public ResponseEntity<MotoboysModel> findMotoboyById(@PathVariable(value = "motoboyId")Integer motoboyId){
+    public ResponseEntity<MotoboyResponseDTO> findMotoboyById(@PathVariable(value = "motoboyId")Integer motoboyId){
         MotoboysModel motoboysModel = motoboyService.findMotoboyById(motoboyId);
-        return ResponseEntity.ok(motoboysModel);
+        MotoboyResponseDTO motoboyResponseDTO = new MotoboyResponseDTO(motoboysModel);
+        return ResponseEntity.ok(motoboyResponseDTO);
     }
 
     @PutMapping("/{motoboyId}")
@@ -115,11 +122,13 @@ public class MotoboyController {
                     @ApiResponse(description = "Internal Error", responseCode = "500", content = @Content),
             }
     )
-    public ResponseEntity<MotoboysModel> putMotoboy(@PathVariable(value = "motoboyId")Integer motoboyId, @RequestBody MotoboyRecord motoboyRecord, HttpServletRequest request){
+    @SecurityRequirement(name = "Bearer Authentication")
+    public ResponseEntity<MotoboyResponseDTO> putMotoboy(@PathVariable(value = "motoboyId")Integer motoboyId, @RequestBody MotoboyRecord motoboyRecord, HttpServletRequest request){
         String token = tokenService.recoverToken(request);
         Integer companyId = tokenService.getCompanyIdFromToken(token);
-        MotoboysModel motoboysModel = motoboyService.putMotoboy(motoboyId, motoboyRecord);
-        return ResponseEntity.ok(motoboysModel);
+        MotoboysModel motoboysModel = motoboyService.putMotoboy(motoboyId, motoboyRecord, companyId);
+        MotoboyResponseDTO motoboyResponseDTO = new MotoboyResponseDTO(motoboysModel);
+        return ResponseEntity.ok(motoboyResponseDTO);
     }
 
     @PutMapping("/active/{motoboyId}")
@@ -139,10 +148,11 @@ public class MotoboyController {
                     @ApiResponse(description = "Internal Error", responseCode = "500", content = @Content),
             }
     )
+    @SecurityRequirement(name = "Bearer Authentication")
     public ResponseEntity activeMotoboy(@PathVariable(value = "motoboyId")Integer motoboyId, HttpServletRequest request){
         String token = tokenService.recoverToken(request);
         Integer companyId = tokenService.getCompanyIdFromToken(token);
-         motoboyService.activeMotoboy(motoboyId);
+         motoboyService.activeMotoboy(motoboyId, companyId);
          return ResponseEntity.ok().build();
     }
 
@@ -163,10 +173,11 @@ public class MotoboyController {
                     @ApiResponse(description = "Internal Error", responseCode = "500", content = @Content),
             }
     )
+    @SecurityRequirement(name = "Bearer Authentication")
     public ResponseEntity inactiveMotoboy(@PathVariable(value = "motoboyId")Integer motoboyId, HttpServletRequest request){
         String token = tokenService.recoverToken(request);
         Integer companyId = tokenService.getCompanyIdFromToken(token);
-        motoboyService.inactiveMotoboy(motoboyId);
+        motoboyService.inactiveMotoboy(motoboyId, companyId);
         return ResponseEntity.noContent().build();
     }
 
@@ -187,13 +198,39 @@ public class MotoboyController {
                     @ApiResponse(description = "Internal Error", responseCode = "500", content = @Content),
             }
     )
+    @SecurityRequirement(name = "Bearer Authentication")
     public ResponseEntity deleteMotoboy(@PathVariable(value = "motoboyId")Integer motoboyId, HttpServletRequest request){
         String token = tokenService.recoverToken(request);
         Integer companyId = tokenService.getCompanyIdFromToken(token);
-        motoboyService.deleteMotoboy(motoboyId);
+        motoboyService.deleteMotoboy(motoboyId, companyId);
         return ResponseEntity.noContent().build();
     }
 
+    @GetMapping("/local/{motoboyIdLocal}")
+    @Operation(summary = "Get motoboy by localId", description = "Get motoboy by localId",
+            tags = {"Motoboy"},
+            responses = {
+                    @ApiResponse(description = "Success", responseCode = "200",
+                            content = {
+                                    @Content(
+                                            mediaType = "application/json",
+                                            array = @ArraySchema(schema = @Schema(implementation = MotoboysModel.class))
+                                    )
+                            }),
+                    @ApiResponse(description = "Bad Request", responseCode = "400", content = @Content),
+                    @ApiResponse(description = "Unauthorized", responseCode = "401", content = @Content),
+                    @ApiResponse(description = "Not Found", responseCode = "404", content = @Content),
+                    @ApiResponse(description = "Internal Error", responseCode = "500", content = @Content),
+            }
+    )
+    @SecurityRequirement(name = "Bearer Authentication")
+    public ResponseEntity<MotoboyResponseDTO> findMotoboyById(@PathVariable(value = "motoboyIdLocal")Integer motoboyId, HttpServletRequest request){
+        String token = tokenService.recoverToken(request);
+        Integer companyId = tokenService.getCompanyIdFromToken(token);
+        MotoboysModel motoboysModel = motoboyService.findMotoboyByIdLocalAndCompany(motoboyId, companyId);
+        MotoboyResponseDTO motoboyResponseDTO = new MotoboyResponseDTO(motoboysModel);
+        return ResponseEntity.ok(motoboyResponseDTO);
+    }
 
 
 

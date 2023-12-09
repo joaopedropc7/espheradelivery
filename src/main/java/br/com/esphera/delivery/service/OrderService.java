@@ -50,7 +50,8 @@ public class OrderService {
             discount = couponService.getDiscountByCoupon(data.couponName(), companyId);
             if(discount == null)throw new ResourceNotFoundException("Cupom inválido");
         }
-        OrderModel orderModel = new OrderModel(data, shoppingCartModel, companyModel, discount);
+        Integer lastIdInsert = orderRepository.findMaxIdLocalByCompany(companyId);
+        OrderModel orderModel = new OrderModel(data, shoppingCartModel, companyModel, discount, lastIdInsert);
         orderRepository.save(orderModel);
         if(data.typeDelivery() == TypeDelivery.DELIVERY){
             DeliveryRecord deliveryRecord = new DeliveryRecord(orderModel, data.addressRecord());
@@ -81,8 +82,9 @@ public class OrderService {
         return orderModel;
     }
 
-    public void cancelSell(Integer id){
+    public void cancelSell(Integer id, Integer companyId){
         OrderModel orderModel = findByIdSell(id);
+        verifyBelongCompany(orderModel, companyId);
         if(orderModel.getTypeDelivery() == TypeDelivery.DELIVERY){
             deliveryService.cancelDelivery(orderModel.getDeliveryModel());
         }
@@ -102,15 +104,17 @@ public class OrderService {
     }
 
     //Pedido em preparo
-    public void setOrderPrepared(Integer id){
+    public void setOrderPrepared(Integer id, Integer companyId){
         OrderModel orderModel = findByIdSell(id);
+        verifyBelongCompany(orderModel, companyId);
         orderModel.setStatusOrder(StatusOrder.EmPreparo);
         orderRepository.save(orderModel);
     }
 
     //Set order Delivery
-    public void setOrderDelivery(Integer idOrder, Integer motoboyId){
+    public void setOrderDelivery(Integer idOrder, Integer motoboyId, Integer companyId){
         OrderModel orderModel = findByIdSell(idOrder);
+        verifyBelongCompany(orderModel, companyId);
         if(orderModel.getTypeDelivery() == TypeDelivery.RETIRADA){
             throw new ResourceNotFoundException("Este pedido é para retirada, não é possível colocar o mesmo para entrega.");
         }
@@ -119,8 +123,9 @@ public class OrderService {
         orderRepository.save(orderModel);
     }
 
-    public void setOrderReadyForCollect(Integer idOrder){
+    public void setOrderReadyForCollect(Integer idOrder, Integer companyId){
         OrderModel orderModel = findByIdSell(idOrder);
+        verifyBelongCompany(orderModel, companyId);
         if(orderModel.getTypeDelivery() == TypeDelivery.DELIVERY){
             throw new ResourceNotFoundException("Este pedido é para entrega, não é posível colocar para retirada!");
         }
@@ -128,8 +133,9 @@ public class OrderService {
         orderRepository.save(orderModel);
     }
 
-    public void setOrderFinished(Integer id){
+    public void setOrderFinished(Integer id, Integer companyId){
         OrderModel orderModel = findByIdSell(id);
+        verifyBelongCompany(orderModel, companyId);
         if(orderModel.getTypeDelivery() == TypeDelivery.DELIVERY){
             deliveryService.setDeliveryFinished(orderModel.getDeliveryModel());
         }
@@ -138,6 +144,17 @@ public class OrderService {
         orderRepository.save(orderModel);
     }
 
+    public void verifyBelongCompany(OrderModel orderModel, Integer idCompany){
+        if(!orderModel.getCompanyModel().getId().equals(idCompany)){
+            throw new ResourceNotFoundException("Este pedido não pertence a esta empresa");
+        }
+    }
+
+    public OrderModel findOrderByLocalIdAndCompany(Integer idLocalOrder, Integer companyId){
+        CompanyModel companyModel = companyService.getCompanyById(companyId);
+        OrderModel orderModel = orderRepository.findOrderModelByIdLocalOrderAndCompanyModel(idLocalOrder, companyModel);
+        return orderModel;
+    }
 
 
 }

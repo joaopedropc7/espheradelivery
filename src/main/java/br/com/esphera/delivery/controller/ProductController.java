@@ -11,6 +11,7 @@ import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpMethod;
@@ -45,6 +46,7 @@ public class ProductController {
                     @ApiResponse(description = "Internal Error", responseCode = "500", content = @Content),
             }
     )
+    @SecurityRequirement(name = "Bearer Authentication")
     public ResponseEntity<ProductResponseDTO> createProduct(@RequestBody ProductRecord dto, HttpServletRequest request){
         String token = tokenService.recoverToken(request);
         Integer companyId = tokenService.getCompanyIdFromToken(token);
@@ -96,6 +98,7 @@ public class ProductController {
                     @ApiResponse(description = "Internal Error", responseCode = "500", content = @Content),
             }
     )
+    @SecurityRequirement(name = "Bearer Authentication")
     public ResponseEntity<List<ProductResponseDTO>> findAllProductsByCategory(HttpServletRequest request, @PathVariable(value = "categoryId")Integer categoryId){
         String token = tokenService.recoverToken(request);
         Integer companyId = tokenService.getCompanyIdFromToken(token);
@@ -121,10 +124,13 @@ public class ProductController {
                     @ApiResponse(description = "Internal Error", responseCode = "500", content = @Content),
             }
     )
-    public ResponseEntity<ProductModel> findProductById(@PathVariable(value = "id") Integer id, HttpServletRequest request){
+    @SecurityRequirement(name = "Bearer Authentication")
+    public ResponseEntity<ProductResponseDTO> findProductById(@PathVariable(value = "id") Integer id, HttpServletRequest request){
         String token = tokenService.recoverToken(request);
         Integer companyId = tokenService.getCompanyIdFromToken(token);
-        return ResponseEntity.ok().body(productService.findById(id));
+        ProductModel productModel = productService.findById(id);
+        ProductResponseDTO productResponseDTO = new ProductResponseDTO(productModel);
+        return ResponseEntity.ok().body(productResponseDTO);
     }
 
     @PutMapping("/{id}")
@@ -144,10 +150,13 @@ public class ProductController {
                     @ApiResponse(description = "Internal Error", responseCode = "500", content = @Content),
             }
     )
-    public ResponseEntity<ProductModel> updateProduct(@PathVariable(value = "id")Integer id, @RequestBody ProductRecord productRecord, HttpServletRequest request){
+    @SecurityRequirement(name = "Bearer Authentication")
+    public ResponseEntity<ProductResponseDTO> updateProduct(@PathVariable(value = "id")Integer id, @RequestBody ProductRecord productRecord, HttpServletRequest request){
         String token = tokenService.recoverToken(request);
         Integer companyId = tokenService.getCompanyIdFromToken(token);
-        return ResponseEntity.ok().body(productService.updateProduct(id, productRecord));
+        ProductModel productModel = productService.updateProduct(id, productRecord, companyId);
+        ProductResponseDTO productResponseDTO = new ProductResponseDTO(productModel);
+        return ResponseEntity.ok().body(productResponseDTO);
     }
 
     @PutMapping("/inactive/{productId}")
@@ -167,10 +176,11 @@ public class ProductController {
                     @ApiResponse(description = "Internal Error", responseCode = "500", content = @Content),
             }
     )
+    @SecurityRequirement(name = "Bearer Authentication")
     public ResponseEntity inactiveProduct(@PathVariable(value = "productId")Integer productId, HttpServletRequest request){
         String token = tokenService.recoverToken(request);
         Integer companyId = tokenService.getCompanyIdFromToken(token);
-        productService.inactiveProduct(productId);
+        productService.inactiveProduct(productId, companyId);
         return ResponseEntity.noContent().build();
     }
 
@@ -191,10 +201,11 @@ public class ProductController {
                     @ApiResponse(description = "Internal Error", responseCode = "500", content = @Content),
             }
     )
+    @SecurityRequirement(name = "Bearer Authentication")
     public ResponseEntity activeProduct(@PathVariable(value = "productId")Integer productId, HttpServletRequest request){
         String token = tokenService.recoverToken(request);
         Integer companyId = tokenService.getCompanyIdFromToken(token);
-        productService.activeProduct(productId);
+        productService.activeProduct(productId, companyId);
         return ResponseEntity.noContent().build();
     }
 
@@ -215,11 +226,38 @@ public class ProductController {
                     @ApiResponse(description = "Internal Error", responseCode = "500", content = @Content),
             }
     )
+    @SecurityRequirement(name = "Bearer Authentication")
     public ResponseEntity deleteProduct(@PathVariable(value = "productId")Integer productId, HttpServletRequest request){
         String token = tokenService.recoverToken(request);
         Integer companyId = tokenService.getCompanyIdFromToken(token);
-        productService.deleteProduct(productId);
+        productService.deleteProduct(productId, companyId);
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/local/{productLocalId}")
+    @Operation(summary = "Find product by idLocalProduct", description = "Find product by idLocalProduct",
+            tags = {"Product"},
+            responses = {
+                    @ApiResponse(description = "Success", responseCode = "200",
+                            content = {
+                                    @Content(
+                                            mediaType = "application/json",
+                                            array = @ArraySchema(schema = @Schema(implementation = void.class))
+                                    )
+                            }),
+                    @ApiResponse(description = "Bad Request", responseCode = "400", content = @Content),
+                    @ApiResponse(description = "Unauthorized", responseCode = "401", content = @Content),
+                    @ApiResponse(description = "Not Found", responseCode = "404", content = @Content),
+                    @ApiResponse(description = "Internal Error", responseCode = "500", content = @Content),
+            }
+    )
+    @SecurityRequirement(name = "Bearer Authentication")
+    public ResponseEntity<ProductResponseDTO> findProductByLocalIdAndCompanyId(@PathVariable(value = "productLocalId")Integer id, HttpServletRequest request){
+        String token = tokenService.recoverToken(request);
+        Integer companyId = tokenService.getCompanyIdFromToken(token);
+        ProductModel productModel = productService.findProductByIdLocalByCompanyAndCompanyModel(id, companyId);
+        ProductResponseDTO productResponseDTO = new ProductResponseDTO(productModel);
+        return ResponseEntity.ok().body(productResponseDTO);
     }
 
 }

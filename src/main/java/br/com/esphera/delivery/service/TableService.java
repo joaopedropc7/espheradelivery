@@ -39,7 +39,7 @@ public class TableService {
         return tableModel;
     }
 
-    public ProductTableModel insertProductInTable(Integer tableId, Integer productId, Integer productQuantity){
+    public ProductTableModel insertProductInTable(Integer tableId, Integer productId, Integer productQuantity, Integer companyId){
         TableModel tableModel = getTableById(tableId);
         verifyTableStatus(tableModel);
         ProductModel productModel = productService.findById(productId);

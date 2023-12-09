@@ -48,7 +48,8 @@ public class ProductEntryService {
             productsEntryModel.add(productEntryItemModel);
             productsModel.add(productModel);
         });
-        ProductEntryModel entryModel = new ProductEntryModel(data, productsEntryModel, companyModel);
+        Integer lastInsert = entryRepository.findMaxIdLocalByCompany(companyId);
+        ProductEntryModel entryModel = new ProductEntryModel(data, productsEntryModel, companyModel, lastInsert);
         entryRepository.save(entryModel);
         productService.addQuantityInProduct(productsEntryModel);
         productsEntryModel.forEach(productEntryItemModel -> {
@@ -68,8 +69,9 @@ public class ProductEntryService {
         return productEntryModel;
     }
 
-    public void cancelEntryById(Integer id){
+    public void cancelEntryById(Integer id, Integer companyId){
         ProductEntryModel productEntryModel = entryRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Não foi encontrado entradas com o id: " + id));
+        verifyBelongCompany(companyId, productEntryModel);
         productEntryModel.setEntryCanceled(true);
         productService.cancelEntryById(productEntryModel.getProducts());
         entryRepository.deleteById(id);
@@ -80,6 +82,18 @@ public class ProductEntryService {
         ProductEntryModel productEntryModel = findById(entryId);
         List<ProductEntryItemModel> productsEntry = productEntryItemModelRepository.findProductEntryItemModelsByCompanyModelAndEntryModel(companyModel, productEntryModel);
         return productsEntry;
+    }
+
+    public ProductEntryModel getEntryByLocalId(Integer companyId, Integer entryLocalId){
+        CompanyModel companyModel = companyService.getCompanyById(companyId);
+        ProductEntryModel productEntryModel = entryRepository.findProductEntryModelByIdLocalEntryAndCompanyModel(entryLocalId, companyModel);
+        return productEntryModel;
+    }
+
+    public void verifyBelongCompany(Integer companyId, ProductEntryModel productEntryModel){
+        if(!productEntryModel.getCompanyModel().getId().equals(companyId)){
+            throw new ResourceNotFoundException("Esta entrada não pertence a esta empresa");
+        }
     }
 
 }

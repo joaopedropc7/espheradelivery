@@ -28,11 +28,11 @@ public class ProductService {
 
 
     public ProductModel createProduct(ProductRecord dto, Integer companyId){
+        Integer lastIdLocalInsert = productRepository.findMaxIdLocalByCompany(companyId);
         CompanyModel companyModel = companyService.getCompanyById(companyId);
         CategoryModel categoryModel = categoryService.findById(dto.idCategory());
-        ProductModel product = new ProductModel(dto, categoryModel, companyModel);
+        ProductModel product = new ProductModel(dto, categoryModel, companyModel, lastIdLocalInsert);
         productRepository.save(product);
-        // product.add(linkTo(methodOn(ProductController.class).createProduct(dto, companyId)).withSelfRel());
         return product;
     }
 
@@ -56,8 +56,9 @@ public class ProductService {
         return product;
     }
 
-    public ProductModel updateProduct(Integer productId, ProductRecord dto){
+    public ProductModel updateProduct(Integer productId, ProductRecord dto, Integer companyId){
         ProductModel product = findById(productId);
+        verifyProductBelongsCompany(product, companyId);
         CategoryModel category = categoryService.findById(dto.idCategory());
 
         product.setName(dto.name());
@@ -69,8 +70,9 @@ public class ProductService {
         return product;
     }
 
-    public void inactiveProduct(Integer productId){
+    public void inactiveProduct(Integer productId, Integer companyId){
         ProductModel product = findById(productId);
+        verifyProductBelongsCompany(product, companyId);
         if(product.getQuantity() > 0){
             throw new ResourceNotFoundException("Não é possível inativar um produto com estoque!");
         }
@@ -78,14 +80,16 @@ public class ProductService {
         productRepository.save(product);
     }
 
-    public void activeProduct(Integer productId){
+    public void activeProduct(Integer productId, Integer companyId){
         ProductModel product = findById(productId);
+        verifyProductBelongsCompany(product, companyId);
         product.setInactive(false);
         productRepository.save(product);
     }
 
-    public void deleteProduct(Integer productId){
+    public void deleteProduct(Integer productId, Integer companyId){
         ProductModel productModel = findById(productId);
+        verifyProductBelongsCompany(productModel, companyId);
         if(productModel.getQuantity() > 0 && productModel.getSales() > 0 && productModel.getValueBuyTotal() > 0 && productModel.getValueSellTotal() > 0){
             throw new ResourceNotFoundException("Não é possível deletar um produto que haja movimentacoes, tente inativar o mesmo!");
         }
@@ -124,14 +128,27 @@ public class ProductService {
         });
     }
 
-    public void setImageProduct(Integer productId, FileEntity fileEntity){
+    public void setImageProduct(Integer productId, FileEntity fileEntity, Integer companyId){
         ProductModel product = findById(productId);
+        verifyProductBelongsCompany(product, companyId);
         product.setImage(fileEntity);
         productRepository.save(product);
     }
 
-    public FileEntity getImageProduct(Integer productId){
+    public FileEntity getImageProduct(Integer productId, Integer companyId){
         ProductModel product = findById(productId);
+        verifyProductBelongsCompany(product, companyId);
         return product.getImage();
+    }
+
+    public ProductModel findProductByIdLocalByCompanyAndCompanyModel(Integer idLocalByCompany, Integer companyId){
+        CompanyModel companyModel = companyService.getCompanyById(companyId);
+        return productRepository.findProductModelByIdLocalByCompanyAndCompanyModel(idLocalByCompany, companyModel);
+    }
+
+    public void verifyProductBelongsCompany(ProductModel productModel, Integer companyId){
+        if(!productModel.getCompanyModel().getId().equals(companyId)){
+            throw new ResourceNotFoundException("Produto não pertence a esta empresa!");
+        }
     }
 }

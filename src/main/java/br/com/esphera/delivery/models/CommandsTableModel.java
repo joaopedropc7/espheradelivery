@@ -13,6 +13,7 @@ public class CommandsTableModel {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
+    private Integer idLocalCommand;
     @ManyToOne(cascade = CascadeType.DETACH)
     @JoinColumn(name = "company_id")
     private CompanyModel companyModel;
@@ -30,7 +31,8 @@ public class CommandsTableModel {
     public CommandsTableModel() {
     }
 
-    public CommandsTableModel (CompanyModel companyModel, TableModel tableModel, PaymentsMethod paymentMethod, String observation){
+    public CommandsTableModel (CompanyModel companyModel, TableModel tableModel, PaymentsMethod paymentMethod, String observation, Integer idLocalCommand){
+        this.idLocalCommand = idLocalCommand + 1;
         this.companyModel = companyModel;
         this.tableNumber = tableModel.getTableNumber();
         this.productsTable = tableModel.getProductsTable();
@@ -39,6 +41,7 @@ public class CommandsTableModel {
         this.quantityTotalItems = tableModel.getQuantityTotalItems();
         this.methodPayment = paymentMethod;
         this.dateCommand = LocalDateTime.now();
+        this.observation = observation;
     }
 
     public Integer getId() {
@@ -119,5 +122,13 @@ public class CommandsTableModel {
 
     public void setObservation(String observation) {
         this.observation = observation;
+    }
+
+    public Integer getIdLocalCommand() {
+        return idLocalCommand;
+    }
+
+    public void setIdLocalCommand(Integer idLocalCommand) {
+        this.idLocalCommand = idLocalCommand;
     }
 }

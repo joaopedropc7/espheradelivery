@@ -2,6 +2,7 @@ package br.com.esphera.delivery.controller;
 
 import br.com.esphera.delivery.exceptions.MyFileNotFoundException;
 import br.com.esphera.delivery.exceptions.UnsupportedMediaTypeException;
+import br.com.esphera.delivery.infra.security.TokenService;
 import br.com.esphera.delivery.models.CommandsTableModel;
 import br.com.esphera.delivery.models.DTOS.responseDtos.UploadFileResponse;
 import br.com.esphera.delivery.models.Enums.EntityRequestImage;
@@ -41,7 +42,8 @@ public class FIleController {
 
     @Autowired
     private FileStorageService fileStorageService;
-
+    @Autowired
+    private TokenService tokenService;
 
     @PostMapping("/uploadFile/{EntityRequestImage}/{idEntity}")
     @Operation(summary = "Upload image entity", description = "Upload image entity",
@@ -61,12 +63,14 @@ public class FIleController {
             }
     )
     @SecurityRequirement(name = "Bearer Authentication")
-    public UploadFileResponse uploadFile(@RequestParam("file")MultipartFile file, @PathVariable(value = "EntityRequestImage") EntityRequestImage entityRequestImage, @PathVariable(value = "idEntity") Integer idEntity) {
+    public UploadFileResponse uploadFile(@RequestParam("file")MultipartFile file, @PathVariable(value = "EntityRequestImage") EntityRequestImage entityRequestImage, @PathVariable(value = "idEntity") Integer idEntity, HttpServletRequest request) {
+        String token = tokenService.recoverToken(request);
+        Integer companyId = tokenService.getCompanyIdFromToken(token);
         String fileExtension = FilenameUtils.getExtension(file.getOriginalFilename()).toLowerCase();
         if (!fileExtension.equals("jpg") && !fileExtension.equals("jpeg") && !fileExtension.equals("png")) {
             throw new UnsupportedMediaTypeException("Apenas arquivos JPEG, PNG ou JPG são suportados.");
         }
-        String fileName = fileStorageService.storeFile(file, idEntity, entityRequestImage);
+        String fileName = fileStorageService.storeFile(file, idEntity, entityRequestImage, companyId);
         String fileDownloadUri = ServletUriComponentsBuilder.fromCurrentContextPath()
                 .path("/api/file/requestProductImage/" + entityRequestImage + "/" + idEntity)
                 .toUriString();
@@ -91,8 +95,10 @@ public class FIleController {
             }
     )
     @SecurityRequirement(name = "Bearer Authentication")
-    public ResponseEntity<Resource> downloadFile(@PathVariable(value = "EntityRequestImage")EntityRequestImage entityRequestImage ,@PathVariable(value = "entityId") Integer entityId) {
-        FileEntity fileEntity = fileStorageService.loadFileAsResource(entityId, entityRequestImage);
+    public ResponseEntity<Resource> downloadFile(@PathVariable(value = "EntityRequestImage")EntityRequestImage entityRequestImage ,@PathVariable(value = "entityId") Integer entityId, HttpServletRequest request) {
+        String token = tokenService.recoverToken(request);
+        Integer companyId = tokenService.getCompanyIdFromToken(token);
+        FileEntity fileEntity = fileStorageService.loadFileAsResource(entityId, entityRequestImage, companyId);
         Resource resource = new ByteArrayResource(fileEntity.getData());
         System.out.println(resource.getFilename());
         String contentType = fileEntity.getFileType();

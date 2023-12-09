@@ -2,6 +2,7 @@ package br.com.esphera.delivery.controller;
 
 import br.com.esphera.delivery.infra.security.TokenService;
 import br.com.esphera.delivery.models.DTOS.ProductEntryRecord;
+import br.com.esphera.delivery.models.DTOS.responseDtos.EntryResponseDTO;
 import br.com.esphera.delivery.models.ProductEntryItemModel;
 import br.com.esphera.delivery.models.ProductEntryModel;
 import br.com.esphera.delivery.models.ProductModel;
@@ -11,6 +12,7 @@ import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -44,11 +46,13 @@ public class EntryProductsController {
                     @ApiResponse(description = "Internal Error", responseCode = "500", content = @Content),
             }
     )
-    public ResponseEntity<ProductEntryModel> createEntryProduct(@RequestBody ProductEntryRecord data, HttpServletRequest request){
+    @SecurityRequirement(name = "Bearer Authentication")
+    public ResponseEntity<EntryResponseDTO> createEntryProduct(@RequestBody ProductEntryRecord data, HttpServletRequest request){
         String token = tokenService.recoverToken(request);
         Integer companyId = tokenService.getCompanyIdFromToken(token);
         ProductEntryModel entryModel = entryService.createEntryProduct(data, companyId);
-        return ResponseEntity.ok().body(entryModel);
+        EntryResponseDTO entryResponseDTO = new EntryResponseDTO(entryModel);
+        return ResponseEntity.ok().body(entryResponseDTO);
     }
 
     @GetMapping("/find")
@@ -68,11 +72,13 @@ public class EntryProductsController {
                     @ApiResponse(description = "Internal Error", responseCode = "500", content = @Content),
             }
     )
-    public ResponseEntity<List<ProductEntryModel>> getAllEntrys(HttpServletRequest request){
+    @SecurityRequirement(name = "Bearer Authentication")
+    public ResponseEntity<List<EntryResponseDTO>> getAllEntrys(HttpServletRequest request){
         String token = tokenService.recoverToken(request);
         Integer companyId = tokenService.getCompanyIdFromToken(token);
         List<ProductEntryModel> entryModels = entryService.findByCompanyId(companyId);
-        return ResponseEntity.ok().body(entryModels);
+        List<EntryResponseDTO> entryResponseDTOS = EntryResponseDTO.convert(entryModels);
+        return ResponseEntity.ok().body(entryResponseDTOS);
     }
 
     @GetMapping("/{id}")
@@ -92,11 +98,13 @@ public class EntryProductsController {
                     @ApiResponse(description = "Internal Error", responseCode = "500", content = @Content),
             }
     )
-    public ResponseEntity<ProductEntryModel> getEntryById(@PathVariable(value = "id") Integer id, HttpServletRequest request){
+    @SecurityRequirement(name = "Bearer Authentication")
+    public ResponseEntity<EntryResponseDTO> getEntryById(@PathVariable(value = "id") Integer id, HttpServletRequest request){
         String token = tokenService.recoverToken(request);
         Integer companyId = tokenService.getCompanyIdFromToken(token);
         ProductEntryModel entryModel = entryService.findById(id);
-        return ResponseEntity.ok().body(entryModel);
+        EntryResponseDTO entryResponseDTO = new EntryResponseDTO(entryModel);
+        return ResponseEntity.ok().body(entryResponseDTO);
     }
 
     @GetMapping("/products{entryId}")
@@ -116,6 +124,7 @@ public class EntryProductsController {
                     @ApiResponse(description = "Internal Error", responseCode = "500", content = @Content),
             }
     )
+    @SecurityRequirement(name = "Bearer Authentication")
     public ResponseEntity<List<ProductEntryItemModel>> getProductsInEntry(HttpServletRequest request, @PathVariable(value = "entryId") Integer entryId){
         String token = tokenService.recoverToken(request);
         Integer companyId = tokenService.getCompanyIdFromToken(token);
@@ -140,11 +149,38 @@ public class EntryProductsController {
                     @ApiResponse(description = "Internal Error", responseCode = "500", content = @Content),
             }
     )
+    @SecurityRequirement(name = "Bearer Authentication")
     public ResponseEntity cancelEntryById(@PathVariable Integer id, HttpServletRequest request){
         String token = tokenService.recoverToken(request);
         Integer companyId = tokenService.getCompanyIdFromToken(token);
-        entryService.cancelEntryById(id);
+        entryService.cancelEntryById(id, companyId);
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/local/{localId}")
+    @Operation(summary = "Get a entry by localId", description = "Get a entry by localId",
+            tags = {"Entry Products"},
+            responses = {
+                    @ApiResponse(description = "Success", responseCode = "200",
+                            content = {
+                                    @Content(
+                                            mediaType = "application/json",
+                                            array = @ArraySchema(schema = @Schema(implementation = ProductEntryModel.class))
+                                    )
+                            }),
+                    @ApiResponse(description = "Bad Request", responseCode = "400", content = @Content),
+                    @ApiResponse(description = "Unauthorized", responseCode = "401", content = @Content),
+                    @ApiResponse(description = "Not Found", responseCode = "404", content = @Content),
+                    @ApiResponse(description = "Internal Error", responseCode = "500", content = @Content),
+            }
+    )
+    @SecurityRequirement(name = "Bearer Authentication")
+    public ResponseEntity<EntryResponseDTO> getEntryByLocalIdAndCompanyId(@PathVariable(value = "localId") Integer id, HttpServletRequest request){
+        String token = tokenService.recoverToken(request);
+        Integer companyId = tokenService.getCompanyIdFromToken(token);
+        ProductEntryModel entryModel = entryService.getEntryByLocalId(companyId, id);
+        EntryResponseDTO entryResponseDTO = new EntryResponseDTO(entryModel);
+        return ResponseEntity.ok().body(entryResponseDTO);
     }
 
 }

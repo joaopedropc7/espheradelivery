@@ -15,6 +15,7 @@ public class ProductEntryModel {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
+    private Integer idLocalEntry;
     private Double totalValue;
     private String supplier;
     private LocalDate dateEntry;
@@ -30,7 +31,8 @@ public class ProductEntryModel {
     public ProductEntryModel() {
     }
 
-    public ProductEntryModel(ProductEntryRecord data, List<ProductEntryItemModel> products, CompanyModel companyModel) {
+    public ProductEntryModel(ProductEntryRecord data, List<ProductEntryItemModel> products, CompanyModel companyModel, Integer lastInsert) {
+        this.idLocalEntry = lastInsert + 1;
         this.companyModel = companyModel;
         this.totalValue = data.totalValue();
         this.supplier = data.supplier();
@@ -102,6 +104,14 @@ public class ProductEntryModel {
 
     public void setCompanyModel(CompanyModel companyModel) {
         this.companyModel = companyModel;
+    }
+
+    public Integer getIdLocalEntry() {
+        return idLocalEntry;
+    }
+
+    public void setIdLocalEntry(Integer idLocalEntry) {
+        this.idLocalEntry = idLocalEntry;
     }
 
     @Override

@@ -24,8 +24,9 @@ public class CategoryService {
     private CompanyService companyService;
 
     public CategoryModel createCategory(CategoryRecord categoryRecord, Integer companyId){
+        Integer lastIdCategoryInsert = categoryRepository.findMaxIdLocalByCompany(companyId);
         CompanyModel companyModel = companyService.getCompanyById(companyId);
-        CategoryModel categoryModel = new CategoryModel(categoryRecord, companyModel);
+        CategoryModel categoryModel = new CategoryModel(categoryRecord, companyModel, lastIdCategoryInsert);
         categoryRepository.save(categoryModel);
         return categoryModel;
     }
@@ -35,28 +36,36 @@ public class CategoryService {
         return categorys;
     }
 
-    public CategoryModel findCategoryById(Integer id){
-        CategoryModel category = findById(id);
-        return category;
-    }
-
     public CategoryModel findById(Integer id){
         CategoryModel category = categoryRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("No records found for this ID!"));
         category.add(linkTo(methodOn(CategoryController.class).findById(id)).withSelfRel());
         return category;
     }
 
-    public CategoryModel updateCategory(Integer id, String nameCategory){
+    public CategoryModel updateCategory(Integer id, String nameCategory, Integer companyId){
         CategoryModel category = findById(id);
+        verifyCategoryBelongsCompany(category, companyId);
         category.setCategoryName(nameCategory);
         categoryRepository.save(category);
         return category;
     }
 
-    public void inactiveProduct(Integer id){
+    public void inactiveProduct(Integer id, Integer companyId){
         CategoryModel categoryModel = categoryRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("No records found for this ID!"));
+        verifyCategoryBelongsCompany(categoryModel, companyId);
         categoryModel.setInactive(true);
         categoryRepository.save(categoryModel);
     }
 
+    public void verifyCategoryBelongsCompany(CategoryModel categoryModel, Integer companyId){
+        if(!categoryModel.getCompanyModel().getId().equals(companyId)){
+            throw new ResourceNotFoundException("Categoria não pertence a empresa!");
+        }
+    }
+
+    public CategoryModel findCategoryByIdLocalCategoryAndCompanyModel(Integer idLocalCategory, Integer companyId){
+        CompanyModel companyModel = companyService.getCompanyById(companyId);
+        CategoryModel categoryModel = categoryRepository.findCategoryModelByIdLocalCategoryAndCompanyModel(idLocalCategory, companyModel);
+        return categoryModel;
+    }
 }

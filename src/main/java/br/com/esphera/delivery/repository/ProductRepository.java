@@ -16,4 +16,8 @@ public interface ProductRepository extends JpaRepository<ProductModel, Integer> 
     @Query("select p from ProductModel p WHERE p.companyModel = :companyModel")
     List<ProductModel> finddProductByComapanyId(CompanyModel companyModel);
 
+    @Query("SELECT COALESCE(MAX(p.idLocalByCompany), 0) FROM ProductModel p WHERE p.companyModel.id = :companyId")
+    Integer findMaxIdLocalByCompany(@Param("companyId") Integer companyId);
+
+    ProductModel findProductModelByIdLocalByCompanyAndCompanyModel(Integer idLocalByCompany, CompanyModel companyModel);
 }

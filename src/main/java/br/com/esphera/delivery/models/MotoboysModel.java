@@ -13,6 +13,7 @@ public class MotoboysModel {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
+    private Integer idLocalMotoboy;
     private String nameMotoboy;
     private String number;
     private String email;
@@ -26,7 +27,8 @@ public class MotoboysModel {
     public MotoboysModel() {
     }
 
-    public MotoboysModel(MotoboyRecord dto, CompanyModel companyModel){
+    public MotoboysModel(MotoboyRecord dto, CompanyModel companyModel, Integer lastIdInsert){
+        this.idLocalMotoboy = lastIdInsert + 1;
         this.nameMotoboy = dto.nameMotoboy();
         this.number = dto.number();
         this.email = dto.email();
@@ -89,6 +91,14 @@ public class MotoboysModel {
 
     public void setInactive(Boolean inactive) {
         this.inactive = inactive;
+    }
+
+    public Integer getIdLocalMotoboy() {
+        return idLocalMotoboy;
+    }
+
+    public void setIdLocalMotoboy(Integer idLocalMotoboy) {
+        this.idLocalMotoboy = idLocalMotoboy;
     }
 
     @Override

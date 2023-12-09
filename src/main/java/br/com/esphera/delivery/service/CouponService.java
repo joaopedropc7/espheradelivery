@@ -21,9 +21,10 @@ public class CouponService {
     private CompanyService companyService;
 
     public CouponModel createdCoupon(CreateCouponDTO dto, Integer companyId){
+        Integer lastInsert = couponRespository.findMaxIdLocalByCompany(companyId);
         CompanyModel companyModel = companyService.getCompanyById(companyId);
         if (couponRespository.findCouponModelByNameAndCompanyModel(dto.name(), companyModel) != null) throw new ResourceNotFoundException("Já existe um cupom come este nome.");
-        CouponModel couponModel = new CouponModel(dto, companyModel);
+        CouponModel couponModel = new CouponModel(dto, companyModel, lastInsert);
         return couponRespository.save(couponModel);
     }
 
@@ -42,8 +43,9 @@ public class CouponService {
         return couponModel.getPercentDiscount();
     }
 
-    public void inactiveCoupon (Integer couponId){
+    public void inactiveCoupon (Integer couponId, Integer companyId){
         CouponModel couponModel = getCouponById(couponId);
+        verifyCouponBelongsToCompany(couponModel, companyId);
         couponModel.setActive(Boolean.FALSE);
         couponRespository.save(couponModel);
     }
@@ -51,5 +53,14 @@ public class CouponService {
     public List<CouponModel> findCouponsByCompany(Integer companyId){
         CompanyModel companyModel = companyService.getCompanyById(companyId);
         return couponRespository.findCouponModelByCompanyModel(companyModel);
+    }
+
+    public CouponModel getCouponByLocalIdAndCompany(Integer idLocalCoupon, Integer companyId){
+        CompanyModel companyModel = companyService.getCompanyById(companyId);
+        return couponRespository.findCouponModelByIdLocalCouponAndCompanyModel(idLocalCoupon, companyModel);
+    }
+
+    public void verifyCouponBelongsToCompany(CouponModel couponModel, Integer companyId){
+        if(!couponModel.getCompanyModel().getId().equals(companyId)) throw new ResourceNotFoundException("Este cupom não pertence a esta empresa!");
     }
 }

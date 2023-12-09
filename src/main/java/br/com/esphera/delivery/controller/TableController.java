@@ -116,7 +116,7 @@ public class TableController {
     public ResponseEntity<ProductTableModel> addProductInTable(@PathVariable(value = "tableId") Integer tableId, @PathVariable(value = "productId") Integer productId, @PathVariable(value = "productQuantity") Integer productQuantity, HttpServletRequest request){
         String token = tokenService.recoverToken(request);
         Integer companyId = tokenService.getCompanyIdFromToken(token);
-        return ResponseEntity.ok().body(tableService.insertProductInTable(tableId, productId, productQuantity));
+        return ResponseEntity.ok().body(tableService.insertProductInTable(tableId, productId, productQuantity, companyId));
     }
 
     @PutMapping("/alterquantityproduct/{tableId}/{productId}/{productQuantity}")

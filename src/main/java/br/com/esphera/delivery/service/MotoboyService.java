@@ -20,8 +20,9 @@ public class MotoboyService {
     private CompanyService companyService;
 
     public MotoboysModel createMotoboy(MotoboyRecord dto, Integer companyId){
+        Integer lastIdInsert = motoboyRepository.findMaxIdLocalByCompany(companyId);
         CompanyModel companyModel = companyService.getCompanyById(companyId);
-        MotoboysModel motoboysModel = new MotoboysModel(dto, companyModel);
+        MotoboysModel motoboysModel = new MotoboysModel(dto, companyModel, lastIdInsert);
         motoboyRepository.save(motoboysModel);
         return motoboysModel;
     }
@@ -37,8 +38,9 @@ public class MotoboyService {
         return motoboysModel;
     }
 
-    public MotoboysModel putMotoboy(Integer motoboyId, MotoboyRecord dto){
+    public MotoboysModel putMotoboy(Integer motoboyId, MotoboyRecord dto, Integer companyId){
         MotoboysModel motoboysModel = motoboyRepository.findById(motoboyId).orElseThrow(() -> new ResourceNotFoundException("Não foi encontrado motoboy com o id " + motoboyId));
+        verifyBelongCompany(motoboysModel, companyId);
         motoboysModel.setNameMotoboy(dto.nameMotoboy());
         motoboysModel.setEmail(dto.email());
         motoboysModel.setNumber(dto.number());
@@ -46,25 +48,45 @@ public class MotoboyService {
         return motoboysModel;
     }
 
-    public void inactiveMotoboy(Integer motoboyId){
+    public void inactiveMotoboy(Integer motoboyId, Integer companyId){
         MotoboysModel motoboysModel = motoboyRepository.findById(motoboyId).orElseThrow(() -> new ResourceNotFoundException("Não foi encontrado motoboy com o id " + motoboyId));
+        verifyBelongCompany(motoboysModel, companyId);
         motoboysModel.setInactive(true);
         motoboyRepository.save(motoboysModel);
     }
 
-    public void activeMotoboy(Integer motoboyId){
+    public void activeMotoboy(Integer motoboyId, Integer companyId){
         MotoboysModel motoboysModel = motoboyRepository.findById(motoboyId).orElseThrow(() -> new ResourceNotFoundException("Não foi encontrado motoboy com o id " + motoboyId));
+        verifyBelongCompany(motoboysModel, companyId);
         motoboysModel.setInactive(false);
         motoboyRepository.save(motoboysModel);
     }
 
-    public void deleteMotoboy(Integer motoboyId){
+    public void deleteMotoboy(Integer motoboyId, Integer companyId){
         MotoboysModel motoboysModel = findMotoboyById(motoboyId);
+        verifyBelongCompany(motoboysModel, companyId);
         motoboyRepository.delete(motoboysModel);
     }
 
     public void incrementDeliveryQuantity(MotoboysModel motoboysModel){
         motoboysModel.setQuantityDelivered(motoboysModel.getQuantityDelivered() + 1);
         motoboyRepository.save(motoboysModel);
+    }
+
+    public void decrementDeliveryQuantity(MotoboysModel motoboysModel){
+        motoboysModel.setQuantityDelivered(motoboysModel.getQuantityDelivered() - 1);
+        motoboyRepository.save(motoboysModel);
+    }
+
+    public MotoboysModel findMotoboyByIdLocalAndCompany(Integer idLocalMotoboy, Integer companyId){
+        CompanyModel companyModel = companyService.getCompanyById(companyId);
+        MotoboysModel motoboysModel = motoboyRepository.findMotoboysModelByIdLocalMotoboyAndCompanyModel(idLocalMotoboy, companyModel);
+        return motoboysModel;
+    }
+
+    public void verifyBelongCompany(MotoboysModel  motoboysModel, Integer companyId){
+        if(!motoboysModel.getCompanyModel().getId().equals(companyId)){
+            throw new ResourceNotFoundException("Este não pertence a esta empresa!");
+        }
     }
 }

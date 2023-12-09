@@ -7,6 +7,7 @@ import java.util.List;
 
 public record ProductResponseDTO(
         Integer id,
+        Integer idLocal,
         String name,
         String description,
         Double costValue,
@@ -23,6 +24,7 @@ public record ProductResponseDTO(
     public ProductResponseDTO(ProductModel productModel)  {
         this(
                 productModel.getId(),
+                productModel.getIdLocalByCompany(),
                 productModel.getName(),
                 productModel.getDescription(),
                 productModel.getCostValue(),

@@ -8,6 +8,7 @@ import br.com.esphera.delivery.models.DTOS.CommandsTableRecords.RequestCommandsB
 import br.com.esphera.delivery.models.TableModel;
 import br.com.esphera.delivery.repository.CommandsTableRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -29,9 +30,10 @@ public class CommandsTableService {
     @Autowired
     private ProductService productService;
 
-    public CommandsTableModel createCommandsTable(CommandsTableRecord commandsTableRecord) {
+    public CommandsTableModel createCommandsTable(CommandsTableRecord commandsTableRecord, Integer companyId) {
+        Integer lastIdInsert = commandsTableRepository.findMaxIdLocalByCompany(companyId);
         TableModel tableModel = tableService.getTableById(commandsTableRecord.tableId());
-        CommandsTableModel commandsTableModel = new CommandsTableModel(tableModel.getCompanyModel(), tableModel, commandsTableRecord.paymentsMethod(), commandsTableRecord.observation());
+        CommandsTableModel commandsTableModel = new CommandsTableModel(tableModel.getCompanyModel(), tableModel, commandsTableRecord.paymentsMethod(), commandsTableRecord.observation(), lastIdInsert);
         tableService.clearTable(tableModel.getId());
         commandsTableModel.getProductsTable().stream().forEach(productTable -> {
             productService.sellProduct(productTable.getProduct(), productTable.getQuantity());
@@ -53,6 +55,17 @@ public class CommandsTableService {
         LocalDate dateStart = LocalDate.parse(dtoRequest.dateStart());
         LocalDate dateEnd = LocalDate.parse(dtoRequest.dateEnd());
         return commandsTableRepository.findCommandsTableModelByDateCommandBetweenAndCompanyModel(dateStart, dateEnd, companyModel);
+   }
+
+   public CommandsTableModel getCommandByLocalIdAndCompany(Integer idLocalCommand, Integer companyId){
+        CompanyModel companyModel = companyService.getCompanyById(companyId);
+        return commandsTableRepository.findCommandsTableModelByIdLocalCommandAndCompanyModel(idLocalCommand, companyModel);
+   }
+
+   public void verifyCommandsTableBelongsCompany(CommandsTableModel commandsTableModel, Integer companyId){
+       if(!commandsTableModel.getCompanyModel().getId().equals(companyId)){
+           throw new ResourceNotFoundException("Comanda não pertence a empresa!");
+       }
    }
 
 
