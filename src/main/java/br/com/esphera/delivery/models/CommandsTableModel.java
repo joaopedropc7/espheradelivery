@@ -2,13 +2,14 @@ package br.com.esphera.delivery.models;
 
 import br.com.esphera.delivery.models.Enums.PaymentsMethod;
 import jakarta.persistence.*;
+import org.springframework.hateoas.RepresentationModel;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
 @Entity
 @Table(name = "commands_table")
-public class CommandsTableModel {
+public class CommandsTableModel extends RepresentationModel<CommandsTableModel> {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

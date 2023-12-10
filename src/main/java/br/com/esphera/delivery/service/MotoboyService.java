@@ -1,5 +1,6 @@
 package br.com.esphera.delivery.service;
 
+import br.com.esphera.delivery.controller.MotoboyController;
 import br.com.esphera.delivery.exceptions.ResourceNotFoundException;
 import br.com.esphera.delivery.models.CompanyModel;
 import br.com.esphera.delivery.models.DTOS.MotoboyRecord;
@@ -9,8 +10,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
-import java.util.List;
 
 @Service
 public class MotoboyService {
@@ -25,17 +27,27 @@ public class MotoboyService {
         CompanyModel companyModel = companyService.getCompanyById(companyId);
         MotoboysModel motoboysModel = new MotoboysModel(dto, companyModel);
         motoboyRepository.save(motoboysModel);
+        motoboysModel.add(linkTo(methodOn(MotoboyController.class).findMotoboyById(motoboysModel.getId())).withSelfRel());
+        return motoboysModel;
+    }
+
+    public Page<MotoboysModel> getMotoboysByNameAndCompanyId(String name, Integer companyId, Pageable pageable){
+        CompanyModel companyModel = companyService.getCompanyById(companyId);
+        Page<MotoboysModel> motoboysModel = motoboyRepository.findMotoboysModelByNameMotoboy(name, pageable, companyModel);
+        motoboysModel.forEach(motoboysModel1 -> motoboysModel1.add(linkTo(methodOn(MotoboyController.class).findMotoboyById(motoboysModel1.getId())).withSelfRel()));
         return motoboysModel;
     }
 
     public MotoboysModel findMotoboyById(Integer motoboyId){
         MotoboysModel motoboysModel = motoboyRepository.findById(motoboyId).orElseThrow(() -> new ResourceNotFoundException("Não foi encontrado motoboy com o id " + motoboyId));
+        motoboysModel.add(linkTo(methodOn(MotoboyController.class).findMotoboyById(motoboyId)).withSelfRel());
         return motoboysModel;
     }
 
     public Page<MotoboysModel> findAllMotoboysByCompanyId(Integer companyId, Pageable pageable){
         CompanyModel companyModel = companyService.getCompanyById(companyId);
         Page<MotoboysModel> motoboysModel = motoboyRepository.findAllByCompanyModel(companyModel, pageable);
+        motoboysModel.forEach(motoboysModel1 -> motoboysModel1.add(linkTo(methodOn(MotoboyController.class).findMotoboyById(motoboysModel1.getId())).withSelfRel()));
         return motoboysModel;
     }
 
@@ -46,6 +58,7 @@ public class MotoboyService {
         motoboysModel.setEmail(dto.email());
         motoboysModel.setNumber(dto.number());
         motoboyRepository.save(motoboysModel);
+        motoboysModel.add(linkTo(methodOn(MotoboyController.class).findMotoboyById(motoboyId)).withSelfRel());
         return motoboysModel;
     }
 

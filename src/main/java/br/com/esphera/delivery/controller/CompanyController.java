@@ -79,6 +79,31 @@ public class CompanyController {
         return ResponseEntity.ok().body(companyModelList);
     }
 
+    @GetMapping("/find/{name}")
+    @Operation(summary = "Get company by name", description = "Get company by name",
+            tags = {"Company"},
+            responses = {
+                    @ApiResponse(description = "Success", responseCode = "200",
+                            content = {
+                                    @Content(
+                                            mediaType = "application/json",
+                                            array = @ArraySchema(schema = @Schema(implementation = ProductModel.class))
+                                    )
+                            }),
+                    @ApiResponse(description = "Bad Request", responseCode = "400", content = @Content),
+                    @ApiResponse(description = "Unauthorized", responseCode = "401", content = @Content),
+                    @ApiResponse(description = "Not Found", responseCode = "404", content = @Content),
+                    @ApiResponse(description = "Internal Error", responseCode = "500", content = @Content),
+            }
+    )
+    public ResponseEntity<Page<CompanyModel>> getCompaniesByName(@PathVariable(value = "name")String name ,@RequestParam(value = "page", defaultValue = "0") Integer page, @RequestParam(value = "limit", defaultValue = "12") Integer limit, @RequestParam(value = "direction", defaultValue = "asc") String direction){
+        var sortDirection = "desc".equalsIgnoreCase(direction) ? Sort.Direction.DESC : Sort.Direction.ASC;
+        Pageable pageable = PageRequest.of(page, limit, Sort.by(sortDirection, "nomeFantasia"));
+        Page<CompanyModel> companyModelList = companyService.findCompaniesByNomeFantasia(name ,pageable);
+        return ResponseEntity.ok().body(companyModelList);
+    }
+
+
     @GetMapping("/{id}")
     @Operation(summary = "Get a company by id", description = "Get a company by id",
             tags = {"Company"},

@@ -6,6 +6,7 @@ import br.com.esphera.delivery.models.ShoppingCartModel;
 import org.aspectj.weaver.ast.Or;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
+import org.springframework.hateoas.Links;
 
 import java.util.List;
 
@@ -26,7 +27,8 @@ public record OrderResponseDTO(
         String dateFinishOrder,
         ShoppingCartModel shoppingCartModel,
         Integer companyId,
-        DeliveryModel deliveryModel
+        DeliveryModel deliveryModel,
+        Links links
 ) {
     public OrderResponseDTO(OrderModel orderModel){
         this(
@@ -46,7 +48,8 @@ public record OrderResponseDTO(
                 orderModel.getDateFinishOrder() != null ? orderModel.getDateFinishOrder().toString() : null,
                 orderModel.getShoppingCartModel(),
                 orderModel.getCompanyModel().getId(),
-                orderModel.getDeliveryModel()
+                orderModel.getDeliveryModel(),
+                orderModel.getLinks()
         );
     }
 

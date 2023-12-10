@@ -3,12 +3,13 @@ package br.com.esphera.delivery.models;
 import br.com.esphera.delivery.models.DTOS.MotoboyRecord;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
+import org.springframework.hateoas.RepresentationModel;
 
 import java.util.Objects;
 
 @Entity
 @Table(name = "motoboys")
-public class MotoboysModel {
+public class MotoboysModel extends RepresentationModel<MotoboysModel> {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

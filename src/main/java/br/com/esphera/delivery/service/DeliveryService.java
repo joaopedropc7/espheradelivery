@@ -10,6 +10,8 @@ import br.com.esphera.delivery.models.DTOS.DistanceDurationDTO;
 import br.com.esphera.delivery.repository.DeliveryRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 import java.time.LocalDateTime;
 
@@ -41,6 +43,7 @@ public class DeliveryService {
         Double valueDelivery = configsCompany.getValueKmDelivery() * distanceDurationDTO.distance();
         DeliveryModel deliveryModel = new DeliveryModel(deliveryRecord, addressModel, distanceDurationDTO, valueDelivery);
         deliveryRepository.save(deliveryModel);
+        deliveryModel.add(linkTo(methodOn(DeliveryService.class).findDeliveyById(deliveryModel.getId())).withSelfRel());
         return deliveryModel;
     }
 
@@ -57,7 +60,9 @@ public class DeliveryService {
     }
 
     public DeliveryModel findDeliveyById(Integer deliveryId){
-        return deliveryRepository.findById(deliveryId).orElseThrow(() -> new ResourceNotFoundException("Nenhuma entrega encontrada com este ID!"));
+        DeliveryModel deliveryModel = deliveryRepository.findById(deliveryId).orElseThrow(() -> new ResourceNotFoundException("Nenhuma entrega encontrada com este ID!"));
+        deliveryModel.add(linkTo(methodOn(DeliveryService.class).findDeliveyById(deliveryModel.getId())).withSelfRel());
+        return deliveryModel;
     }
 
     public DeliveryConsultValueDTO consultValueDelivery(AddressRecord addressRecord, Integer companyId){

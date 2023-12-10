@@ -3,6 +3,7 @@ package br.com.esphera.delivery.models.DTOS.responseDtos;
 import br.com.esphera.delivery.models.CouponModel;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
+import org.springframework.hateoas.Links;
 
 import java.util.List;
 
@@ -17,7 +18,8 @@ public record CouponResponseDTO(
         Boolean limitUses,
         Integer numberUsesAllowed,
         Boolean active,
-        Integer companyId
+        Integer companyId,
+        Links links
 ) {
     public CouponResponseDTO(CouponModel couponModel){
         this(
@@ -31,7 +33,8 @@ public record CouponResponseDTO(
                 couponModel.getLimitUses(),
                 couponModel.getNumberUsesAllowed(),
                 couponModel.getActive(),
-                couponModel.getCompanyModel().getId()
+                couponModel.getCompanyModel().getId(),
+                couponModel.getLinks()
         );
     }
 

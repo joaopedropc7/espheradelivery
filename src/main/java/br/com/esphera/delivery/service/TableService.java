@@ -1,5 +1,6 @@
 package br.com.esphera.delivery.service;
 
+import br.com.esphera.delivery.controller.TableController;
 import br.com.esphera.delivery.exceptions.ResourceNotFoundException;
 import br.com.esphera.delivery.models.CompanyModel;
 import br.com.esphera.delivery.models.Enums.StatusTable;
@@ -10,6 +11,8 @@ import br.com.esphera.delivery.repository.TableRepository;
 import org.hibernate.ResourceClosedException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 import java.util.List;
 
@@ -36,6 +39,7 @@ public class TableService {
         }
         TableModel tableModel = new TableModel(companyModel, tableNumber);
         tableRepository.save(tableModel);
+        tableModel.add(linkTo(methodOn(TableController.class).getTableById(tableModel.getId())).withSelfRel());
         return tableModel;
     }
 
@@ -48,6 +52,7 @@ public class TableService {
         ProductTableModel productInTable = tableModel.insertIntoTable(productTableModel);
         tableRepository.save(tableModel);
         calculeAmountTable(tableModel);
+        productInTable.add(linkTo(methodOn(TableController.class).getTableById(tableModel.getId())).withSelfRel());
         return productInTable;
     }
 
@@ -56,6 +61,7 @@ public class TableService {
         ProductTableModel productTableModel = tableModel.alterQuantityProductInTable(productId, productQuantity);
         tableRepository.save(tableModel);
         calculeAmountTable(tableModel);
+        productTableModel.add(linkTo(methodOn(TableController.class).getTableById(tableModel.getId())).withSelfRel());
         return productTableModel;
     }
 
@@ -91,12 +97,16 @@ public class TableService {
     }
 
     public TableModel getTableById(Integer tableId){
-        return tableRepository.findById(tableId).orElseThrow(() -> new ResourceClosedException("Mesa não encontrada!"));
+        TableModel tableModel = tableRepository.findById(tableId).orElseThrow(() -> new ResourceClosedException("Mesa não encontrada!"));
+        tableModel.add(linkTo(methodOn(TableController.class).getTableById(tableModel.getId())).withSelfRel());
+        return tableModel;
     }
 
     public List<TableModel> getAllTablesByCompany(Integer companyId){
         CompanyModel companyModel = companyService.getCompanyById(companyId);
-        return tableRepository.findAllByCompanyModel(companyModel);
+        List<TableModel> tables = tableRepository.findAllByCompanyModel(companyModel);
+        tables.forEach(tableModel -> tableModel.add(linkTo(methodOn(TableController.class).getTableById(tableModel.getId())).withSelfRel()));
+        return tables;
     }
 
     public TableModel putTable(Integer tableId, Integer tableNumber){
@@ -106,6 +116,7 @@ public class TableService {
         }
         tableModel.setTableNumber(tableNumber);
         tableRepository.save(tableModel);
+        tableModel.add(linkTo(methodOn(TableController.class).getTableById(tableModel.getId())).withSelfRel());
         return tableModel;
     }
 

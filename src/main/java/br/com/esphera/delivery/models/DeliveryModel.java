@@ -5,13 +5,14 @@ import br.com.esphera.delivery.models.DTOS.DistanceDurationDTO;
 import br.com.esphera.delivery.models.Enums.StatusDelivery;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
+import org.springframework.hateoas.RepresentationModel;
 
 import java.time.LocalDateTime;
 import java.util.Objects;
 
 @Entity
 @Table(name = "delivery")
-public class DeliveryModel {
+public class DeliveryModel extends RepresentationModel<DeliveryModel> {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

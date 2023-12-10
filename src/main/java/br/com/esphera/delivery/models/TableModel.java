@@ -4,6 +4,7 @@ import br.com.esphera.delivery.exceptions.ResourceNotFoundException;
 import br.com.esphera.delivery.models.Enums.StatusTable;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
+import org.springframework.hateoas.RepresentationModel;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -11,7 +12,7 @@ import java.util.Objects;
 
 @Entity
 @Table(name = "restaurant_table")
-public class TableModel {
+public class TableModel extends RepresentationModel<TableModel> {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

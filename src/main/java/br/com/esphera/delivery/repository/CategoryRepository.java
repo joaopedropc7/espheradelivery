@@ -15,5 +15,7 @@ public interface CategoryRepository extends JpaRepository<CategoryModel, Integer
 
     Page<CategoryModel> findCategoryModelByCompanyModel(CompanyModel companyModel, Pageable pageable);
 
+    @Query("SELECT p FROM CategoryModel p WHERE LOWER(TRIM(p.categoryName)) LIKE LOWER(TRIM(CONCAT('%', :name, '%'))) AND p.companyModel = :companyModel")
+    Page<CategoryModel> findCategoryModelByCategoryName(@Param("name") String name, Pageable pageable, CompanyModel companyModel);
 
 }

@@ -78,11 +78,7 @@ public class ProductController {
             }
     )
     @SecurityRequirement(name = "Bearer Authentication")
-    public ResponseEntity<Page<ProductResponseDTO>> findAllProducts(
-            HttpServletRequest request,
-            @RequestParam(value = "page", defaultValue = "0") Integer page,
-            @RequestParam(value = "limit", defaultValue = "12") Integer limit,
-            @RequestParam(value = "direction", defaultValue = "asc") String direction
+    public ResponseEntity<Page<ProductResponseDTO>> findAllProducts(HttpServletRequest request, @RequestParam(value = "page", defaultValue = "0") Integer page, @RequestParam(value = "limit", defaultValue = "12") Integer limit, @RequestParam(value = "direction", defaultValue = "asc") String direction
     ){
         String token = tokenService.recoverToken(request);
         Integer companyId = tokenService.getCompanyIdFromToken(token);
@@ -93,6 +89,34 @@ public class ProductController {
         return ResponseEntity.ok().body(products);
     }
 
+    @GetMapping("/findByName/{name}")
+    @Operation(summary = "find products parsing name", description = "find products parsing name",
+            tags = {"Product"},
+            responses = {
+                    @ApiResponse(description = "Success", responseCode = "200",
+                            content = {
+                                    @Content(
+                                            mediaType = "application/json",
+                                            array = @ArraySchema(schema = @Schema(implementation = ProductModel.class))
+                                    )
+                            }),
+                    @ApiResponse(description = "Bad Request", responseCode = "400", content = @Content),
+                    @ApiResponse(description = "Unauthorized", responseCode = "401", content = @Content),
+                    @ApiResponse(description = "Not Found", responseCode = "404", content = @Content),
+                    @ApiResponse(description = "Internal Error", responseCode = "500", content = @Content),
+            }
+    )
+    @SecurityRequirement(name = "Bearer Authentication")
+    public ResponseEntity<Page<ProductResponseDTO>> findAllProductsByName(@PathVariable(value = "name")String name,HttpServletRequest request, @RequestParam(value = "page", defaultValue = "0") Integer page, @RequestParam(value = "limit", defaultValue = "12") Integer limit, @RequestParam(value = "direction", defaultValue = "asc") String direction
+    ){
+        String token = tokenService.recoverToken(request);
+        Integer companyId = tokenService.getCompanyIdFromToken(token);
+        var sortDirection = "desc".equalsIgnoreCase(direction) ? Sort.Direction.DESC : Sort.Direction.ASC;
+        Pageable pageable = PageRequest.of(page, limit, Sort.by(sortDirection, "name"));
+        Page<ProductModel> productModel = productService.findProductsByName(name ,companyId, pageable);
+        Page<ProductResponseDTO> products = ProductResponseDTO.convert(productModel);
+        return ResponseEntity.ok().body(products);
+    }
 
     @GetMapping("/category/{categoryId}")
     @Operation(summary = "find products by category parsing categoryId and companyId", description = "find products by category parsing categoryId and companyId",
@@ -141,9 +165,7 @@ public class ProductController {
             }
     )
     @SecurityRequirement(name = "Bearer Authentication")
-    public ResponseEntity<ProductResponseDTO> findProductById(@PathVariable(value = "id") Integer id, HttpServletRequest request){
-        String token = tokenService.recoverToken(request);
-        Integer companyId = tokenService.getCompanyIdFromToken(token);
+    public ResponseEntity<ProductResponseDTO> findProductById(@PathVariable(value = "id") Integer id){
         ProductModel productModel = productService.findById(id);
         ProductResponseDTO productResponseDTO = new ProductResponseDTO(productModel);
         return ResponseEntity.ok().body(productResponseDTO);

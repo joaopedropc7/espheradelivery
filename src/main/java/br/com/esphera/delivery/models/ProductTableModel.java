@@ -2,12 +2,13 @@ package br.com.esphera.delivery.models;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
+import org.springframework.hateoas.RepresentationModel;
 
 import java.util.Objects;
 
 @Entity
 @Table(name = "product_table")
-public class ProductTableModel {
+public class ProductTableModel extends RepresentationModel<ProductTableModel> {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

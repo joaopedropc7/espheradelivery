@@ -4,13 +4,14 @@ import br.com.esphera.delivery.models.DTOS.ProductEntryQuantityIdRecord;
 import br.com.esphera.delivery.models.DTOS.ProductEntryRecord;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
+import org.springframework.hateoas.RepresentationModel;
 
 import java.util.List;
 import java.util.Objects;
 
 @Entity
 @Table(name = "product_entry_item")
-public class ProductEntryItemModel {
+public class ProductEntryItemModel extends RepresentationModel<ProductEntryItemModel> {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

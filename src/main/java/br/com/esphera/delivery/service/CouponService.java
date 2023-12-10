@@ -1,5 +1,6 @@
 package br.com.esphera.delivery.service;
 
+import br.com.esphera.delivery.controller.CouponController;
 import br.com.esphera.delivery.exceptions.ResourceNotFoundException;
 import br.com.esphera.delivery.models.CompanyModel;
 import br.com.esphera.delivery.models.CouponModel;
@@ -9,9 +10,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 import java.time.LocalDateTime;
-import java.util.List;
+
 
 @Service
 public class CouponService {
@@ -26,11 +29,14 @@ public class CouponService {
         CompanyModel companyModel = companyService.getCompanyById(companyId);
         if (couponRespository.findCouponModelByNameAndCompanyModel(dto.name(), companyModel) != null) throw new ResourceNotFoundException("Já existe um cupom come este nome.");
         CouponModel couponModel = new CouponModel(dto, companyModel);
-        return couponRespository.save(couponModel);
+        couponRespository.save(couponModel);
+        couponModel.add(linkTo(methodOn(CouponController.class).findCouponById(couponModel.getId())).withSelfRel());
+        return couponModel;
     }
 
     public CouponModel getCouponById(Integer couponId){
         CouponModel couponModel = couponRespository.findById(couponId).orElseThrow(() -> new ResourceNotFoundException("Nenhum cupom encontrado com este Id!"));
+        couponModel.add(linkTo(methodOn(CouponController.class).findCouponById(couponModel.getId())).withSelfRel());
         return couponModel;
     }
 
@@ -53,7 +59,9 @@ public class CouponService {
 
     public Page<CouponModel> findCouponsByCompany(Integer companyId, Pageable pageable){
         CompanyModel companyModel = companyService.getCompanyById(companyId);
-        return couponRespository.findCouponModelByCompanyModel(companyModel, pageable);
+        Page<CouponModel> coupons = couponRespository.findCouponModelByCompanyModel(companyModel, pageable);
+        coupons.forEach(couponModel -> couponModel.add(linkTo(methodOn(CouponController.class).findCouponById(couponModel.getId())).withSelfRel()));
+        return coupons;
     }
 
 

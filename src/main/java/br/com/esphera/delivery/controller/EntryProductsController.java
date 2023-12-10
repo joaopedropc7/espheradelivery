@@ -105,9 +105,7 @@ public class EntryProductsController {
             }
     )
     @SecurityRequirement(name = "Bearer Authentication")
-    public ResponseEntity<EntryResponseDTO> getEntryById(@PathVariable(value = "id") Integer id, HttpServletRequest request){
-        String token = tokenService.recoverToken(request);
-        Integer companyId = tokenService.getCompanyIdFromToken(token);
+    public ResponseEntity<EntryResponseDTO> getEntryById(@PathVariable(value = "id") Integer id){
         ProductEntryModel entryModel = entryService.findById(id);
         EntryResponseDTO entryResponseDTO = new EntryResponseDTO(entryModel);
         return ResponseEntity.ok().body(entryResponseDTO);

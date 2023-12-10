@@ -34,24 +34,36 @@ public class ProductService {
         CategoryModel categoryModel = categoryService.findById(dto.idCategory());
         ProductModel product = new ProductModel(dto, categoryModel, companyModel);
         productRepository.save(product);
+        product.add(linkTo(methodOn(ProductController.class).findProductById(product.getId())).withSelfRel());
         return product;
+    }
+
+    public Page<ProductModel> findProductsByName(String name,Integer companyId, Pageable pageable){
+        CompanyModel companyModel = companyService.getCompanyById(companyId);
+        Page<ProductModel> products = productRepository.findProductModelByName(name, pageable, companyModel);
+        System.out.println(products);
+        products.stream().forEach(product -> product.add(linkTo(methodOn(ProductController.class).findProductById(product.getId())).withSelfRel()));
+        return products;
     }
 
     public Page<ProductModel> findProductsByCategory(Integer companyId, Integer categoryId, Pageable pageable){
         CategoryModel category = categoryService.findById(categoryId);
         CompanyModel companyModel = companyService.getCompanyById(companyId);
         Page<ProductModel> products = productRepository.findProductModelsByCompanyModelAndCategoryModel(companyModel, category, pageable);
+        products.stream().forEach(product -> product.add(linkTo(methodOn(ProductController.class).findProductById(product.getId())).withSelfRel()));
         return products;
     }
 
     public Page<ProductModel> findAllProducts(Integer companyId, Pageable pageable){
         CompanyModel companyModel = companyService.getCompanyById(companyId);
         Page<ProductModel> products = productRepository.findProductModelByCompanyModel(companyModel, pageable);
+        products.stream().forEach(product -> product.add(linkTo(methodOn(ProductController.class).findProductById(product.getId())).withSelfRel()));
         return products;
     }
 
     public ProductModel findById(Integer id){
         ProductModel product = productRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Não existe produto com este ID!"));
+        product.add(linkTo(methodOn(ProductController.class).findProductById(product.getId())).withSelfRel());
         return product;
     }
 
@@ -66,6 +78,7 @@ public class ProductService {
         product.setCostValue(dto.costValue());
         product.setValueSell(dto.valueSell());
         productRepository.save(product);
+        product.add(linkTo(methodOn(ProductController.class).findProductById(product.getId())).withSelfRel());
         return product;
     }
 

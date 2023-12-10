@@ -1,5 +1,6 @@
 package br.com.esphera.delivery.service;
 
+import br.com.esphera.delivery.controller.CartController;
 import br.com.esphera.delivery.exceptions.ResourceNotFoundException;
 import br.com.esphera.delivery.models.ProductCartItemModel;
 import br.com.esphera.delivery.models.ShoppingCartModel;
@@ -7,6 +8,8 @@ import br.com.esphera.delivery.repository.ShoppingCartRepository;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 import java.util.List;
 
@@ -87,7 +90,13 @@ public class ShoppingCartService {
     }
 
     public ShoppingCartModel getShoppingCartInDBById(Integer cartID){
-        return shoppingCartRepository.findById(cartID).orElseThrow(() -> new ResourceNotFoundException("Nenhum carrinho de compra encontrado ocm este id!"));
+        ShoppingCartModel shoppingCartModel = shoppingCartRepository.findById(cartID).orElseThrow(() -> new ResourceNotFoundException("Nenhum carrinho de compra encontrado ocm este id!"));
+        shoppingCartModel.add(linkTo(methodOn(CartController.class).getShoppingCartById(shoppingCartModel.getId())).withSelfRel());
+        shoppingCartModel.getProductCartItems().forEach(product -> {
+            product.add(linkTo(methodOn(CartController.class).getShoppingCartById(shoppingCartModel.getId())).withSelfRel());
+        });
+        return shoppingCartModel;
+
     }
 
     public void clearCart(){

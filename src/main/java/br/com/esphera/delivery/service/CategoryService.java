@@ -29,11 +29,19 @@ public class CategoryService {
         CompanyModel companyModel = companyService.getCompanyById(companyId);
         CategoryModel categoryModel = new CategoryModel(categoryRecord, companyModel);
         categoryRepository.save(categoryModel);
+        categoryModel.add(linkTo(methodOn(CategoryController.class).findById(categoryModel.getId())).withSelfRel());
         return categoryModel;
+    }
+
+    public Page<CategoryModel> findCategorysByName(String nameCategory, Integer idCompany, Pageable pageable){
+        Page<CategoryModel> categorys = categoryRepository.findCategoryModelByCategoryName(nameCategory, pageable, companyService.getCompanyById(idCompany));
+        categorys.stream().forEach(category -> category.add(linkTo(methodOn(CategoryController.class).findById(category.getId())).withSelfRel()));
+        return categorys;
     }
 
     public Page<CategoryModel> findAllCategorys(Integer idCompany, Pageable pageable){
         Page<CategoryModel> categorys = categoryRepository.findCategoryModelByCompanyModel(companyService.getCompanyById(idCompany), pageable);
+        categorys.stream().forEach(category -> category.add(linkTo(methodOn(CategoryController.class).findById(category.getId())).withSelfRel()));
         return categorys;
     }
 
@@ -48,6 +56,7 @@ public class CategoryService {
         verifyCategoryBelongsCompany(category, companyId);
         category.setCategoryName(nameCategory);
         categoryRepository.save(category);
+        category.add(linkTo(methodOn(CategoryController.class).findById(id)).withSelfRel());
         return category;
     }
 

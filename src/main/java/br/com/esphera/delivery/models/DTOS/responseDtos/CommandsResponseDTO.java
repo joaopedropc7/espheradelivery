@@ -5,6 +5,7 @@ import br.com.esphera.delivery.models.Enums.PaymentsMethod;
 import br.com.esphera.delivery.models.ProductTableModel;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
+import org.springframework.hateoas.Links;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -18,7 +19,8 @@ public record CommandsResponseDTO(
         Integer quantityTotalItems,
         PaymentsMethod methodPayment,
         LocalDateTime dateCommand,
-        String observation
+        String observation,
+        Links links
 ) {
 
     public CommandsResponseDTO(CommandsTableModel commandsTableModel) {
@@ -31,7 +33,8 @@ public record CommandsResponseDTO(
                 commandsTableModel.getQuantityTotalItems(),
                 commandsTableModel.getMethodPayment(),
                 commandsTableModel.getDateCommand(),
-                commandsTableModel.getObservation()
+                commandsTableModel.getObservation(),
+                commandsTableModel.getLinks()
         );
     }
 

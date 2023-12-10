@@ -3,6 +3,7 @@ package br.com.esphera.delivery.models.DTOS.responseDtos;
 import br.com.esphera.delivery.models.ProductModel;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
+import org.springframework.hateoas.Links;
 import org.springframework.hateoas.RepresentationModel;
 
 import java.util.List;
@@ -20,7 +21,8 @@ public record ProductResponseDTO(
         Boolean inactive,
         Integer categoryId,
         String categoryName,
-        Integer companyId
+        Integer companyId,
+        Links links
 ) {
     public ProductResponseDTO(ProductModel productModel)  {
         this(
@@ -36,7 +38,8 @@ public record ProductResponseDTO(
                 productModel.getInactive(),
                 productModel.getCategoryModel().getId(),
                 productModel.getCategoryModel().getCategoryName(),
-                productModel.getCompanyModel().getId()
+                productModel.getCompanyModel().getId(),
+                productModel.getLinks()
         );
     }
 

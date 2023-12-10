@@ -6,13 +6,14 @@ import br.com.esphera.delivery.models.Enums.TypeDelivery;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
+import org.springframework.hateoas.RepresentationModel;
 
 import java.time.LocalDateTime;
 import java.util.Objects;
 
 @Entity
 @Table(name = "sells")
-public class OrderModel {
+public class OrderModel extends RepresentationModel<OrderModel> {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

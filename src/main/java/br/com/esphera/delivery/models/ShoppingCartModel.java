@@ -2,6 +2,7 @@ package br.com.esphera.delivery.models;
 
 import br.com.esphera.delivery.exceptions.ResourceNotFoundException;
 import jakarta.persistence.*;
+import org.springframework.hateoas.RepresentationModel;
 
 import javax.annotation.processing.Generated;
 import java.util.ArrayList;
@@ -10,7 +11,7 @@ import java.util.Objects;
 
 @Entity
 @Table(name = "shoppingcart")
-public class ShoppingCartModel {
+public class ShoppingCartModel extends RepresentationModel<ShoppingCartModel> {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

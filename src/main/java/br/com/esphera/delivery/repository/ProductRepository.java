@@ -17,4 +17,7 @@ public interface ProductRepository extends JpaRepository<ProductModel, Integer> 
 
     Page<ProductModel> findProductModelByCompanyModel(CompanyModel companyModel, Pageable pageable);
 
+    @Query("SELECT p FROM ProductModel p WHERE LOWER(TRIM(p.name)) LIKE LOWER(TRIM(CONCAT('%', :name, '%'))) AND p.companyModel = :companyModel")
+    Page<ProductModel> findProductModelByName(@Param("name") String name, Pageable pageable, CompanyModel companyModel);
+
 }

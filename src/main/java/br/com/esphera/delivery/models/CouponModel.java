@@ -3,6 +3,7 @@ package br.com.esphera.delivery.models;
 import br.com.esphera.delivery.models.DTOS.CreateCouponDTO;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
+import org.springframework.hateoas.RepresentationModel;
 
 import java.time.LocalDateTime;
 
@@ -10,7 +11,7 @@ import java.time.LocalDateTime;
 @Table(name = "discount_coupon", uniqueConstraints = {
         @UniqueConstraint(columnNames = {"company_id", "name"})
 })
-public class CouponModel {
+public class CouponModel extends RepresentationModel<CouponModel> {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

@@ -2,6 +2,7 @@ package br.com.esphera.delivery.service;
 
 import br.com.esphera.delivery.ApiMaps.MapsAPi;
 import br.com.esphera.delivery.ApiMaps.ValidatesAddressDTO.response.ResponseAddressValidationMapsAPI;
+import br.com.esphera.delivery.controller.CompanyController;
 import br.com.esphera.delivery.exceptions.ResourceNotFoundException;
 import br.com.esphera.delivery.models.CompanyModel;
 import br.com.esphera.delivery.models.DTOS.CompanyRecord;
@@ -13,7 +14,8 @@ import br.com.esphera.delivery.repository.CompanyRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.scheduling.annotation.Scheduled;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -31,22 +33,35 @@ public class  CompanyService {
     @Autowired
     private MapsAPi mapsAPi;
 
-
-
     public CompanyModel createCompany(CompanyRecord companyDTO){
         ResponseAddressValidationMapsAPI responseAddressValidation = mapsAPi.validateAddress(companyDTO.addressRecord());
         AddressModel addressModel = addressService.createAddress(companyDTO.addressRecord());
         CompanyModel companyModel = new CompanyModel(companyDTO, addressModel, responseAddressValidation.result().geocode().placeId());
         companyRepository.save(companyModel);
+        companyModel.add(linkTo(methodOn(CompanyController.class).getCompanyById(companyModel.getId())).withSelfRel());
         return companyModel;
     }
 
+    public Page<CompanyModel> findCompaniesByNomeFantasia(String nomeFantasia, Pageable pageable){
+        Page<CompanyModel> companyModels = companyRepository.findCompanyModelByNomeFantasia(nomeFantasia, pageable);
+        companyModels.forEach(companyModel -> {
+            companyModel.add(linkTo(methodOn(CompanyController.class).getCompanyById(companyModel.getId())).withSelfRel());
+        });
+        return companyModels;
+    }
+
     public Page<CompanyModel> getAllCompanies(Pageable pageable){
-        return companyRepository.findAll(pageable);
+        Page<CompanyModel> companyModels = companyRepository.findAll(pageable);
+        companyModels.forEach(companyModel -> {
+            companyModel.add(linkTo(methodOn(CompanyController.class).getCompanyById(companyModel.getId())).withSelfRel());
+        });
+        return companyModels;
     }
 
     public CompanyModel getCompanyById(Integer id){
-        return companyRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Nenhuma empresa encontrada com este ID!"));
+        CompanyModel companyModel = companyRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Nenhuma empresa encontrada com este ID!"));
+        companyModel.add(linkTo(methodOn(CompanyController.class).getCompanyById(companyModel.getId())).withSelfRel());
+        return companyModel;
     }
 
     public CompanyModel putCompany(Integer companyId, CompanyUpdateRecord companyRecord){
@@ -57,6 +72,7 @@ public class  CompanyService {
         companyModel.setNumberCompany2(companyRecord.numberCompany2());
         companyModel.setEmailCompany(companyRecord.emailCompany());
         companyRepository.save(companyModel);
+        companyModel.add(linkTo(methodOn(CompanyController.class).getCompanyById(companyModel.getId())).withSelfRel());
         return companyModel;
     }
 
@@ -67,6 +83,7 @@ public class  CompanyService {
         String placeId = addressService.getPlaceIdApiMaps(addressRecord);
         companyModel.setIdLocalCompanyMaps(placeId);
         companyRepository.save(companyModel);
+        companyModel.add(linkTo(methodOn(CompanyController.class).getCompanyById(companyModel.getId())).withSelfRel());
         return companyModel;
     }
 

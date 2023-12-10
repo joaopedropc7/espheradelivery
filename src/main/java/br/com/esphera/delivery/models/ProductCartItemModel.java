@@ -2,12 +2,13 @@ package br.com.esphera.delivery.models;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
+import org.springframework.hateoas.RepresentationModel;
 
 import java.util.Objects;
 
 @Entity
 @Table(name = "productcartitem")
-public class ProductCartItemModel {
+public class ProductCartItemModel extends RepresentationModel<ProductCartItemModel> {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

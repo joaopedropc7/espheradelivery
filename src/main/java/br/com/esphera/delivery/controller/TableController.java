@@ -66,9 +66,7 @@ public class TableController {
                     @ApiResponse(description = "Internal Error", responseCode = "500", content = @Content),
             }
     )
-    public ResponseEntity<TableModel> getTableById(@PathVariable(value = "tableId") Integer tableId, HttpServletRequest request){
-        String token = tokenService.recoverToken(request);
-        Integer companyId = tokenService.getCompanyIdFromToken(token);
+    public ResponseEntity<TableModel> getTableById(@PathVariable(value = "tableId") Integer tableId){
         return ResponseEntity.ok().body(tableService.getTableById(tableId));
     }
 

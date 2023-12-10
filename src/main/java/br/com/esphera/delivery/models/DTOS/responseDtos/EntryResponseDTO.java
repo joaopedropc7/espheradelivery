@@ -4,6 +4,7 @@ import br.com.esphera.delivery.models.ProductEntryItemModel;
 import br.com.esphera.delivery.models.ProductEntryModel;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
+import org.springframework.hateoas.Links;
 
 import java.util.List;
 
@@ -15,7 +16,8 @@ public record EntryResponseDTO(
         Integer quantityAllProducts,
         Boolean entryCanceled,
         List<ProductEntryItemModel> products,
-        Integer companyId
+        Integer companyId,
+        Links links
 ) {
     public EntryResponseDTO(ProductEntryModel entryModel) {
         this(
@@ -26,7 +28,8 @@ public record EntryResponseDTO(
                 entryModel.getQuantityAllProducts(),
                 entryModel.getEntryCanceled(),
                 entryModel.getProducts(),
-                entryModel.getCompanyModel().getId()
+                entryModel.getCompanyModel().getId(),
+                entryModel.getLinks()
         );
     }
 

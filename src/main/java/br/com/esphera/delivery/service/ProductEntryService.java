@@ -1,5 +1,6 @@
 package br.com.esphera.delivery.service;
 
+import br.com.esphera.delivery.controller.EntryProductsController;
 import br.com.esphera.delivery.exceptions.ResourceNotFoundException;
 import br.com.esphera.delivery.models.CompanyModel;
 import br.com.esphera.delivery.models.DTOS.ProductEntryRecord;
@@ -13,6 +14,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -57,16 +60,22 @@ public class ProductEntryService {
             productEntryItemModel.setEntryModel(entryModel);
             productEntryItemModelRepository.save(productEntryItemModel);
             });
+        entryModel.add(linkTo(methodOn(EntryProductsController.class).getEntryById(entryModel.getId())).withSelfRel());
         return entryModel;
     }
 
     public Page<ProductEntryModel> findByCompanyId(Integer companyId, Pageable pageable){
         CompanyModel companyModel = companyService.getCompanyById(companyId);
-        return entryRepository.findProductEntryModelsByCompanyModel(companyModel, pageable);
+        Page<ProductEntryModel> entrys = entryRepository.findProductEntryModelsByCompanyModel(companyModel, pageable);
+        entrys.forEach(entry -> {
+            entry.add(linkTo(methodOn(EntryProductsController.class).getEntryById(entry.getId())).withSelfRel());
+        });
+        return entrys;
     }
 
     public ProductEntryModel findById(Integer id){
         ProductEntryModel productEntryModel = entryRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Não foi encontrado entradas com o id: " + id));
+        productEntryModel.add(linkTo(methodOn(EntryProductsController.class).getEntryById(productEntryModel.getId())).withSelfRel());
         return productEntryModel;
     }
 
@@ -82,6 +91,9 @@ public class ProductEntryService {
         CompanyModel companyModel = companyService.getCompanyById(companyId);
         ProductEntryModel productEntryModel = findById(entryId);
         List<ProductEntryItemModel> productsEntry = productEntryItemModelRepository.findProductEntryItemModelsByCompanyModelAndEntryModel(companyModel, productEntryModel);
+        productsEntry.forEach(productEntryItemModel -> {
+            productEntryItemModel.add(linkTo(methodOn(EntryProductsController.class).getEntryById(productEntryModel.getId())).withSelfRel());
+        });
         return productsEntry;
     }
 
