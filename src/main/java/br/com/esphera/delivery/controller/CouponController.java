@@ -14,6 +14,10 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -121,11 +125,13 @@ public class CouponController {
             }
     )
     @SecurityRequirement(name = "Bearer Authentication")
-    public ResponseEntity<List<CouponResponseDTO>> findCouponsByCompany(HttpServletRequest request){
+    public ResponseEntity<Page<CouponResponseDTO>> findCouponsByCompany(HttpServletRequest request, @RequestParam(value = "page", defaultValue = "0") Integer page, @RequestParam(value = "limit", defaultValue = "12") Integer limit, @RequestParam(value = "direction", defaultValue = "asc") String direction){
         String token = tokenService.recoverToken(request);
         Integer companyId = tokenService.getCompanyIdFromToken(token);
-        List<CouponModel> coupons = couponService.findCouponsByCompany(companyId);
-        List<CouponResponseDTO> couponResponseDTOS = CouponResponseDTO.convert(coupons);
+        var sortDirection = "desc".equalsIgnoreCase(direction) ? Sort.Direction.DESC : Sort.Direction.ASC;
+        Pageable pageable = PageRequest.of(page, limit, Sort.by(sortDirection, "name"));
+        Page<CouponModel> coupons = couponService.findCouponsByCompany(companyId, pageable);
+        Page<CouponResponseDTO> couponResponseDTOS = CouponResponseDTO.convert(coupons);
         return ResponseEntity.ok().body(couponResponseDTOS);
     }
 
@@ -151,29 +157,5 @@ public class CouponController {
         return ResponseEntity.ok().body(valuePercent);
     }
 
-    @GetMapping("/local/{idLocal}")
-    @Operation(summary = "Find a coupon by localID", description = "Find a coupon by localID",
-            tags = {"Coupon"},
-            responses = {
-                    @ApiResponse(description = "Success", responseCode = "200",
-                            content = {
-                                    @Content(
-                                            mediaType = "application/json",
-                                            array = @ArraySchema(schema = @Schema(implementation = CouponModel.class))
-                                    )
-                            }),
-                    @ApiResponse(description = "Bad Request", responseCode = "400", content = @Content),
-                    @ApiResponse(description = "Unauthorized", responseCode = "401", content = @Content),
-                    @ApiResponse(description = "Not Found", responseCode = "404", content = @Content),
-                    @ApiResponse(description = "Internal Error", responseCode = "500", content = @Content),
-            }
-    )
-    public ResponseEntity<CouponResponseDTO> getCouponByLocalId(@PathVariable(value = "idLocal")Integer idLocal,HttpServletRequest request){
-        String token = tokenService.recoverToken(request);
-        Integer companyId = tokenService.getCompanyIdFromToken(token);
-        CouponModel couponModel = couponService.getCouponByLocalIdAndCompany(idLocal, companyId);
-        CouponResponseDTO couponResponseDTO = new CouponResponseDTO(couponModel);
-        return ResponseEntity.ok().body(couponResponseDTO);
-    }
 
 }

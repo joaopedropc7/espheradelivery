@@ -15,7 +15,6 @@ public class CouponModel {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
-    private Integer idLocalCoupon;
     @ManyToOne
     @JoinColumn(name = "company_id")
     @JsonIgnore
@@ -30,8 +29,7 @@ public class CouponModel {
     private Integer numberUsesAllowed;
     private Boolean active;
 
-    public CouponModel(CreateCouponDTO dto, CompanyModel companyModel, Integer lastInsert){
-        this.idLocalCoupon = lastInsert + 1;
+    public CouponModel(CreateCouponDTO dto, CompanyModel companyModel){
         this.companyModel = companyModel;
         this.name = dto.name();
         this.percentDiscount = dto.percentDiscount();
@@ -136,12 +134,5 @@ public class CouponModel {
         this.active = active;
     }
 
-    public Integer getIdLocalCoupon() {
-        return idLocalCoupon;
-    }
-
-    public void setIdLocalCoupon(Integer idLocalCoupon) {
-        this.idLocalCoupon = idLocalCoupon;
-    }
 }
 

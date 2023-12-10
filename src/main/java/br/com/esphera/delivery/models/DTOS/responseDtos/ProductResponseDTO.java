@@ -1,13 +1,14 @@
 package br.com.esphera.delivery.models.DTOS.responseDtos;
 
 import br.com.esphera.delivery.models.ProductModel;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.hateoas.RepresentationModel;
 
 import java.util.List;
 
 public record ProductResponseDTO(
         Integer id,
-        Integer idLocal,
         String name,
         String description,
         Double costValue,
@@ -24,7 +25,6 @@ public record ProductResponseDTO(
     public ProductResponseDTO(ProductModel productModel)  {
         this(
                 productModel.getId(),
-                productModel.getIdLocalByCompany(),
                 productModel.getName(),
                 productModel.getDescription(),
                 productModel.getCostValue(),
@@ -40,7 +40,11 @@ public record ProductResponseDTO(
         );
     }
 
-    public static List<ProductResponseDTO> convert(List<ProductModel> products) {
-        return products.stream().map(ProductResponseDTO::new).toList();
+    public static Page<ProductResponseDTO> convert(Page<ProductModel> products) {
+        List<ProductResponseDTO> productDTOs = products
+                .stream()
+                .map(ProductResponseDTO::new)
+                .toList();
+        return new PageImpl<>(productDTOs, products.getPageable(), products.getTotalElements());
     }
 }

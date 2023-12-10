@@ -10,6 +10,8 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 import br.com.esphera.delivery.repository.ProductRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -28,26 +30,23 @@ public class ProductService {
 
 
     public ProductModel createProduct(ProductRecord dto, Integer companyId){
-        Integer lastIdLocalInsert = productRepository.findMaxIdLocalByCompany(companyId);
         CompanyModel companyModel = companyService.getCompanyById(companyId);
         CategoryModel categoryModel = categoryService.findById(dto.idCategory());
-        ProductModel product = new ProductModel(dto, categoryModel, companyModel, lastIdLocalInsert);
+        ProductModel product = new ProductModel(dto, categoryModel, companyModel);
         productRepository.save(product);
         return product;
     }
 
-    public List<ProductModel> findProductsByCategory(Integer companyId, Integer categoryId){
+    public Page<ProductModel> findProductsByCategory(Integer companyId, Integer categoryId, Pageable pageable){
         CategoryModel category = categoryService.findById(categoryId);
         CompanyModel companyModel = companyService.getCompanyById(companyId);
-        System.out.println(category.getCategoryName());
-        System.out.println(companyModel.getNameContact());
-        List<ProductModel> products = productRepository.findProductModelsByCompanyModelAndCategoryModel(companyModel, category);
+        Page<ProductModel> products = productRepository.findProductModelsByCompanyModelAndCategoryModel(companyModel, category, pageable);
         return products;
     }
 
-    public List<ProductModel> findAllProducts(Integer companyId){
+    public Page<ProductModel> findAllProducts(Integer companyId, Pageable pageable){
         CompanyModel companyModel = companyService.getCompanyById(companyId);
-        List<ProductModel> products = productRepository.finddProductByComapanyId(companyModel);
+        Page<ProductModel> products = productRepository.findProductModelByCompanyModel(companyModel, pageable);
         return products;
     }
 
@@ -139,11 +138,6 @@ public class ProductService {
         ProductModel product = findById(productId);
         verifyProductBelongsCompany(product, companyId);
         return product.getImage();
-    }
-
-    public ProductModel findProductByIdLocalByCompanyAndCompanyModel(Integer idLocalByCompany, Integer companyId){
-        CompanyModel companyModel = companyService.getCompanyById(companyId);
-        return productRepository.findProductModelByIdLocalByCompanyAndCompanyModel(idLocalByCompany, companyModel);
     }
 
     public void verifyProductBelongsCompany(ProductModel productModel, Integer companyId){

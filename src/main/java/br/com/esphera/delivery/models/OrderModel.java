@@ -17,7 +17,6 @@ public class OrderModel {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
-    private Integer idLocalOrder;
     @ManyToOne
     @JoinColumn(name = "company_id")
     @JsonIgnore
@@ -49,8 +48,7 @@ public class OrderModel {
     public OrderModel() {
     }
 
-    public OrderModel(OrderCreateRecord data, ShoppingCartModel shoppingCartModel, CompanyModel companyModel, Double discount, Integer lastIdInsert) {
-        this.idLocalOrder = lastIdInsert + 1;
+    public OrderModel(OrderCreateRecord data, ShoppingCartModel shoppingCartModel, CompanyModel companyModel, Double discount ) {
         this.clientName = data.clientName();
         this.companyModel = companyModel;
         this.cpf = data.cpf();
@@ -208,13 +206,6 @@ public class OrderModel {
         this.dateFinishOrder = dateFinishOrder;
     }
 
-    public Integer getIdLocalOrder() {
-        return idLocalOrder;
-    }
-
-    public void setIdLocalOrder(Integer idLocalOrder) {
-        this.idLocalOrder = idLocalOrder;
-    }
 
     @Override
     public boolean equals(Object o) {

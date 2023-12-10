@@ -2,12 +2,13 @@ package br.com.esphera.delivery.models.DTOS.responseDtos;
 
 import br.com.esphera.delivery.models.ProductEntryItemModel;
 import br.com.esphera.delivery.models.ProductEntryModel;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 
 import java.util.List;
 
 public record EntryResponseDTO(
         Integer id,
-        Integer idLocalEntry,
         Double totalValue,
         String supplier,
         String dateEntry,
@@ -19,7 +20,6 @@ public record EntryResponseDTO(
     public EntryResponseDTO(ProductEntryModel entryModel) {
         this(
                 entryModel.getId(),
-                entryModel.getIdLocalEntry(),
                 entryModel.getTotalValue(),
                 entryModel.getSupplier(),
                 entryModel.getDateEntry().toString(),
@@ -30,7 +30,11 @@ public record EntryResponseDTO(
         );
     }
 
-    public static List<EntryResponseDTO> convert(List<ProductEntryModel> entryModels) {
-        return entryModels.stream().map(EntryResponseDTO::new).toList();
+    public static Page<EntryResponseDTO> convert(Page<ProductEntryModel> entryModels) {
+        List<EntryResponseDTO> entryResponseDTOS = entryModels
+                .stream()
+                .map(EntryResponseDTO::new)
+                .toList();
+        return new PageImpl<>(entryResponseDTOS, entryModels.getPageable(), entryModels.getTotalElements());
     }
 }

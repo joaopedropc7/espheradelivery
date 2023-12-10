@@ -1,12 +1,13 @@
 package br.com.esphera.delivery.models.DTOS.responseDtos;
 
 import br.com.esphera.delivery.models.MotoboysModel;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 
 import java.util.List;
 
 public record MotoboyResponseDTO(
         Integer idMotoboy,
-        Integer idLocalMotoboy,
         String nameMotoboy,
         String email,
         String number,
@@ -16,7 +17,6 @@ public record MotoboyResponseDTO(
     public MotoboyResponseDTO(MotoboysModel motoboysModel) {
         this(
                 motoboysModel.getId(),
-                motoboysModel.getIdLocalMotoboy(),
                 motoboysModel.getNameMotoboy(),
                 motoboysModel.getEmail(),
                 motoboysModel.getNumber(),
@@ -25,7 +25,11 @@ public record MotoboyResponseDTO(
         );
     }
 
-    public static List<MotoboyResponseDTO> convert(List<MotoboysModel> motoboysModel) {
-        return motoboysModel.stream().map(MotoboyResponseDTO::new).toList();
+    public static Page<MotoboyResponseDTO> convert(Page<MotoboysModel> motoboysModel) {
+        List<MotoboyResponseDTO> motoboyDTOs = motoboysModel
+                .stream()
+                .map(MotoboyResponseDTO::new)
+                .toList();
+        return new PageImpl<>(motoboyDTOs, motoboysModel.getPageable(), motoboysModel.getTotalElements());
     }
 }

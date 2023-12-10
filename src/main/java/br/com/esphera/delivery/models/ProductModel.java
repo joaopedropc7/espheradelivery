@@ -15,7 +15,6 @@ public class ProductModel extends RepresentationModel<ProductModel> {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
-    private Integer idLocalByCompany;
     private String name;
     @ManyToOne
     @JoinColumn(name = "category_id")
@@ -32,6 +31,7 @@ public class ProductModel extends RepresentationModel<ProductModel> {
     private Double valueBuyTotal;
     private Double valueSellTotal;
     private Boolean inactive;
+    private LocalDate dateCreated;
     @ManyToOne
     @JoinColumn(name = "company_id")
     @JsonIgnore
@@ -41,8 +41,7 @@ public class ProductModel extends RepresentationModel<ProductModel> {
     public ProductModel() {
     }
 
-    public ProductModel(ProductRecord dto, CategoryModel category, CompanyModel companyModel, Integer lastIdLocalInsert) {
-        this.idLocalByCompany = lastIdLocalInsert + 1;
+    public ProductModel(ProductRecord dto, CategoryModel category, CompanyModel companyModel ) {
         this.companyModel = companyModel;
         this.name = dto.name();
         this.categoryModel = category;
@@ -55,6 +54,7 @@ public class ProductModel extends RepresentationModel<ProductModel> {
         this.sales = 0;
         this.dateCreate = LocalDate.now();
         this.inactive = false;
+        this.dateCreated = LocalDate.now();
     }
 
 
@@ -170,12 +170,12 @@ public class ProductModel extends RepresentationModel<ProductModel> {
         this.companyModel = companyModel;
     }
 
-    public Integer getIdLocalByCompany() {
-        return idLocalByCompany;
+    public LocalDate getDateCreated() {
+        return dateCreated;
     }
 
-    public void setIdLocalByCompany(Integer idLocalByCompany) {
-        this.idLocalByCompany = idLocalByCompany;
+    public void setDateCreated(LocalDate dateCreated) {
+        this.dateCreated = dateCreated;
     }
 
     @Override
@@ -184,11 +184,11 @@ public class ProductModel extends RepresentationModel<ProductModel> {
         if (o == null || getClass() != o.getClass()) return false;
         if (!super.equals(o)) return false;
         ProductModel that = (ProductModel) o;
-        return Objects.equals(id, that.id) && Objects.equals(idLocalByCompany, that.idLocalByCompany) && Objects.equals(name, that.name) && Objects.equals(categoryModel, that.categoryModel) && Objects.equals(description, that.description) && Objects.equals(image, that.image) && Objects.equals(costValue, that.costValue) && Objects.equals(valueSell, that.valueSell) && Objects.equals(quantity, that.quantity) && Objects.equals(sales, that.sales) && Objects.equals(dateCreate, that.dateCreate) && Objects.equals(valueBuyTotal, that.valueBuyTotal) && Objects.equals(valueSellTotal, that.valueSellTotal) && Objects.equals(inactive, that.inactive) && Objects.equals(companyModel, that.companyModel);
+        return Objects.equals(id, that.id) && Objects.equals(name, that.name) && Objects.equals(categoryModel, that.categoryModel) && Objects.equals(description, that.description) && Objects.equals(image, that.image) && Objects.equals(costValue, that.costValue) && Objects.equals(valueSell, that.valueSell) && Objects.equals(quantity, that.quantity) && Objects.equals(sales, that.sales) && Objects.equals(dateCreate, that.dateCreate) && Objects.equals(valueBuyTotal, that.valueBuyTotal) && Objects.equals(valueSellTotal, that.valueSellTotal) && Objects.equals(inactive, that.inactive) && Objects.equals(companyModel, that.companyModel);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(super.hashCode(), id, idLocalByCompany, name, categoryModel, description, image, costValue, valueSell, quantity, sales, dateCreate, valueBuyTotal, valueSellTotal, inactive, companyModel);
+        return Objects.hash(super.hashCode(), id, name, categoryModel, description, image, costValue, valueSell, quantity, sales, dateCreate, valueBuyTotal, valueSellTotal, inactive, companyModel);
     }
 }

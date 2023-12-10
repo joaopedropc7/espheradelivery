@@ -8,6 +8,8 @@ import br.com.esphera.delivery.models.DTOS.CommandsTableRecords.RequestCommandsB
 import br.com.esphera.delivery.models.TableModel;
 import br.com.esphera.delivery.repository.CommandsTableRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
@@ -31,9 +33,8 @@ public class CommandsTableService {
     private ProductService productService;
 
     public CommandsTableModel createCommandsTable(CommandsTableRecord commandsTableRecord, Integer companyId) {
-        Integer lastIdInsert = commandsTableRepository.findMaxIdLocalByCompany(companyId);
         TableModel tableModel = tableService.getTableById(commandsTableRecord.tableId());
-        CommandsTableModel commandsTableModel = new CommandsTableModel(tableModel.getCompanyModel(), tableModel, commandsTableRecord.paymentsMethod(), commandsTableRecord.observation(), lastIdInsert);
+        CommandsTableModel commandsTableModel = new CommandsTableModel(tableModel.getCompanyModel(), tableModel, commandsTableRecord.paymentsMethod(), commandsTableRecord.observation());
         tableService.clearTable(tableModel.getId());
         commandsTableModel.getProductsTable().stream().forEach(productTable -> {
             productService.sellProduct(productTable.getProduct(), productTable.getQuantity());
@@ -45,22 +46,18 @@ public class CommandsTableService {
         return commandsTableRepository.findById(commandsTableId).orElseThrow(() -> new ResourceNotFoundException("Comanda não encontrada!"));
     }
 
-    public List<CommandsTableModel> getCommandsTableByCompany(Integer companyId) {
+    public Page<CommandsTableModel> getCommandsTableByCompany(Integer companyId, Pageable pageable) {
         CompanyModel companyModel = companyService.getCompanyById(companyId);
-        return commandsTableRepository.findCommandsTableModelByCompanyModel(companyModel);
+        return commandsTableRepository.findCommandsTableModelByCompanyModel(companyModel, pageable);
     }
 
-   public List<CommandsTableModel> getCommandsTableBetwennAndByCompany(Integer companyId, RequestCommandsBetween dtoRequest){
+   public Page<CommandsTableModel> getCommandsTableBetwennAndByCompany(Integer companyId, RequestCommandsBetween dtoRequest, Pageable pageable){
         CompanyModel companyModel = companyService.getCompanyById(companyId);
         LocalDate dateStart = LocalDate.parse(dtoRequest.dateStart());
         LocalDate dateEnd = LocalDate.parse(dtoRequest.dateEnd());
-        return commandsTableRepository.findCommandsTableModelByDateCommandBetweenAndCompanyModel(dateStart, dateEnd, companyModel);
+        return commandsTableRepository.findCommandsTableModelByDateCommandBetweenAndCompanyModel(dateStart, dateEnd, companyModel, pageable);
    }
 
-   public CommandsTableModel getCommandByLocalIdAndCompany(Integer idLocalCommand, Integer companyId){
-        CompanyModel companyModel = companyService.getCompanyById(companyId);
-        return commandsTableRepository.findCommandsTableModelByIdLocalCommandAndCompanyModel(idLocalCommand, companyModel);
-   }
 
    public void verifyCommandsTableBelongsCompany(CommandsTableModel commandsTableModel, Integer companyId){
        if(!commandsTableModel.getCompanyModel().getId().equals(companyId)){

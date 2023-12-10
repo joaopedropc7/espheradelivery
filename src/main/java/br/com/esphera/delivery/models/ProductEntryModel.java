@@ -15,10 +15,10 @@ public class ProductEntryModel {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
-    private Integer idLocalEntry;
     private Double totalValue;
     private String supplier;
     private LocalDate dateEntry;
+    private LocalDate dateRegister;
     private Integer quantityAllProducts;
     @OneToMany(mappedBy = "entryModel", cascade = CascadeType.ALL)
     private List<ProductEntryItemModel> products;
@@ -31,10 +31,10 @@ public class ProductEntryModel {
     public ProductEntryModel() {
     }
 
-    public ProductEntryModel(ProductEntryRecord data, List<ProductEntryItemModel> products, CompanyModel companyModel, Integer lastInsert) {
-        this.idLocalEntry = lastInsert + 1;
+    public ProductEntryModel(ProductEntryRecord data, List<ProductEntryItemModel> products, CompanyModel companyModel ) {
         this.companyModel = companyModel;
         this.totalValue = data.totalValue();
+        this.dateRegister = LocalDate.now();
         this.supplier = data.supplier();
         this.dateEntry = LocalDate.parse(data.dateEntry());
         this.quantityAllProducts = data.quantityAllProducts();
@@ -106,12 +106,12 @@ public class ProductEntryModel {
         this.companyModel = companyModel;
     }
 
-    public Integer getIdLocalEntry() {
-        return idLocalEntry;
+    public LocalDate getDateRegister() {
+        return dateRegister;
     }
 
-    public void setIdLocalEntry(Integer idLocalEntry) {
-        this.idLocalEntry = idLocalEntry;
+    public void setDateRegister(LocalDate dateRegister) {
+        this.dateRegister = dateRegister;
     }
 
     @Override

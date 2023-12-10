@@ -3,6 +3,8 @@ package br.com.esphera.delivery.repository;
 import br.com.esphera.delivery.models.CategoryModel;
 import br.com.esphera.delivery.models.CompanyModel;
 import br.com.esphera.delivery.models.ProductModel;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -11,13 +13,8 @@ import java.util.List;
 
 public interface ProductRepository extends JpaRepository<ProductModel, Integer> {
 
-    List<ProductModel> findProductModelsByCompanyModelAndCategoryModel(CompanyModel companyModel, CategoryModel categoryModel);
+    Page<ProductModel> findProductModelsByCompanyModelAndCategoryModel(CompanyModel companyModel, CategoryModel categoryModel, Pageable pageable);
 
-    @Query("select p from ProductModel p WHERE p.companyModel = :companyModel")
-    List<ProductModel> finddProductByComapanyId(CompanyModel companyModel);
+    Page<ProductModel> findProductModelByCompanyModel(CompanyModel companyModel, Pageable pageable);
 
-    @Query("SELECT COALESCE(MAX(p.idLocalByCompany), 0) FROM ProductModel p WHERE p.companyModel.id = :companyId")
-    Integer findMaxIdLocalByCompany(@Param("companyId") Integer companyId);
-
-    ProductModel findProductModelByIdLocalByCompanyAndCompanyModel(Integer idLocalByCompany, CompanyModel companyModel);
 }

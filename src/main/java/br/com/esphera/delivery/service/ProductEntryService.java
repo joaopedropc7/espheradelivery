@@ -10,6 +10,8 @@ import br.com.esphera.delivery.repository.ProductEntryItemModelRepository;
 import br.com.esphera.delivery.repository.ProductEntryRepository;
 import br.com.esphera.delivery.validations.entry.ValidationEntry;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -48,8 +50,7 @@ public class ProductEntryService {
             productsEntryModel.add(productEntryItemModel);
             productsModel.add(productModel);
         });
-        Integer lastInsert = entryRepository.findMaxIdLocalByCompany(companyId);
-        ProductEntryModel entryModel = new ProductEntryModel(data, productsEntryModel, companyModel, lastInsert);
+        ProductEntryModel entryModel = new ProductEntryModel(data, productsEntryModel, companyModel);
         entryRepository.save(entryModel);
         productService.addQuantityInProduct(productsEntryModel);
         productsEntryModel.forEach(productEntryItemModel -> {
@@ -59,9 +60,9 @@ public class ProductEntryService {
         return entryModel;
     }
 
-    public List<ProductEntryModel> findByCompanyId(Integer companyId){
+    public Page<ProductEntryModel> findByCompanyId(Integer companyId, Pageable pageable){
         CompanyModel companyModel = companyService.getCompanyById(companyId);
-        return entryRepository.findProductEntryModelsByCompanyModel(companyModel);
+        return entryRepository.findProductEntryModelsByCompanyModel(companyModel, pageable);
     }
 
     public ProductEntryModel findById(Integer id){
@@ -84,11 +85,6 @@ public class ProductEntryService {
         return productsEntry;
     }
 
-    public ProductEntryModel getEntryByLocalId(Integer companyId, Integer entryLocalId){
-        CompanyModel companyModel = companyService.getCompanyById(companyId);
-        ProductEntryModel productEntryModel = entryRepository.findProductEntryModelByIdLocalEntryAndCompanyModel(entryLocalId, companyModel);
-        return productEntryModel;
-    }
 
     public void verifyBelongCompany(Integer companyId, ProductEntryModel productEntryModel){
         if(!productEntryModel.getCompanyModel().getId().equals(companyId)){

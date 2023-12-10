@@ -11,6 +11,8 @@ import br.com.esphera.delivery.repository.ShoppingCartRepository;
 import br.com.esphera.delivery.validations.sells.ValidationSales;
 import jakarta.persistence.criteria.Order;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -50,8 +52,7 @@ public class OrderService {
             discount = couponService.getDiscountByCoupon(data.couponName(), companyId);
             if(discount == null)throw new ResourceNotFoundException("Cupom inválido");
         }
-        Integer lastIdInsert = orderRepository.findMaxIdLocalByCompany(companyId);
-        OrderModel orderModel = new OrderModel(data, shoppingCartModel, companyModel, discount, lastIdInsert);
+        OrderModel orderModel = new OrderModel(data, shoppingCartModel, companyModel, discount);
         orderRepository.save(orderModel);
         if(data.typeDelivery() == TypeDelivery.DELIVERY){
             DeliveryRecord deliveryRecord = new DeliveryRecord(orderModel, data.addressRecord());
@@ -71,9 +72,9 @@ public class OrderService {
         return orderModel;
     }
 
-    public List<OrderModel> findAllSells(Integer idCompany){
+    public Page<OrderModel> findAllSells(Integer idCompany, Pageable pageable){
         CompanyModel companyModel = companyService.getCompanyById(idCompany);
-        List<OrderModel> sells = orderRepository.findOrderModelsByCompanyModel(companyModel);
+        Page<OrderModel> sells = orderRepository.findOrderModelsByCompanyModel(companyModel, pageable);
         return sells;
     }
 
@@ -97,9 +98,9 @@ public class OrderService {
         companyService.reverseValueGenerated(orderModel.getCompanyModel() ,orderModel.getSellValueWithDiscount());
     }
 
-    public List<OrderModel> findByStatusOrder(StatusOrder statusOrder, Integer companyId){
+    public Page<OrderModel> findByStatusOrder(StatusOrder statusOrder, Integer companyId, Pageable pageable){
         CompanyModel companyModel = companyService.getCompanyById(companyId);
-        List<OrderModel> orderModels = orderRepository.findByStatusOrderAndCompanyModel(statusOrder, companyModel);
+        Page<OrderModel> orderModels = orderRepository.findByStatusOrderAndCompanyModel(statusOrder, companyModel, pageable);
         return orderModels;
     }
 
@@ -149,12 +150,5 @@ public class OrderService {
             throw new ResourceNotFoundException("Este pedido não pertence a esta empresa");
         }
     }
-
-    public OrderModel findOrderByLocalIdAndCompany(Integer idLocalOrder, Integer companyId){
-        CompanyModel companyModel = companyService.getCompanyById(companyId);
-        OrderModel orderModel = orderRepository.findOrderModelByIdLocalOrderAndCompanyModel(idLocalOrder, companyModel);
-        return orderModel;
-    }
-
 
 }

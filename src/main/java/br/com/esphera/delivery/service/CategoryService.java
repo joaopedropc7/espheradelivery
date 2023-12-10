@@ -8,6 +8,8 @@ import br.com.esphera.delivery.models.DTOS.CategoryRecord;
 import br.com.esphera.delivery.models.DTOS.responseDtos.CategoryResponseDTO;
 import br.com.esphera.delivery.repository.CategoryRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
@@ -24,15 +26,14 @@ public class CategoryService {
     private CompanyService companyService;
 
     public CategoryModel createCategory(CategoryRecord categoryRecord, Integer companyId){
-        Integer lastIdCategoryInsert = categoryRepository.findMaxIdLocalByCompany(companyId);
         CompanyModel companyModel = companyService.getCompanyById(companyId);
-        CategoryModel categoryModel = new CategoryModel(categoryRecord, companyModel, lastIdCategoryInsert);
+        CategoryModel categoryModel = new CategoryModel(categoryRecord, companyModel);
         categoryRepository.save(categoryModel);
         return categoryModel;
     }
 
-    public List<CategoryModel> findAllCategorys(Integer idCompany){
-        List<CategoryModel> categorys = categoryRepository.findCategoryModelByCompanyModel(companyService.getCompanyById(idCompany));
+    public Page<CategoryModel> findAllCategorys(Integer idCompany, Pageable pageable){
+        Page<CategoryModel> categorys = categoryRepository.findCategoryModelByCompanyModel(companyService.getCompanyById(idCompany), pageable);
         return categorys;
     }
 
@@ -61,11 +62,5 @@ public class CategoryService {
         if(!categoryModel.getCompanyModel().getId().equals(companyId)){
             throw new ResourceNotFoundException("Categoria não pertence a empresa!");
         }
-    }
-
-    public CategoryModel findCategoryByIdLocalCategoryAndCompanyModel(Integer idLocalCategory, Integer companyId){
-        CompanyModel companyModel = companyService.getCompanyById(companyId);
-        CategoryModel categoryModel = categoryRepository.findCategoryModelByIdLocalCategoryAndCompanyModel(idLocalCategory, companyModel);
-        return categoryModel;
     }
 }

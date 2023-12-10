@@ -6,6 +6,8 @@ import br.com.esphera.delivery.models.CouponModel;
 import br.com.esphera.delivery.models.DTOS.CreateCouponDTO;
 import br.com.esphera.delivery.repository.CouponRespository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -21,10 +23,9 @@ public class CouponService {
     private CompanyService companyService;
 
     public CouponModel createdCoupon(CreateCouponDTO dto, Integer companyId){
-        Integer lastInsert = couponRespository.findMaxIdLocalByCompany(companyId);
         CompanyModel companyModel = companyService.getCompanyById(companyId);
         if (couponRespository.findCouponModelByNameAndCompanyModel(dto.name(), companyModel) != null) throw new ResourceNotFoundException("Já existe um cupom come este nome.");
-        CouponModel couponModel = new CouponModel(dto, companyModel, lastInsert);
+        CouponModel couponModel = new CouponModel(dto, companyModel);
         return couponRespository.save(couponModel);
     }
 
@@ -50,15 +51,11 @@ public class CouponService {
         couponRespository.save(couponModel);
     }
 
-    public List<CouponModel> findCouponsByCompany(Integer companyId){
+    public Page<CouponModel> findCouponsByCompany(Integer companyId, Pageable pageable){
         CompanyModel companyModel = companyService.getCompanyById(companyId);
-        return couponRespository.findCouponModelByCompanyModel(companyModel);
+        return couponRespository.findCouponModelByCompanyModel(companyModel, pageable);
     }
 
-    public CouponModel getCouponByLocalIdAndCompany(Integer idLocalCoupon, Integer companyId){
-        CompanyModel companyModel = companyService.getCompanyById(companyId);
-        return couponRespository.findCouponModelByIdLocalCouponAndCompanyModel(idLocalCoupon, companyModel);
-    }
 
     public void verifyCouponBelongsToCompany(CouponModel couponModel, Integer companyId){
         if(!couponModel.getCompanyModel().getId().equals(companyId)) throw new ResourceNotFoundException("Este cupom não pertence a esta empresa!");

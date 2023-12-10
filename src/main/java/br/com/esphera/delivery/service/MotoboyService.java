@@ -6,6 +6,8 @@ import br.com.esphera.delivery.models.DTOS.MotoboyRecord;
 import br.com.esphera.delivery.models.MotoboysModel;
 import br.com.esphera.delivery.repository.MotoboyRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -20,9 +22,8 @@ public class MotoboyService {
     private CompanyService companyService;
 
     public MotoboysModel createMotoboy(MotoboyRecord dto, Integer companyId){
-        Integer lastIdInsert = motoboyRepository.findMaxIdLocalByCompany(companyId);
         CompanyModel companyModel = companyService.getCompanyById(companyId);
-        MotoboysModel motoboysModel = new MotoboysModel(dto, companyModel, lastIdInsert);
+        MotoboysModel motoboysModel = new MotoboysModel(dto, companyModel);
         motoboyRepository.save(motoboysModel);
         return motoboysModel;
     }
@@ -32,9 +33,9 @@ public class MotoboyService {
         return motoboysModel;
     }
 
-    public List<MotoboysModel> findAllMotoboysByCompanyId(Integer companyId){
+    public Page<MotoboysModel> findAllMotoboysByCompanyId(Integer companyId, Pageable pageable){
         CompanyModel companyModel = companyService.getCompanyById(companyId);
-        List<MotoboysModel> motoboysModel = motoboyRepository.findAllByCompanyModel(companyModel);
+        Page<MotoboysModel> motoboysModel = motoboyRepository.findAllByCompanyModel(companyModel, pageable);
         return motoboysModel;
     }
 
@@ -76,12 +77,6 @@ public class MotoboyService {
     public void decrementDeliveryQuantity(MotoboysModel motoboysModel){
         motoboysModel.setQuantityDelivered(motoboysModel.getQuantityDelivered() - 1);
         motoboyRepository.save(motoboysModel);
-    }
-
-    public MotoboysModel findMotoboyByIdLocalAndCompany(Integer idLocalMotoboy, Integer companyId){
-        CompanyModel companyModel = companyService.getCompanyById(companyId);
-        MotoboysModel motoboysModel = motoboyRepository.findMotoboysModelByIdLocalMotoboyAndCompanyModel(idLocalMotoboy, companyModel);
-        return motoboysModel;
     }
 
     public void verifyBelongCompany(MotoboysModel  motoboysModel, Integer companyId){
