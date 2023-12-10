@@ -27,7 +27,6 @@ public class SecurityConfigurations {
             "/swagger-resources/**",
             "/swagger-ui/**",
             "/v3/api-docs/**",
-            "/api/v1/app/user/auth/**",
             "/api/cart/**",
             "/api/product/find/**",
             "/api/product/{companyId}/{categoryId}",
@@ -41,9 +40,9 @@ public class SecurityConfigurations {
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers(HttpMethod.POST, "api/authentication/login").permitAll()
-                        .requestMatchers(HttpMethod.POST, "api/authentication/register").permitAll()
+                        .requestMatchers(HttpMethod.POST, "api/authentication/register").hasRole("ADMIN")
                         .requestMatchers(AUTH_WHITELIST).permitAll()
-                        .anyRequest().permitAll()
+                        .anyRequest().authenticated()
                 )
                 .addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();

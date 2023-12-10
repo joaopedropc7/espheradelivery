@@ -38,7 +38,7 @@ public class UserModel implements UserDetails {
         this.password = passwordEncrypted;
         this.numberCellphone = registerDTO.numberCellphone();
         this.company = companyModel;
-        this.role = UserRole.USER;
+        this.role = registerDTO.role();
         this.inactive = false;
     }
 
