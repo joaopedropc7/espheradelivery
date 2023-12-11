@@ -1,0 +1,36 @@
+version: '3.9'
+services:
+  db:
+    image: postgres
+    restart: always
+    environment:
+      TZ: America/Sao_Paulo
+      POSTGRES_PASSWORD: root
+      POSTGRES_USER: postgres
+      POSTGRES_DB: deliveryesphera
+    ports:
+      - 5434:5434
+    expose:
+      - 5434
+    networks:
+      - esphera-network
+  deliveryesphera:
+    image: jpedrocunha/deliveryesphera
+    restart: always
+    build: ../espheradelivery
+    working_dir: /home/jp/Documentos/Esphera/espheradelivery
+    environment:
+      TZ: America/Sao_Paulo
+      SPRING.DATASOURCE.URL: jdbc:postgresql://db:5434/deliveryesphera
+      SPRING.DATASOURCE.USERNAME: postgres
+      SPRING.DATASOURCE.PASSWORD: root
+    ports:
+      - 3245:3245
+    command: mvn spring-boot:run
+    depends_on:
+      - db
+    networks:
+      - esphera-network
+networks:
+  esphera-network:
+    driver: bridge
