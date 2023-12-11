@@ -11,6 +11,8 @@
 ![Restful](https://img.shields.io/badge/RESTful-00FFFF?style=for-the-badge&logo=RESTful&logoColor=white)
 ![CORs](https://img.shields.io/badge/CORs-00FFFF?style=for-the-badge&logo=CORs&logoColor=white)
 
+[![Docker Hub Repo](https://img.shields.io/docker/pulls/jpedrocunha/deliveryesphera.svg)](https://hub.docker.com/repository/docker/jpedrocunha/deliveryesphera)
+
 Projeto de gerenciamento de restaurante, tem o objetivo de fornecer um PDV para fazer pedidos, entregas, compras, motoboys, cupons de desconto e calculo de valor da entrega a partir da distancia e valor por KM cadastrado.
 
 ## Objetivo
