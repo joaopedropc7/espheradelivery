@@ -6,7 +6,7 @@ services:
     environment:
       - TZ=America/Sao_Paulo
       - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=root
+      - POSTGRES_PASSWORD=admin123
       - POSTGRES_DB=deliveryesphera
     ports:
       - 5434:5434
@@ -17,13 +17,12 @@ services:
   deliveryesphera:
     image: jpedrocunha/deliveryesphera
     restart: always
-    build: ../espheradelivery
     working_dir: /home/jp/Documentos/Esphera/espheradelivery
     environment:
         - TZ=America/Sao_Paulo
         - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/deliveryesphera
         - SPRING_DATASOURCE_USERNAME=postgres
-        - SPRING_DATASOURCE_PASSWORD=root
+        - SPRING_DATASOURCE_PASSWORD=admin123
         - SPRING_JPA_HIBERNATE_DDL_AUTO=update
     ports:
       - 9999:9999
