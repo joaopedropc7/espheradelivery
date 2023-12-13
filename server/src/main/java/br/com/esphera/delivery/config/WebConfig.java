@@ -13,7 +13,7 @@ public class WebConfig implements WebMvcConfigurer {
         registry.addMapping("/**")
                 .allowedOrigins("http://localhost:3000")
                 .allowedMethods("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS", "HEAD", "TRACE", "CONNECT")
-                .allowedOriginPatterns("*")
-                .allowedHeaders("Requestor-Type");
+                .allowedOriginPatterns("http://localhost:3000")
+                .allowedHeaders("Requestor-Type", "Authorization", "Content-Type", "Accept", "Origin", "Access-Control-Request-Method", "Access-Control-Request-Headers", "Access-Control-Allow-Origin");
     }
 }

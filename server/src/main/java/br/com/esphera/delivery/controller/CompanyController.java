@@ -1,9 +1,11 @@
 package br.com.esphera.delivery.controller;
 
+import br.com.esphera.delivery.infra.security.TokenService;
 import br.com.esphera.delivery.models.CompanyModel;
 import br.com.esphera.delivery.models.DTOS.CompanyRecord;
 import br.com.esphera.delivery.models.DTOS.CompanyUpdateRecord;
 import br.com.esphera.delivery.models.DTOS.AddressRecord;
+import br.com.esphera.delivery.models.DTOS.responseDtos.CompanyInfoResponseDTO;
 import br.com.esphera.delivery.models.ProductModel;
 import br.com.esphera.delivery.service.CompanyService;
 import br.com.esphera.delivery.service.ConfigsCompanyService;
@@ -12,6 +14,8 @@ import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -28,7 +32,10 @@ public class CompanyController {
 
     @Autowired
     private CompanyService companyService;
-
+    @Autowired
+    private TokenService tokenService;
+    @Autowired
+    private FIleController fIleController;
     @Autowired
     private ConfigsCompanyService configsCompanyService;
 
@@ -126,7 +133,7 @@ public class CompanyController {
         return ResponseEntity.ok().body(companyModel);
     }
 
-    @GetMapping("/info}")
+    @GetMapping("/info")
     @Operation(summary = "Get a company info by id", description = "Get a company info by id",
             tags = {"Company"},
             responses = {
@@ -143,9 +150,14 @@ public class CompanyController {
                     @ApiResponse(description = "Internal Error", responseCode = "500", content = @Content),
             }
     )
-    public ResponseEntity<CompanyModel> getCompanyInfoById(@PathVariable(value = "id") Integer id){
-        CompanyModel companyModel = companyService.getCompanyById(id);
-        return ResponseEntity.ok().body(companyModel);
+    @SecurityRequirement(name = "Bearer Authentication")
+    public ResponseEntity<CompanyInfoResponseDTO> getCompanyInfoById(HttpServletRequest request){
+        String token = tokenService.recoverToken(request);
+        Integer companyId = tokenService.getCompanyIdFromToken(token);
+        CompanyModel companyModel = companyService.getCompanyById(companyId);
+
+        CompanyInfoResponseDTO companyInfoResponseDTO = new CompanyInfoResponseDTO(companyModel);
+        return ResponseEntity.ok().body(companyInfoResponseDTO);
     }
 
     @PutMapping("/{id}")

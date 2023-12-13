@@ -147,9 +147,8 @@ public class ProductService {
         productRepository.save(product);
     }
 
-    public FileEntity getImageProduct(Integer productId, Integer companyId){
+    public FileEntity getImageProduct(Integer productId){
         ProductModel product = findById(productId);
-        verifyProductBelongsCompany(product, companyId);
         return product.getImage();
     }
 

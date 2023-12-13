@@ -63,21 +63,32 @@ public class FileStorageService {
         }
     }
 
-    public FileEntity loadFileAsResource(Integer idEntity, EntityRequestImage entityRequestImage, Integer companyId) {
-        try {
-            if (entityRequestImage == EntityRequestImage.PRODUCT) {
-                return productService.getImageProduct(idEntity, companyId);
-            } else if (entityRequestImage == EntityRequestImage.COMPANYBANNER) {
-                return companyService.getBannerImageCompany(idEntity);
-            } else if (entityRequestImage == EntityRequestImage.COMPANYLOGO) {
-                return companyService.getLogoImageCompany(idEntity);
-            }
-            throw new MyFileNotFoundException("Erro na requisicao do arquivo");
 
+    public Resource loadProductImage(Integer productId) {
+        try {
+            FileEntity fileEntity = productService.getImageProduct(productId);
+            return new ByteArrayResource(fileEntity.getData());
         } catch (Exception e) {
             throw new MyFileNotFoundException("Arquivo não encontrado ");
         }
+    }
 
+    public Resource loadBannerCompany(Integer companyId) {
+        try {
+            FileEntity fileEntity = companyService.getBannerImageCompany(companyId);
+            return new ByteArrayResource(fileEntity.getData());
+        } catch (Exception e) {
+            throw new MyFileNotFoundException("Arquivo não encontrado ");
+        }
+    }
+
+    public FileEntity loadCompanyLogo(Integer idCompany) {
+        try {
+            FileEntity fileEntity = companyService.getLogoImageCompany(idCompany);
+            return fileEntity;
+        } catch (Exception e) {
+            throw new MyFileNotFoundException("Arquivo não encontrado ");
+        }
     }
 
 }

@@ -16,6 +16,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.transaction.Transactional;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.juli.logging.Log;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,6 +29,9 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.List;
 import java.util.logging.Logger;
@@ -47,20 +51,7 @@ public class FIleController {
 
     @PostMapping("/uploadFile/{EntityRequestImage}/{idEntity}")
     @Operation(summary = "Upload image entity", description = "Upload image entity",
-            tags = {"Files"},
-            responses = {
-                    @ApiResponse(description = "Success", responseCode = "200",
-                            content = {
-                                    @Content(
-                                            mediaType = "application/json",
-                                            array = @ArraySchema(schema = @Schema(implementation = FileEntity.class))
-                                    )
-                            }),
-                    @ApiResponse(description = "Bad Request", responseCode = "400", content = @Content),
-                    @ApiResponse(description = "Unauthorized", responseCode = "401", content = @Content),
-                    @ApiResponse(description = "Not Found", responseCode = "404", content = @Content),
-                    @ApiResponse(description = "Internal Error", responseCode = "500", content = @Content),
-            }
+            tags = {"Files"}
     )
     @SecurityRequirement(name = "Bearer Authentication")
     public UploadFileResponse uploadFile(@RequestParam("file")MultipartFile file, @PathVariable(value = "EntityRequestImage") EntityRequestImage entityRequestImage, @PathVariable(value = "idEntity") Integer idEntity, HttpServletRequest request) {
@@ -77,37 +68,18 @@ public class FIleController {
         return new UploadFileResponse(fileName, fileDownloadUri, file.getContentType(), file.getSize());
     }
 
-    @GetMapping("/requestProductImage/{EntityRequestImage}/{entityId}")
-    @Operation(summary = "Request image passing entityId", description = "Request image passing entityId",
-            tags = {"Files"},
-            responses = {
-                    @ApiResponse(description = "Success", responseCode = "200",
-                            content = {
-                                    @Content(
-                                            mediaType = "application/json",
-                                            array = @ArraySchema(schema = @Schema(implementation = FileEntity.class))
-                                    )
-                            }),
-                    @ApiResponse(description = "Bad Request", responseCode = "400", content = @Content),
-                    @ApiResponse(description = "Unauthorized", responseCode = "401", content = @Content),
-                    @ApiResponse(description = "Not Found", responseCode = "404", content = @Content),
-                    @ApiResponse(description = "Internal Error", responseCode = "500", content = @Content),
-            }
-    )
-    @SecurityRequirement(name = "Bearer Authentication")
-    public ResponseEntity<Resource> downloadFile(@PathVariable(value = "EntityRequestImage")EntityRequestImage entityRequestImage ,@PathVariable(value = "entityId") Integer entityId, HttpServletRequest request) {
-        String token = tokenService.recoverToken(request);
-        Integer companyId = tokenService.getCompanyIdFromToken(token);
-        FileEntity fileEntity = fileStorageService.loadFileAsResource(entityId, entityRequestImage, companyId);
-        Resource resource = new ByteArrayResource(fileEntity.getData());
-        System.out.println(resource.getFilename());
-        String contentType = fileEntity.getFileType();
 
+    @GetMapping("/logo/{companyId}")
+    @Transactional
+    public ResponseEntity<Resource> loadLogoCompany(@PathVariable(value = "companyId")Integer companyId) throws IOException {
+        FileEntity fileEntity = fileStorageService.loadCompanyLogo(companyId);
+        System.out.println("PASSOU");
+        System.out.println(fileEntity.getNameFile());
+        Resource resource = new ByteArrayResource(fileEntity.getData());
+        String contentType = fileEntity.getFileType();
         return ResponseEntity.ok()
                 .contentType(MediaType.parseMediaType(contentType))
                 .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"" + resource.getFilename() + "\"")
                 .body(resource);
     }
-
-
 }

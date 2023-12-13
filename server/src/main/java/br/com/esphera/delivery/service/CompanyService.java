@@ -125,6 +125,7 @@ public class  CompanyService {
     }
 
     public FileEntity getLogoImageCompany(Integer companyId){
+        System.out.println("CAIU AQ");
         CompanyModel companyModel = getCompanyById(companyId);
         FileEntity fileEntity = companyModel.getLogoImage();
         if (fileEntity == null) throw new ResourceNotFoundException("Nenhuma imagem encontrada para esta empresa!");

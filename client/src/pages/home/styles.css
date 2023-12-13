@@ -1,0 +1,47 @@
+header{
+    width: 100%;
+    padding: 10px 10px;
+    background-color: grey;
+}
+
+header nav{
+    width: 100%;
+}
+
+header nav ul{
+    display: flex;
+    justify-content: space-between;
+}
+
+header nav ul .init{
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+    font-size: 18px;
+}
+
+header nav ul .init figure img{
+    width: 80px;
+    border-radius: 50%;
+}
+
+header nav ul .content{
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+}
+
+header nav ul li{
+    list-style: none;
+}
+
+header nav ul li a{
+    text-decoration: none;
+    color: black;
+    font-size: 18px;
+}
+
+header nav ul li a:hover{
+    color: #fff;
+    transition: 0.3s;
+}
