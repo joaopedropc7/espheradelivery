@@ -1,0 +1,33 @@
+
+spring:
+  servlet:
+    multipart:
+      enabled: true
+      file-size-threshold: 2KB
+      max-file-size: 200MB
+      max-request-size: 215MB
+  datasource:
+    url: jdbc:postgresql://localhost:5432/deliveryesphera
+    username: postgres
+    password: root
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        ddl-auto: update
+
+key:
+  maps: AIzaSyBqUk0RuC1TpLWLwYlKYbGU2EAZrOluNDA
+
+file:
+  upload-dir: /home/jp/Documentos/Esphera/uploaddir
+
+api:
+  security:
+    token:
+      secret: ${JWT_SECRET:my-secret-key}
+
+server:
+  port: 8080
