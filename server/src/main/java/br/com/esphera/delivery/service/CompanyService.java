@@ -35,8 +35,7 @@ public class  CompanyService {
 
     public CompanyModel createCompany(CompanyRecord companyDTO){
         ResponseAddressValidationMapsAPI responseAddressValidation = mapsAPi.validateAddress(companyDTO.addressRecord());
-        AddressModel addressModel = addressService.createAddress(companyDTO.addressRecord());
-        CompanyModel companyModel = new CompanyModel(companyDTO, addressModel, responseAddressValidation.result().geocode().placeId());
+        CompanyModel companyModel = new CompanyModel(companyDTO, companyDTO.addressRecord(), responseAddressValidation.result().geocode().placeId());
         companyRepository.save(companyModel);
         companyModel.add(linkTo(methodOn(CompanyController.class).getCompanyById(companyModel.getId())).withSelfRel());
         return companyModel;
@@ -78,8 +77,12 @@ public class  CompanyService {
 
     public CompanyModel putCompanyAddress(Integer companyId, AddressRecord addressRecord){
         CompanyModel companyModel = getCompanyById(companyId);
-        AddressModel addressModel = addressService.putAddress(companyModel, addressRecord);
-        companyModel.setEnderecoModel(addressModel);
+        companyModel.setLogradouro(addressRecord.logradouro());
+        companyModel.setBairro(addressRecord.bairro());
+        companyModel.setComplemento(addressRecord.complemento());
+        companyModel.setCep(addressRecord.cep());
+        companyModel.setLocalidade(addressRecord.localidade());
+        companyModel.setUF(addressRecord.UF());
         String placeId = addressService.getPlaceIdApiMaps(addressRecord);
         companyModel.setIdLocalCompanyMaps(placeId);
         companyRepository.save(companyModel);
@@ -125,7 +128,6 @@ public class  CompanyService {
     }
 
     public FileEntity getLogoImageCompany(Integer companyId){
-        System.out.println("CAIU AQ");
         CompanyModel companyModel = getCompanyById(companyId);
         FileEntity fileEntity = companyModel.getLogoImage();
         if (fileEntity == null) throw new ResourceNotFoundException("Nenhuma imagem encontrada para esta empresa!");

@@ -1,5 +1,6 @@
 package br.com.esphera.delivery.models;
 
+import br.com.esphera.delivery.models.DTOS.AddressRecord;
 import br.com.esphera.delivery.models.DTOS.CompanyRecord;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
@@ -30,9 +31,6 @@ public class CompanyModel extends RepresentationModel<CompanyModel> {
     private LocalDate dateNextPayment;
     private LocalDate expirationDateSignature;
     private Boolean signatureActive;
-    @ManyToOne
-    @JoinColumn(name = "endereco_id")
-    private AddressModel addressModel;
     private String emailCompany;
     private Boolean defaulter;
     @OneToMany
@@ -45,17 +43,24 @@ public class CompanyModel extends RepresentationModel<CompanyModel> {
     private List<ProductModel> products;
     private Double valueGenerated;
     private Boolean inactive;
-    private String idLocalCompanyMaps;
     @OneToOne(fetch = FetchType.LAZY)    @JoinColumn(name = "banner_image_id")
     private FileEntity bannerImage;
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "logo_image_id")
     private FileEntity logoImage;
+    private String logradouro;
+    private String cep;
+    private String complemento;
+    private String bairro;
+    private String localidade;
+    private String UF;
+    private String numberHouse;
+    private String idLocalCompanyMaps;
 
     public CompanyModel() {
     }
 
-    public CompanyModel(CompanyRecord dto, AddressModel addressModel, String placeId) {
+    public CompanyModel(CompanyRecord dto, AddressRecord addressRecord, String placeId) {
         this.nomeFantasia = dto.nomeFantasia();
         this.razaoSocial = dto.razaoSocial();
         this.cnpj = dto.cnpj();
@@ -64,15 +69,21 @@ public class CompanyModel extends RepresentationModel<CompanyModel> {
         this.numberCompany1 = dto.numberCompany1();
         this.NumberCompany2 = dto.numberCompany2();
         this.emailCompany = dto.emailCompany();
-        this.addressModel = addressModel;
         this.defaulter = false;
         this.valueGenerated = 0.0;
-        this.idLocalCompanyMaps = placeId;
         this.inactive = false;
         this.dateRegister = LocalDate.now();
         this.dateLastPayment = null;
         this.dateNextPayment = null;
         this.signatureActive = false;
+        this.logradouro = addressRecord.logradouro();
+        this.cep = addressRecord.cep();
+        this.complemento = addressRecord.complemento();
+        this.bairro = addressRecord.bairro();
+        this.localidade = addressRecord.localidade();
+        this.UF = addressRecord.UF();
+        this.numberHouse = addressRecord.numberHouse();
+        this.idLocalCompanyMaps = placeId;
     }
 
     public Integer getId() {
@@ -113,14 +124,6 @@ public class CompanyModel extends RepresentationModel<CompanyModel> {
 
     public void setNumberCompany2(String numberCompany2) {
         NumberCompany2 = numberCompany2;
-    }
-
-    public AddressModel getEnderecoModel() {
-        return addressModel;
-    }
-
-    public void setEnderecoModel(AddressModel addressModel) {
-        this.addressModel = addressModel;
     }
 
     public String getEmailCompany() {
@@ -187,13 +190,6 @@ public class CompanyModel extends RepresentationModel<CompanyModel> {
         this.nameContact = nameContact;
     }
 
-    public AddressModel getAddressModel() {
-        return addressModel;
-    }
-
-    public void setAddressModel(AddressModel addressModel) {
-        this.addressModel = addressModel;
-    }
 
     public String getIdLocalCompanyMaps() {
         return idLocalCompanyMaps;
@@ -267,17 +263,59 @@ public class CompanyModel extends RepresentationModel<CompanyModel> {
         this.signatureActive = signatureActive;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        if (!super.equals(o)) return false;
-        CompanyModel that = (CompanyModel) o;
-        return Objects.equals(id, that.id) && Objects.equals(nomeFantasia, that.nomeFantasia) && Objects.equals(razaoSocial, that.razaoSocial) && Objects.equals(cpf, that.cpf) && Objects.equals(cnpj, that.cnpj) && Objects.equals(nameContact, that.nameContact) && Objects.equals(numberCompany1, that.numberCompany1) && Objects.equals(NumberCompany2, that.NumberCompany2) && Objects.equals(addressModel, that.addressModel) && Objects.equals(emailCompany, that.emailCompany) && Objects.equals(defaulter, that.defaulter) && Objects.equals(sells, that.sells) && Objects.equals(products, that.products) && Objects.equals(valueGenerated, that.valueGenerated) && Objects.equals(inactive, that.inactive) && Objects.equals(idLocalCompanyMaps, that.idLocalCompanyMaps) && Objects.equals(bannerImage, that.bannerImage) && Objects.equals(logoImage, that.logoImage);
+    public String getLogradouro() {
+        return logradouro;
     }
 
-    @Override
-    public int hashCode() {
-        return Objects.hash(super.hashCode(), id, nomeFantasia, razaoSocial, cpf, cnpj, nameContact, numberCompany1, NumberCompany2, addressModel, emailCompany, defaulter, sells, products, valueGenerated, inactive, idLocalCompanyMaps, bannerImage, logoImage);
+    public void setLogradouro(String logradouro) {
+        this.logradouro = logradouro;
+    }
+
+    public String getCep() {
+        return cep;
+    }
+
+    public void setCep(String cep) {
+        this.cep = cep;
+    }
+
+    public String getComplemento() {
+        return complemento;
+    }
+
+    public void setComplemento(String complemento) {
+        this.complemento = complemento;
+    }
+
+    public String getBairro() {
+        return bairro;
+    }
+
+    public void setBairro(String bairro) {
+        this.bairro = bairro;
+    }
+
+    public String getLocalidade() {
+        return localidade;
+    }
+
+    public void setLocalidade(String localidade) {
+        this.localidade = localidade;
+    }
+
+    public String getUF() {
+        return UF;
+    }
+
+    public void setUF(String UF) {
+        this.UF = UF;
+    }
+
+    public String getNumberHouse() {
+        return numberHouse;
+    }
+
+    public void setNumberHouse(String numberHouse) {
+        this.numberHouse = numberHouse;
     }
 }

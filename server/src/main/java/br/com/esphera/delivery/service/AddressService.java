@@ -29,8 +29,14 @@ public class AddressService {
     }
 
     public String getPlaceIdApiMaps(AddressRecord addressRecord){
-        ResponseAddressValidationMapsAPI response = mapsAPi.validateAddress(addressRecord);
-        return response.result().geocode().placeId();
+        try{
+            ResponseAddressValidationMapsAPI response = mapsAPi.validateAddress(addressRecord);
+            System.out.println(response.result().geocode().placeId());
+            return response.result().geocode().placeId();
+        }
+        catch (Exception e){
+            throw new ResourceNotFoundException("Erro ao validar endereco!");
+        }
     }
 
     public AddressModel getAddressById(Integer addressId){
@@ -38,18 +44,6 @@ public class AddressService {
         return address;
     }
 
-    public AddressModel putAddress(CompanyModel companyModel, AddressRecord dto){
-        AddressModel address = companyModel.getAddressModel();
-        address.setLogradouro(dto.logradouro());
-        address.setBairro(dto.bairro());
-        address.setComplemento(dto.complemento());
-        address.setCep(dto.cep());
-        address.setLocalidade(dto.localidade());
-        address.setUF(dto.UF());
-        address.setNumberHouse(dto.numberHouse());
-        addressRepository.save(address);
-        return address;
-    }
 
     public DistanceDurationDTO getDistanceDelivery(CompanyModel companyModel, String localIdDestine){
         ResponseDistanceAPI response = mapsAPi.getDistanceRouteDelivery(companyModel.getIdLocalCompanyMaps(), localIdDestine);

@@ -78,10 +78,9 @@ public class OrderController {
     )
     @SecurityRequirement(name = "Bearer Authentication")
     public ResponseEntity<Page<OrderResponseDTO>> findAllSells(HttpServletRequest request, @RequestParam(value = "page", defaultValue = "0") Integer page, @RequestParam(value = "limit", defaultValue = "12") Integer limit, @RequestParam(value = "direction", defaultValue = "asc") String direction){
-        String token = tokenService.recoverToken(request);
-        Integer companyId = tokenService.getCompanyIdFromToken(token);
+        Integer companyId = tokenService.getCompanyIdFromToken(tokenService.recoverToken(request));
         var sortDirection = "asc".equalsIgnoreCase(direction) ? Sort.Direction.ASC : Sort.Direction.DESC;
-        Pageable pageable = PageRequest.of(page, limit, Sort.by(sortDirection, "orderDate"));
+        Pageable pageable = PageRequest.of(page, limit, Sort.by(sortDirection, "orderDate").descending());
         Page<OrderModel> sells = orderService.findAllSells(companyId, pageable);
         Page<OrderResponseDTO> orderResponseDTOS = OrderResponseDTO.convert(sells);
         return ResponseEntity.ok().body(orderResponseDTOS);

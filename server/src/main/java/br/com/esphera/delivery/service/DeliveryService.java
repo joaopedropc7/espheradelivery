@@ -1,6 +1,7 @@
 package br.com.esphera.delivery.service;
 
 import br.com.esphera.delivery.ApiMaps.MapsAPi;
+import br.com.esphera.delivery.controller.DeliveryController;
 import br.com.esphera.delivery.exceptions.ResourceNotFoundException;
 import br.com.esphera.delivery.models.*;
 import br.com.esphera.delivery.models.DTOS.AddressRecord;
@@ -34,16 +35,14 @@ public class DeliveryService {
     private MotoboyService motoboyService;
 
 
-    public DeliveryModel createDelivery(CompanyModel companyModel, DeliveryRecord deliveryRecord){
 
-        AddressModel addressModel = addressService.createAddress(deliveryRecord.addressRecord());
+    public DeliveryModel createDelivery(CompanyModel companyModel, DeliveryRecord deliveryRecord){
         String localId = addressService.getPlaceIdApiMaps(deliveryRecord.addressRecord());
         DistanceDurationDTO distanceDurationDTO = addressService.getDistanceDelivery(companyModel ,localId);
-        ConfigsCompanyModel configsCompany = configsCompanyService.getConfigByCompany(companyModel.getId());
-        Double valueDelivery = configsCompany.getValueKmDelivery() * distanceDurationDTO.distance();
-        DeliveryModel deliveryModel = new DeliveryModel(deliveryRecord, addressModel, distanceDurationDTO, valueDelivery);
+        Double valueKmCompany = configsCompanyService.getValueDelivery(companyModel.getId());
+        Double valueDelivery = valueKmCompany * distanceDurationDTO.distance();
+        DeliveryModel deliveryModel = new DeliveryModel(deliveryRecord, distanceDurationDTO, valueDelivery, deliveryRecord.addressRecord());
         deliveryRepository.save(deliveryModel);
-        deliveryModel.add(linkTo(methodOn(DeliveryService.class).findDeliveyById(deliveryModel.getId())).withSelfRel());
         return deliveryModel;
     }
 

@@ -73,8 +73,9 @@ public class FIleController {
     @Transactional
     public ResponseEntity<Resource> loadLogoCompany(@PathVariable(value = "companyId")Integer companyId) throws IOException {
         FileEntity fileEntity = fileStorageService.loadCompanyLogo(companyId);
-        System.out.println("PASSOU");
-        System.out.println(fileEntity.getNameFile());
+        if(fileEntity == null) {
+            throw new MyFileNotFoundException("Arquivo não encontrado!");
+        }
         Resource resource = new ByteArrayResource(fileEntity.getData());
         String contentType = fileEntity.getFileType();
         return ResponseEntity.ok()

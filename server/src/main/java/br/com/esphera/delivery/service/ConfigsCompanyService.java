@@ -46,5 +46,10 @@ public class ConfigsCompanyService {
         return configs;
     }
 
+    public Double getValueDelivery(Integer companyId){
+        ConfigsCompanyModel configsCompanyModel = getConfigByCompany(companyId);
+        return configsCompanyModel.getValueKmDelivery();
+    }
+
 
 }

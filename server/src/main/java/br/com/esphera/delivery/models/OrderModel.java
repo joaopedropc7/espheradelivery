@@ -46,6 +46,7 @@ public class OrderModel extends RepresentationModel<OrderModel> {
     private LocalDateTime dateStartOrder;
     private LocalDateTime dateFinishOrder;
 
+
     public OrderModel() {
     }
 

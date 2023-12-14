@@ -43,9 +43,12 @@ public class OrderService {
 
     @Autowired
     private CouponService couponService;
-    
+
+    @Autowired
+    private AddressService addressService;
 
     public OrderModel createSell(OrderCreateRecord data, Integer companyId){
+        addressService.getPlaceIdApiMaps(data.addressRecord());
         CompanyModel companyModel = companyService.getCompanyById(companyId);
         ShoppingCartModel shoppingCartModel = shoppingCartRepository.findById(data.shoppingCartId()).orElseThrow(() -> new ResourceNotFoundException("No records found for this id"));
         validationSales.forEach(validationSales -> validationSales.valid(data, shoppingCartModel));
@@ -61,11 +64,9 @@ public class OrderService {
             DeliveryModel deliveryModel = deliveryService.createDelivery(companyModel,deliveryRecord);
             orderModel.setDeliveryModel(deliveryModel);
             orderModel.ajustValueDelivery(deliveryModel.getValue());
-
         }else{
             orderModel.setDeliveryModel(null);
         }
-
         orderRepository.save(orderModel);
         shoppingCartModel.getProductCartItems().forEach(productCartItemModel -> {
             productService.sellProduct(productCartItemModel.getProduct(), productCartItemModel.getQuantity());

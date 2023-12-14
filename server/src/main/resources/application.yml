@@ -1,4 +1,6 @@
 
+
+
 spring:
   servlet:
     multipart:
@@ -12,6 +14,8 @@ spring:
     password: root
     driver-class-name: org.postgresql.Driver
   jpa:
+    hibernate:
+      ddl-auto: update
     database-platform: org.hibernate.dialect.PostgreSQLDialect
     properties:
       hibernate:

@@ -1,5 +1,6 @@
 package br.com.esphera.delivery.models;
 
+import br.com.esphera.delivery.models.DTOS.AddressRecord;
 import br.com.esphera.delivery.models.DTOS.DeliveryRecord;
 import br.com.esphera.delivery.models.DTOS.DistanceDurationDTO;
 import br.com.esphera.delivery.models.Enums.StatusDelivery;
@@ -24,27 +25,37 @@ public class DeliveryModel extends RepresentationModel<DeliveryModel> {
     @OneToOne
     @JoinColumn(name = "motoboy_id")
     private MotoboysModel motoboysModel;
-    @OneToOne
-    @JoinColumn(name = "address_id")
-    private AddressModel addressModel;
     private LocalDateTime dateDeliveryStart;
     private LocalDateTime dateDeliveryFinished;
     private Double value;
     private Double distance;
     private Boolean cancelled;
+    private String logradouro;
+    private String cep;
+    private String complemento;
+    private String bairro;
+    private String localidade;
+    private String UF;
+    private String numberHouse;
 
     public DeliveryModel() {
     }
 
-    public DeliveryModel(DeliveryRecord deliveryRecord, AddressModel addressModel, DistanceDurationDTO distanceDurationDTO, Double valueDelivery) {
+    public DeliveryModel(DeliveryRecord deliveryRecord, DistanceDurationDTO distanceDurationDTO, Double valueDelivery, AddressRecord addressRecord) {
         this.orderModel = deliveryRecord.orderModel();
         this.motoboysModel = null;
-        this.addressModel = addressModel;
         this.dateDeliveryStart = null;
         this.dateDeliveryFinished = null;
         this.value = valueDelivery;
         this.distance = distanceDurationDTO.distance();
         this.cancelled = false;
+        this.logradouro = addressRecord.logradouro();
+        this.cep = addressRecord.cep();
+        this.complemento = addressRecord.complemento();
+        this.bairro = addressRecord.bairro();
+        this.localidade = addressRecord.localidade();
+        this.UF = addressRecord.UF();
+        this.numberHouse = addressRecord.numberHouse();
     }
 
     public Integer getId() {
@@ -71,13 +82,6 @@ public class DeliveryModel extends RepresentationModel<DeliveryModel> {
         this.motoboysModel = motoboysModel;
     }
 
-    public AddressModel getAddressModel() {
-        return addressModel;
-    }
-
-    public void setAddressModel(AddressModel addressModel) {
-        this.addressModel = addressModel;
-    }
 
     public LocalDateTime getDateDeliveryStart() {
         return dateDeliveryStart;
@@ -119,16 +123,63 @@ public class DeliveryModel extends RepresentationModel<DeliveryModel> {
         this.cancelled = cancelled;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        DeliveryModel that = (DeliveryModel) o;
-        return Objects.equals(id, that.id) && Objects.equals(orderModel, that.orderModel) && Objects.equals(motoboysModel, that.motoboysModel) && Objects.equals(addressModel, that.addressModel) && Objects.equals(dateDeliveryStart, that.dateDeliveryStart) && Objects.equals(dateDeliveryFinished, that.dateDeliveryFinished) && Objects.equals(value, that.value) && Objects.equals(distance, that.distance);
+    public String getLogradouro() {
+        return logradouro;
     }
 
-    @Override
-    public int hashCode() {
-        return Objects.hash(id, orderModel, motoboysModel, addressModel, dateDeliveryStart, dateDeliveryFinished, value, distance);
+    public void setLogradouro(String logradouro) {
+        this.logradouro = logradouro;
     }
+
+    public String getCep() {
+        return cep;
+    }
+
+    public void setCep(String cep) {
+        this.cep = cep;
+    }
+
+    public String getComplemento() {
+        return complemento;
+    }
+
+    public void setComplemento(String complemento) {
+        this.complemento = complemento;
+    }
+
+    public String getBairro() {
+        return bairro;
+    }
+
+    public void setBairro(String bairro) {
+        this.bairro = bairro;
+    }
+
+    public String getLocalidade() {
+        return localidade;
+    }
+
+    public void setLocalidade(String localidade) {
+        this.localidade = localidade;
+    }
+
+    public String getUF() {
+        return UF;
+    }
+
+    public void setUF(String UF) {
+        this.UF = UF;
+    }
+
+    public String getNumberHouse() {
+        return numberHouse;
+    }
+
+    public void setNumberHouse(String numberHouse) {
+        this.numberHouse = numberHouse;
+    }
+    
+    
+
+
 }

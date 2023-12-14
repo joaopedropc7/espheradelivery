@@ -1,0 +1,57 @@
+.products{
+    padding: 20px;
+    display: flex;
+    width: 100%;
+}
+
+.products .listProducts{
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    align-items: center;
+    gap: 2rem;
+}
+
+.products .listProducts h2{
+    font-size: 28px;
+}
+
+.products .listProducts ul li{
+    list-style-type: none;
+    gap: 1rem;
+}
+
+.products .listProducts ul li .cardInfo{
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 20px;
+    width: 100%;
+}
+
+.products .listProducts ul li .cardInfo p{
+    width: 180px;
+    text-align: center;
+    font-size: 22px;
+}
+
+.products .listProducts ul li .cardProduct{
+    display: flex;
+    gap: 1rem;
+}
+
+.products .listProducts ul li .cardProduct p{
+    width: 180px;
+    text-align: center;
+    font-size: 18px;
+}
+
+.products .listProducts ul li .cardProduct a{
+    width: 20%;
+}
+
+
+.products .listProducts ul li .cardProduct a img{
+    width: 20px;
+    margin: 0;
+    padding: 0;
+}
