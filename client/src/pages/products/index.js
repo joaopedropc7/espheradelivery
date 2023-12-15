@@ -1,5 +1,7 @@
 import React, {useState, useEffect} from 'react';
 import { useNavigate } from 'react-router-dom'
+import Modal from 'react-modal';
+
 import './styles.css'
 
 import api from '../../services/api'
@@ -8,11 +10,16 @@ import { urlApi } from '../../services/api'
 import changeImg from '../../assets/change.png'
 import deleteImg from '../../assets/delete.png'
 
+
+
 export default function Products(){
     
     const [products, setProducts] = useState([]);
     const token = localStorage.getItem('token');
     const [companyInfo, setCompanyInfo] = useState({});
+    const [modalIsOpen, setModalIsOpen] = useState(false);
+    const [error, setError] = useState(null);
+    const [productIdToDelete, setProductIdToDelete] = useState(null);
 
     useEffect(() => {
 
@@ -37,9 +44,54 @@ export default function Products(){
     
       
         fetchProducts();
+
+        const intervalId = setInterval(() => {
+            window.location.reload();
+          }, 30000);
+      
+          // Limpa o intervalo quando o componente é desmontado
+          return () => clearInterval(intervalId);
       }, []); 
     
-      const urlLogoCompany = `${urlApi}api/file/logo/${companyInfo.companyId}` 
+      
+      const urlLogoCompany = `${urlApi}api/file/logo/${companyInfo.companyId}`
+      
+      const handleDeleteClick = async (productId) => {
+        setProductIdToDelete(productId);
+        setModalIsOpen(true);
+      };    
+
+      const handleConfirmDelete = async () => {    
+        if(productIdToDelete){
+          try {
+            await api.delete(`api/product/${productIdToDelete}`,{
+                headers: {
+                  Authorization: `Bearer ${token}`,
+                },
+              });
+            setModalIsOpen(false);
+            window.location.reload();
+          } catch (error) {
+            setModalIsOpen(false);
+            if (error.response && error.response.data && error.response.data.message) {
+                setError(error.response.data.message);
+              } else {
+                setError('Erro ao excluir produto. Por favor, tente novamente mais tarde.');
+              }
+        }}};
+
+        const handleCancelDelete = () => {
+            setModalIsOpen(false);
+          };
+
+        const ErrorDialog = ({ message, onClose }) => {
+        return (
+            <div className="error-dialog">
+                <p>{message}</p>
+                <button onClick={onClose}>OK</button>
+            </div>
+            );
+          };
       
       return (
         <>
@@ -86,15 +138,58 @@ export default function Products(){
                                 <p>{product.costValue}</p>
                                 <p>{product.valueSell}</p>
                                 <p><a href=''><img src={changeImg} alt="" /></a></p>
-                                <p><a href=""><img src={deleteImg} alt="" /></a></p>
+                                <p><a href="" onClick={(e) => { e.preventDefault(); handleDeleteClick(product.id); }}><img src={deleteImg} alt="" /></a></p>
                             </div>
                         </li>
                     ))}
                 </ul>
+                <Modal className="modalConfirm"
+                    isOpen={modalIsOpen}
+                    onRequestClose={handleCancelDelete}
+                    contentLabel="Confirmação de Exclusão">
+                    <h2>Deseja realmente deletar este produto?</h2>
+                    <button onClick={handleConfirmDelete}>Confirmar</button>
+                    <button onClick={handleCancelDelete}>Cancelar</button>
+                </Modal>
             </div>
         </section>
+        <div>
+      {error && (
+        <div style={errorDialogStyle}>
+          <p>{error}</p>
+          <button style={closeButtonStyle} onClick={() => setError(null)}>
+            Fechar
+          </button>
+        </div>
+      )}
+    </div>
         </>
       );
 }
     
 
+const errorDialogStyle = {
+    position: 'fixed',
+    top: '50%',
+    left: '50%',
+    transform: 'translate(-50%, -50%)',
+    backgroundColor: '#f44336', // Cor de fundo vermelha, você pode ajustar conforme necessário
+    color: '#fff',
+    padding: '30px',
+    width: '360px',
+    maxWidth: '80%',
+    textAlign: 'center',
+    fontSize: '18px',
+    borderRadius: '4px',
+    boxShadow: 'rgba(0, 0, 0, 0.35) 0px 5px 15px', // Adiciona uma sombra sutil
+  };
+
+  const closeButtonStyle = {
+    backgroundColor: '#fff',
+    color: '#f44336',
+    padding: '8px 12px',
+    border: 'none',
+    cursor: 'pointer',
+    borderRadius: '4px',
+    marginTop: '15px',
+  };

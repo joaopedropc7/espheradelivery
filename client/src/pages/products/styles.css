@@ -55,3 +55,44 @@
     margin: 0;
     padding: 0;
 }
+
+.modalConfirm {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+    background-color: #fff;
+    border: 1px solid #ccc;
+    padding: 20px;
+    width: 300px;
+    max-width: 80%;
+    text-align: center;
+  }
+  
+  /* Estilo do título do modal */
+  .modalConfirm h2 {
+    margin-bottom: 20px;
+  }
+  
+  /* Estilo dos botões do modal */
+  .modalConfirm button {
+    background-color: #4caf50;
+    color: #fff;
+    padding: 10px 15px;
+    margin: 0 10px;
+    border: none;
+    cursor: pointer;
+    border-radius: 4px;
+  }
+  
+  /* Estilo do botão Confirmar */
+  .modalConfirm button.confirm-btn {
+    background-color: #4caf50;
+  }
+  
+  /* Estilo do botão Cancelar */
+  .modalConfirm button.cancel-btn {
+    background-color: #f44336;
+  }
+
