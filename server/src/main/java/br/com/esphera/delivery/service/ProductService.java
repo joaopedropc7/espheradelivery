@@ -4,6 +4,7 @@ import br.com.esphera.delivery.controller.ProductController;
 import br.com.esphera.delivery.exceptions.ResourceNotFoundException;
 import br.com.esphera.delivery.models.*;
 import br.com.esphera.delivery.models.DTOS.ProductRecord;
+import br.com.esphera.delivery.models.DTOS.responseDtos.ProductReportResponseDTO;
 import br.com.esphera.delivery.models.DTOS.responseDtos.ProductResponseDTO;
 import br.com.esphera.delivery.repository.CategoryRepository;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
@@ -156,5 +157,13 @@ public class ProductService {
         if(!productModel.getCompanyModel().getId().equals(companyId)){
             throw new ResourceNotFoundException("Produto não pertence a esta empresa!");
         }
+    }
+
+    public Page<ProductReportResponseDTO> getProductsBestSellingProducts(Integer companyId, Pageable pageable){
+        CompanyModel companyModel = companyService.getCompanyById(companyId);
+        Page<ProductModel> productsModels = productRepository.findProductsByCompanyOrderBySalesDesc(companyModel, pageable);
+        productsModels.stream().forEach(product -> product.add(linkTo(methodOn(ProductController.class).findProductById(product.getId())).withSelfRel()));
+        Page<ProductReportResponseDTO> products = ProductReportResponseDTO.convert(productsModels);
+        return products;
     }
 }

@@ -34,22 +34,7 @@ public class CommandsTableController {
     private TokenService tokenService;
 
     @PostMapping
-    @Operation(summary = "Create commandsTable parsing table", description = "Create commandsTable parsing table",
-            tags = {"Commands"},
-            responses = {
-                    @ApiResponse(description = "Success", responseCode = "200",
-                            content = {
-                                    @Content(
-                                            mediaType = "application/json",
-                                            array = @ArraySchema(schema = @Schema(implementation = CommandsTableModel.class))
-                                    )
-                            }),
-                    @ApiResponse(description = "Bad Request", responseCode = "400", content = @Content),
-                    @ApiResponse(description = "Unauthorized", responseCode = "401", content = @Content),
-                    @ApiResponse(description = "Not Found", responseCode = "404", content = @Content),
-                    @ApiResponse(description = "Internal Error", responseCode = "500", content = @Content),
-            }
-    )
+    @Operation(summary = "Create commandsTable parsing table", description = "Create commandsTable parsing table", tags = {"Commands"})
     @SecurityRequirement(name = "Bearer Authentication")
     public ResponseEntity<CommandsResponseDTO> createCommandsTable(CommandsTableRecord commandsTableRecord, HttpServletRequest request){
         String token = tokenService.recoverToken(request);
@@ -60,22 +45,7 @@ public class CommandsTableController {
     }
 
     @GetMapping("/{commandsTableId}")
-    @Operation(summary = "Get commandsTable parsing commandTable id", description = "Get commandsTable parsing commandTable id",
-            tags = {"Commands"},
-            responses = {
-                    @ApiResponse(description = "Success", responseCode = "200",
-                            content = {
-                                    @Content(
-                                            mediaType = "application/json",
-                                            array = @ArraySchema(schema = @Schema(implementation = CommandsTableModel.class))
-                                    )
-                            }),
-                    @ApiResponse(description = "Bad Request", responseCode = "400", content = @Content),
-                    @ApiResponse(description = "Unauthorized", responseCode = "401", content = @Content),
-                    @ApiResponse(description = "Not Found", responseCode = "404", content = @Content),
-                    @ApiResponse(description = "Internal Error", responseCode = "500", content = @Content),
-            }
-    )
+    @Operation(summary = "Get commandsTable parsing commandTable id", description = "Get commandsTable parsing commandTable id", tags = {"Commands"})
     public ResponseEntity<CommandsResponseDTO> getCommandsTableById(@PathVariable(value = "commandsTableId") Integer commandsTableId){
         CommandsTableModel commandsTableModel = commandsTableService.getCommandsTableById(commandsTableId);
         CommandsResponseDTO commandsResponseDTO = new CommandsResponseDTO(commandsTableModel);
@@ -83,22 +53,7 @@ public class CommandsTableController {
     }
 
     @GetMapping("/company")
-    @Operation(summary = "Get all commandsTable company parsing company id", description = "Get all commandsTable company parsing company id",
-            tags = {"Commands"},
-            responses = {
-                    @ApiResponse(description = "Success", responseCode = "200",
-                            content = {
-                                    @Content(
-                                            mediaType = "application/json",
-                                            array = @ArraySchema(schema = @Schema(implementation = CommandsTableModel.class))
-                                    )
-                            }),
-                    @ApiResponse(description = "Bad Request", responseCode = "400", content = @Content),
-                    @ApiResponse(description = "Unauthorized", responseCode = "401", content = @Content),
-                    @ApiResponse(description = "Not Found", responseCode = "404", content = @Content),
-                    @ApiResponse(description = "Internal Error", responseCode = "500", content = @Content),
-            }
-    )
+    @Operation(summary = "Get all commandsTable company parsing company id", description = "Get all commandsTable company parsing company id", tags = {"Commands"})
     @SecurityRequirement(name = "Bearer Authentication")
     public ResponseEntity<Page<CommandsResponseDTO>> getCommandsTableByCompany(HttpServletRequest request, @RequestParam(value = "page", defaultValue = "0") Integer page, @RequestParam(value = "limit", defaultValue = "12") Integer limit, @RequestParam(value = "direction", defaultValue = "asc") String direction){
         String token = tokenService.recoverToken(request);
@@ -111,22 +66,7 @@ public class CommandsTableController {
     }
 
     @GetMapping("/date")
-    @Operation(summary = "Get all commandsTable company parsing company id and period", description = "Get all commandsTable company parsing company id and period",
-            tags = {"Commands"},
-            responses = {
-                    @ApiResponse(description = "Success", responseCode = "200",
-                            content = {
-                                    @Content(
-                                            mediaType = "application/json",
-                                            array = @ArraySchema(schema = @Schema(implementation = CommandsTableModel.class))
-                                    )
-                            }),
-                    @ApiResponse(description = "Bad Request", responseCode = "400", content = @Content),
-                    @ApiResponse(description = "Unauthorized", responseCode = "401", content = @Content),
-                    @ApiResponse(description = "Not Found", responseCode = "404", content = @Content),
-                    @ApiResponse(description = "Internal Error", responseCode = "500", content = @Content),
-            }
-    )
+    @Operation(summary = "Get all commandsTable company parsing company id and period", description = "Get all commandsTable company parsing company id and period", tags = {"Commands"})
     @SecurityRequirement(name = "Bearer Authentication")
     public ResponseEntity<Page<CommandsResponseDTO>> getCommandsTableByDateAndCompanyId(HttpServletRequest request, RequestCommandsBetween requestCommandsBetween, @RequestParam(value = "page", defaultValue = "0") Integer page, @RequestParam(value = "limit", defaultValue = "12") Integer limit, @RequestParam(value = "direction", defaultValue = "asc") String direction){
         String token = tokenService.recoverToken(request);

@@ -34,22 +34,7 @@ public class EntryProductsController {
     private TokenService tokenService;
 
     @PostMapping
-    @Operation(summary = "Create a entry", description = "Create a entry parsing company ID and body",
-            tags = {"Entry Products"},
-            responses = {
-                    @ApiResponse(description = "Success", responseCode = "200",
-                            content = {
-                                    @Content(
-                                            mediaType = "application/json",
-                                            array = @ArraySchema(schema = @Schema(implementation = ProductEntryModel.class))
-                                    )
-                            }),
-                    @ApiResponse(description = "Bad Request", responseCode = "400", content = @Content),
-                    @ApiResponse(description = "Unauthorized", responseCode = "401", content = @Content),
-                    @ApiResponse(description = "Not Found", responseCode = "404", content = @Content),
-                    @ApiResponse(description = "Internal Error", responseCode = "500", content = @Content),
-            }
-    )
+    @Operation(summary = "Create a entry", description = "Create a entry parsing company ID and body", tags = {"Entry Products"})
     @SecurityRequirement(name = "Bearer Authentication")
     public ResponseEntity<EntryResponseDTO> createEntryProduct(@RequestBody ProductEntryRecord data, HttpServletRequest request){
         String token = tokenService.recoverToken(request);
@@ -60,22 +45,7 @@ public class EntryProductsController {
     }
 
     @GetMapping("/find")
-    @Operation(summary = "Find all entry", description = "Find all entrys",
-            tags = {"Entry Products"},
-            responses = {
-                    @ApiResponse(description = "Success", responseCode = "200",
-                            content = {
-                                    @Content(
-                                            mediaType = "application/json",
-                                            array = @ArraySchema(schema = @Schema(implementation = ProductEntryModel.class))
-                                    )
-                            }),
-                    @ApiResponse(description = "Bad Request", responseCode = "400", content = @Content),
-                    @ApiResponse(description = "Unauthorized", responseCode = "401", content = @Content),
-                    @ApiResponse(description = "Not Found", responseCode = "404", content = @Content),
-                    @ApiResponse(description = "Internal Error", responseCode = "500", content = @Content),
-            }
-    )
+    @Operation(summary = "Find all entry", description = "Find all entrys", tags = {"Entry Products"})
     @SecurityRequirement(name = "Bearer Authentication")
     public ResponseEntity<Page<EntryResponseDTO>> getAllEntrys(HttpServletRequest request, @RequestParam(value = "page", defaultValue = "0") Integer page, @RequestParam(value = "limit", defaultValue = "12") Integer limit, @RequestParam(value = "direction", defaultValue = "asc") String direction){
         String token = tokenService.recoverToken(request);
@@ -88,22 +58,7 @@ public class EntryProductsController {
     }
 
     @GetMapping("/{id}")
-    @Operation(summary = "Get a entry", description = "Get a entry parsing company Id",
-            tags = {"Entry Products"},
-            responses = {
-                    @ApiResponse(description = "Success", responseCode = "200",
-                            content = {
-                                    @Content(
-                                            mediaType = "application/json",
-                                            array = @ArraySchema(schema = @Schema(implementation = ProductEntryModel.class))
-                                    )
-                            }),
-                    @ApiResponse(description = "Bad Request", responseCode = "400", content = @Content),
-                    @ApiResponse(description = "Unauthorized", responseCode = "401", content = @Content),
-                    @ApiResponse(description = "Not Found", responseCode = "404", content = @Content),
-                    @ApiResponse(description = "Internal Error", responseCode = "500", content = @Content),
-            }
-    )
+    @Operation(summary = "Get a entry", description = "Get a entry parsing company Id", tags = {"Entry Products"})
     @SecurityRequirement(name = "Bearer Authentication")
     public ResponseEntity<EntryResponseDTO> getEntryById(@PathVariable(value = "id") Integer id){
         ProductEntryModel entryModel = entryService.findById(id);
@@ -112,22 +67,7 @@ public class EntryProductsController {
     }
 
     @GetMapping("/products{entryId}")
-    @Operation(summary = "Get all products in entry", description = "Get all products in entry",
-            tags = {"Entry Products"},
-            responses = {
-                    @ApiResponse(description = "Success", responseCode = "200",
-                            content = {
-                                    @Content(
-                                            mediaType = "application/json",
-                                            array = @ArraySchema(schema = @Schema(implementation = ProductEntryItemModel.class))
-                                    )
-                            }),
-                    @ApiResponse(description = "Bad Request", responseCode = "400", content = @Content),
-                    @ApiResponse(description = "Unauthorized", responseCode = "401", content = @Content),
-                    @ApiResponse(description = "Not Found", responseCode = "404", content = @Content),
-                    @ApiResponse(description = "Internal Error", responseCode = "500", content = @Content),
-            }
-    )
+    @Operation(summary = "Get all products in entry", description = "Get all products in entry", tags = {"Entry Products"})
     @SecurityRequirement(name = "Bearer Authentication")
     public ResponseEntity<List<ProductEntryItemModel>> getProductsInEntry(HttpServletRequest request, @PathVariable(value = "entryId") Integer entryId){
         String token = tokenService.recoverToken(request);
@@ -137,22 +77,7 @@ public class EntryProductsController {
     }
 
     @PostMapping("/cancel/{id}")
-    @Operation(summary = "Cancel entry", description = "Cancel entry by id",
-            tags = {"Entry Products"},
-            responses = {
-                    @ApiResponse(description = "Success", responseCode = "200",
-                            content = {
-                                    @Content(
-                                            mediaType = "application/json",
-                                            array = @ArraySchema(schema = @Schema(implementation = ProductEntryModel.class))
-                                    )
-                            }),
-                    @ApiResponse(description = "Bad Request", responseCode = "400", content = @Content),
-                    @ApiResponse(description = "Unauthorized", responseCode = "401", content = @Content),
-                    @ApiResponse(description = "Not Found", responseCode = "404", content = @Content),
-                    @ApiResponse(description = "Internal Error", responseCode = "500", content = @Content),
-            }
-    )
+    @Operation(summary = "Cancel entry", description = "Cancel entry by id", tags = {"Entry Products"})
     @SecurityRequirement(name = "Bearer Authentication")
     public ResponseEntity cancelEntryById(@PathVariable Integer id, HttpServletRequest request){
         String token = tokenService.recoverToken(request);

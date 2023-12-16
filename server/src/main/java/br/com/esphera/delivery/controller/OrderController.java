@@ -60,22 +60,7 @@ public class OrderController {
     }
 
     @GetMapping("/findall")
-    @Operation(summary = "Get all Orders", description = "Get all Orders parsing company Id",
-            tags = {"Order"},
-            responses = {
-                    @ApiResponse(description = "Success", responseCode = "200",
-                            content = {
-                                    @Content(
-                                            mediaType = "application/json",
-                                            array = @ArraySchema(schema = @Schema(implementation = OrderModel.class))
-                                    )
-                            }),
-                    @ApiResponse(description = "Bad Request", responseCode = "400", content = @Content),
-                    @ApiResponse(description = "Unauthorized", responseCode = "401", content = @Content),
-                    @ApiResponse(description = "Not Found", responseCode = "404", content = @Content),
-                    @ApiResponse(description = "Internal Error", responseCode = "500", content = @Content),
-            }
-    )
+    @Operation(summary = "Get all Orders", description = "Get all Orders parsing company Id", tags = {"Order"})
     @SecurityRequirement(name = "Bearer Authentication")
     public ResponseEntity<Page<OrderResponseDTO>> findAllSells(HttpServletRequest request, @RequestParam(value = "page", defaultValue = "0") Integer page, @RequestParam(value = "limit", defaultValue = "12") Integer limit, @RequestParam(value = "direction", defaultValue = "asc") String direction){
         Integer companyId = tokenService.getCompanyIdFromToken(tokenService.recoverToken(request));
@@ -87,22 +72,7 @@ public class OrderController {
     }
 
     @GetMapping("/{id}")
-    @Operation(summary = "Get Order by Id", description = "Get order by id",
-            tags = {"Order"},
-            responses = {
-                    @ApiResponse(description = "Success", responseCode = "200",
-                            content = {
-                                    @Content(
-                                            mediaType = "application/json",
-                                            array = @ArraySchema(schema = @Schema(implementation = OrderModel.class))
-                                    )
-                            }),
-                    @ApiResponse(description = "Bad Request", responseCode = "400", content = @Content),
-                    @ApiResponse(description = "Unauthorized", responseCode = "401", content = @Content),
-                    @ApiResponse(description = "Not Found", responseCode = "404", content = @Content),
-                    @ApiResponse(description = "Internal Error", responseCode = "500", content = @Content),
-            }
-    )
+    @Operation(summary = "Get Order by Id", description = "Get order by id", tags = {"Order"})
     public ResponseEntity<OrderResponseDTO> findSellById(@PathVariable(value = "id")Integer id){
         OrderModel orderModel = orderService.findByIdSell(id);
         OrderResponseDTO orderResponseDTO = new OrderResponseDTO(orderModel);
@@ -110,22 +80,7 @@ public class OrderController {
     }
 
     @DeleteMapping("/{id}")
-    @Operation(summary = "Cancel Order", description = "Cancel Order",
-            tags = {"Order"},
-            responses = {
-                    @ApiResponse(description = "Success", responseCode = "200",
-                            content = {
-                                    @Content(
-                                            mediaType = "application/json",
-                                            array = @ArraySchema(schema = @Schema(implementation = void.class))
-                                    )
-                            }),
-                    @ApiResponse(description = "Bad Request", responseCode = "400", content = @Content),
-                    @ApiResponse(description = "Unauthorized", responseCode = "401", content = @Content),
-                    @ApiResponse(description = "Not Found", responseCode = "404", content = @Content),
-                    @ApiResponse(description = "Internal Error", responseCode = "500", content = @Content),
-            }
-    )
+    @Operation(summary = "Cancel Order", description = "Cancel Order", tags = {"Order"})
     @SecurityRequirement(name = "Bearer Authentication")
     public ResponseEntity cancelSell(@PathVariable(value = "id") Integer id, HttpServletRequest request){
         String token = tokenService.recoverToken(request);
@@ -135,22 +90,7 @@ public class OrderController {
     }
 
     @GetMapping("/{statusOrder}")
-    @Operation(summary = "Find orders by status", description = "Find orders by status",
-            tags = {"Order"},
-            responses = {
-                    @ApiResponse(description = "Success", responseCode = "200",
-                            content = {
-                                    @Content(
-                                            mediaType = "application/json",
-                                            array = @ArraySchema(schema = @Schema(implementation = OrderModel.class))
-                                    )
-                            }),
-                    @ApiResponse(description = "Bad Request", responseCode = "400", content = @Content),
-                    @ApiResponse(description = "Unauthorized", responseCode = "401", content = @Content),
-                    @ApiResponse(description = "Not Found", responseCode = "404", content = @Content),
-                    @ApiResponse(description = "Internal Error", responseCode = "500", content = @Content),
-            }
-    )
+    @Operation(summary = "Find orders by status", description = "Find orders by status", tags = {"Order"})
     @SecurityRequirement(name = "Bearer Authentication")
     public ResponseEntity<Page<OrderResponseDTO>> findByStatusOrder(@PathVariable(value = "statusOrder") StatusOrder statusOrder, HttpServletRequest request, @RequestParam(value = "page", defaultValue = "0") Integer page, @RequestParam(value = "limit", defaultValue = "12") Integer limit, @RequestParam(value = "direction", defaultValue = "asc") String direction){
         String token = tokenService.recoverToken(request);
@@ -163,22 +103,7 @@ public class OrderController {
     }
 
     @PostMapping("/prepared/{idOrder}")
-    @Operation(summary = "Parse orders for prepared", description = "Parse orders for prepared",
-            tags = {"Order"},
-            responses = {
-                    @ApiResponse(description = "Success", responseCode = "200",
-                            content = {
-                                    @Content(
-                                            mediaType = "application/json",
-                                            array = @ArraySchema(schema = @Schema(implementation = void.class))
-                                    )
-                            }),
-                    @ApiResponse(description = "Bad Request", responseCode = "400", content = @Content),
-                    @ApiResponse(description = "Unauthorized", responseCode = "401", content = @Content),
-                    @ApiResponse(description = "Not Found", responseCode = "404", content = @Content),
-                    @ApiResponse(description = "Internal Error", responseCode = "500", content = @Content),
-            }
-    )
+    @Operation(summary = "Parse orders for prepared", description = "Parse orders for prepared", tags = {"Order"})
     @SecurityRequirement(name = "Bearer Authentication")
     public ResponseEntity setOrderPrepared(@PathVariable(value = "idOrder") Integer idOrder, HttpServletRequest request){
         String token = tokenService.recoverToken(request);
@@ -188,22 +113,7 @@ public class OrderController {
     }
 
     @PostMapping("/ready/{idOrder}")
-    @Operation(summary = "Parse order ready for collect", description = "Parse orders ready - Ready for take order (COLLECT, NOT DELIVERY)",
-            tags = {"Order"},
-            responses = {
-                    @ApiResponse(description = "Success", responseCode = "200",
-                            content = {
-                                    @Content(
-                                            mediaType = "application/json",
-                                            array = @ArraySchema(schema = @Schema(implementation = void.class))
-                                    )
-                            }),
-                    @ApiResponse(description = "Bad Request", responseCode = "400", content = @Content),
-                    @ApiResponse(description = "Unauthorized", responseCode = "401", content = @Content),
-                    @ApiResponse(description = "Not Found", responseCode = "404", content = @Content),
-                    @ApiResponse(description = "Internal Error", responseCode = "500", content = @Content),
-            }
-    )
+    @Operation(summary = "Parse order ready for collect", description = "Parse orders ready - Ready for take order (COLLECT, NOT DELIVERY)", tags = {"Order"})
     @SecurityRequirement(name = "Bearer Authentication")
     public ResponseEntity setOrderReadyForCollect(@PathVariable(value = "idOrder") Integer idOrder, HttpServletRequest request){
         String token = tokenService.recoverToken(request);
@@ -213,22 +123,7 @@ public class OrderController {
     }
 
     @PostMapping("/inroute/{idOrder}/{motoboyId}")
-    @Operation(summary = "Parse orders for in route (DELIVERY ONLY)", description = "Parse orders for in route (DELIVERY ONLY)",
-            tags = {"Order"},
-            responses = {
-                    @ApiResponse(description = "Success", responseCode = "200",
-                            content = {
-                                    @Content(
-                                            mediaType = "application/json",
-                                            array = @ArraySchema(schema = @Schema(implementation = void.class))
-                                    )
-                            }),
-                    @ApiResponse(description = "Bad Request", responseCode = "400", content = @Content),
-                    @ApiResponse(description = "Unauthorized", responseCode = "401", content = @Content),
-                    @ApiResponse(description = "Not Found", responseCode = "404", content = @Content),
-                    @ApiResponse(description = "Internal Error", responseCode = "500", content = @Content),
-            }
-    )
+    @Operation(summary = "Parse orders for in route (DELIVERY ONLY)", description = "Parse orders for in route (DELIVERY ONLY)", tags = {"Order"})
     @SecurityRequirement(name = "Bearer Authentication")
     public ResponseEntity setOrderInRoute(@PathVariable(value = "idOrder") Integer idOrder, @PathVariable(value = "motoboyId") Integer motoboyId, HttpServletRequest request){
         String token = tokenService.recoverToken(request);
@@ -238,22 +133,7 @@ public class OrderController {
     }
 
     @PostMapping("/finished/{idOrder}")
-    @Operation(summary = "Parse orders for finished", description = "Parse orders for finished",
-            tags = {"Order"},
-            responses = {
-                    @ApiResponse(description = "Success", responseCode = "200",
-                            content = {
-                                    @Content(
-                                            mediaType = "application/json",
-                                            array = @ArraySchema(schema = @Schema(implementation = void.class))
-                                    )
-                            }),
-                    @ApiResponse(description = "Bad Request", responseCode = "400", content = @Content),
-                    @ApiResponse(description = "Unauthorized", responseCode = "401", content = @Content),
-                    @ApiResponse(description = "Not Found", responseCode = "404", content = @Content),
-                    @ApiResponse(description = "Internal Error", responseCode = "500", content = @Content),
-            }
-    )
+    @Operation(summary = "Parse orders for finished", description = "Parse orders for finished", tags = {"Order"})
     @SecurityRequirement(name = "Bearer Authentication")
     public ResponseEntity setOrderDelivered(@PathVariable(value = "idOrder") Integer idOrder, HttpServletRequest request){
         String token = tokenService.recoverToken(request);

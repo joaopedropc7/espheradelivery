@@ -161,66 +161,21 @@ public class CompanyController {
     }
 
     @PutMapping("/{id}")
-    @Operation(summary = "Put a company by id and body", description = "Put a company by id and body",
-            tags = {"Company"},
-            responses = {
-                    @ApiResponse(description = "Success", responseCode = "200",
-                            content = {
-                                    @Content(
-                                            mediaType = "application/json",
-                                            array = @ArraySchema(schema = @Schema(implementation = ProductModel.class))
-                                    )
-                            }),
-                    @ApiResponse(description = "Bad Request", responseCode = "400", content = @Content),
-                    @ApiResponse(description = "Unauthorized", responseCode = "401", content = @Content),
-                    @ApiResponse(description = "Not Found", responseCode = "404", content = @Content),
-                    @ApiResponse(description = "Internal Error", responseCode = "500", content = @Content),
-            }
-    )
+    @Operation(summary = "Put a company by id and body", description = "Put a company by id and body", tags = {"Company"})
     public ResponseEntity<CompanyModel> putCompany(@PathVariable(value = "id") Integer id, CompanyUpdateRecord companyUpdateRecord){
         CompanyModel companyModel = companyService.putCompany(id, companyUpdateRecord);
         return ResponseEntity.ok().body(companyModel);
     }
 
     @PutMapping("/address/{id}")
-    @Operation(summary = "Put a company address by id and body", description = "Put a company address by id and body",
-            tags = {"Company"},
-            responses = {
-                    @ApiResponse(description = "Success", responseCode = "200",
-                            content = {
-                                    @Content(
-                                            mediaType = "application/json",
-                                            array = @ArraySchema(schema = @Schema(implementation = ProductModel.class))
-                                    )
-                            }),
-                    @ApiResponse(description = "Bad Request", responseCode = "400", content = @Content),
-                    @ApiResponse(description = "Unauthorized", responseCode = "401", content = @Content),
-                    @ApiResponse(description = "Not Found", responseCode = "404", content = @Content),
-                    @ApiResponse(description = "Internal Error", responseCode = "500", content = @Content),
-            }
-    )
+    @Operation(summary = "Put a company address by id and body", description = "Put a company address by id and body", tags = {"Company"})
     public ResponseEntity<CompanyModel> putCompanyAddress(@PathVariable(value = "id") Integer id, AddressRecord addressRecord){
         CompanyModel companyModel = companyService.putCompanyAddress(id, addressRecord);
         return ResponseEntity.ok().body(companyModel);
     }
 
     @PutMapping("/inactive/{id}")
-    @Operation(summary = "Inactive a company address by id", description = "Inactive a company address by id",
-            tags = {"Company"},
-            responses = {
-                    @ApiResponse(description = "Success", responseCode = "200",
-                            content = {
-                                    @Content(
-                                            mediaType = "application/json",
-                                            array = @ArraySchema(schema = @Schema(implementation = void.class))
-                                    )
-                            }),
-                    @ApiResponse(description = "Bad Request", responseCode = "400", content = @Content),
-                    @ApiResponse(description = "Unauthorized", responseCode = "401", content = @Content),
-                    @ApiResponse(description = "Not Found", responseCode = "404", content = @Content),
-                    @ApiResponse(description = "Internal Error", responseCode = "500", content = @Content),
-            }
-    )
+    @Operation(summary = "Inactive a company address by id", description = "Inactive a company address by id", tags = {"Company"})
     public ResponseEntity inactiveCompany(@PathVariable(value = "id") Integer id){
         companyService.inactiveCompany(id);
         return ResponseEntity.noContent().build();

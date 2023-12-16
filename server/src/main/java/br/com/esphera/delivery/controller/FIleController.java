@@ -50,9 +50,7 @@ public class FIleController {
     private TokenService tokenService;
 
     @PostMapping("/uploadFile/{EntityRequestImage}/{idEntity}")
-    @Operation(summary = "Upload image entity", description = "Upload image entity",
-            tags = {"Files"}
-    )
+    @Operation(summary = "Upload image entity", description = "Upload image entity", tags = {"Files"})
     @SecurityRequirement(name = "Bearer Authentication")
     public UploadFileResponse uploadFile(@RequestParam("file")MultipartFile file, @PathVariable(value = "EntityRequestImage") EntityRequestImage entityRequestImage, @PathVariable(value = "idEntity") Integer idEntity, HttpServletRequest request) {
         String token = tokenService.recoverToken(request);
@@ -70,6 +68,7 @@ public class FIleController {
 
 
     @GetMapping("/logo/{companyId}")
+    @Operation(summary = "Get image logo company", description = "Get image logo company", tags = {"Files"})
     @Transactional
     public ResponseEntity<Resource> loadLogoCompany(@PathVariable(value = "companyId")Integer companyId) throws IOException {
         FileEntity fileEntity = fileStorageService.loadCompanyLogo(companyId);

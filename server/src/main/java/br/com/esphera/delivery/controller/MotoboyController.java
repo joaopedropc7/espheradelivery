@@ -35,22 +35,7 @@ public class MotoboyController {
     private TokenService tokenService;
 
     @PostMapping
-    @Operation(summary = "Create motoboy", description = "Create motoboy",
-            tags = {"Motoboy"},
-            responses = {
-                    @ApiResponse(description = "Success", responseCode = "200",
-                            content = {
-                                    @Content(
-                                            mediaType = "application/json",
-                                            array = @ArraySchema(schema = @Schema(implementation = MotoboysModel.class))
-                                    )
-                            }),
-                    @ApiResponse(description = "Bad Request", responseCode = "400", content = @Content),
-                    @ApiResponse(description = "Unauthorized", responseCode = "401", content = @Content),
-                    @ApiResponse(description = "Not Found", responseCode = "404", content = @Content),
-                    @ApiResponse(description = "Internal Error", responseCode = "500", content = @Content),
-            }
-    )
+    @Operation(summary = "Create motoboy", description = "Create motoboy", tags = {"Motoboy"})
     @SecurityRequirement(name = "Bearer Authentication")
     public ResponseEntity<MotoboyResponseDTO> createMotoboy(@RequestBody MotoboyRecord motoboyRecord, HttpServletRequest request){
         String token = tokenService.recoverToken(request);
@@ -61,22 +46,7 @@ public class MotoboyController {
     };
 
     @GetMapping("/findByName/{name}")
-    @Operation(summary = "Get all motoboys by name", description = "Get all motoboys by name",
-            tags = {"Motoboy"},
-            responses = {
-                    @ApiResponse(description = "Success", responseCode = "200",
-                            content = {
-                                    @Content(
-                                            mediaType = "application/json",
-                                            array = @ArraySchema(schema = @Schema(implementation = MotoboysModel.class))
-                                    )
-                            }),
-                    @ApiResponse(description = "Bad Request", responseCode = "400", content = @Content),
-                    @ApiResponse(description = "Unauthorized", responseCode = "401", content = @Content),
-                    @ApiResponse(description = "Not Found", responseCode = "404", content = @Content),
-                    @ApiResponse(description = "Internal Error", responseCode = "500", content = @Content),
-            }
-    )
+    @Operation(summary = "Get all motoboys by name", description = "Get all motoboys by name", tags = {"Motoboy"})
     @SecurityRequirement(name = "Bearer Authentication")
     public ResponseEntity<Page<MotoboyResponseDTO>> findMotoboysByName(@PathVariable(value = "name")String name,HttpServletRequest request, @RequestParam(value = "page", defaultValue = "0") Integer page, @RequestParam(value = "limit", defaultValue = "12") Integer limit, @RequestParam(value = "direction", defaultValue = "asc") String direction){
         String token = tokenService.recoverToken(request);
@@ -89,22 +59,7 @@ public class MotoboyController {
     }
 
     @GetMapping("/findall")
-    @Operation(summary = "Get all motoboys in company", description = "Get all motoboys in company",
-            tags = {"Motoboy"},
-            responses = {
-                    @ApiResponse(description = "Success", responseCode = "200",
-                            content = {
-                                    @Content(
-                                            mediaType = "application/json",
-                                            array = @ArraySchema(schema = @Schema(implementation = MotoboysModel.class))
-                                    )
-                            }),
-                    @ApiResponse(description = "Bad Request", responseCode = "400", content = @Content),
-                    @ApiResponse(description = "Unauthorized", responseCode = "401", content = @Content),
-                    @ApiResponse(description = "Not Found", responseCode = "404", content = @Content),
-                    @ApiResponse(description = "Internal Error", responseCode = "500", content = @Content),
-            }
-    )
+    @Operation(summary = "Get all motoboys in company", description = "Get all motoboys in company", tags = {"Motoboy"})
     @SecurityRequirement(name = "Bearer Authentication")
     public ResponseEntity<Page<MotoboyResponseDTO>> findMotoboysByIdCompany(HttpServletRequest request, @RequestParam(value = "page", defaultValue = "0") Integer page, @RequestParam(value = "limit", defaultValue = "12") Integer limit, @RequestParam(value = "direction", defaultValue = "asc") String direction){
         String token = tokenService.recoverToken(request);
@@ -117,22 +72,7 @@ public class MotoboyController {
     }
 
     @GetMapping("/{motoboyId}")
-    @Operation(summary = "Get motoboy by Id", description = "Get motoboy by Id",
-            tags = {"Motoboy"},
-            responses = {
-                    @ApiResponse(description = "Success", responseCode = "200",
-                            content = {
-                                    @Content(
-                                            mediaType = "application/json",
-                                            array = @ArraySchema(schema = @Schema(implementation = MotoboysModel.class))
-                                    )
-                            }),
-                    @ApiResponse(description = "Bad Request", responseCode = "400", content = @Content),
-                    @ApiResponse(description = "Unauthorized", responseCode = "401", content = @Content),
-                    @ApiResponse(description = "Not Found", responseCode = "404", content = @Content),
-                    @ApiResponse(description = "Internal Error", responseCode = "500", content = @Content),
-            }
-    )
+    @Operation(summary = "Get motoboy by Id", description = "Get motoboy by Id", tags = {"Motoboy"})
     public ResponseEntity<MotoboyResponseDTO> findMotoboyById(@PathVariable(value = "motoboyId")Integer motoboyId){
         MotoboysModel motoboysModel = motoboyService.findMotoboyById(motoboyId);
         MotoboyResponseDTO motoboyResponseDTO = new MotoboyResponseDTO(motoboysModel);
@@ -140,22 +80,7 @@ public class MotoboyController {
     }
 
     @PutMapping("/{motoboyId}")
-    @Operation(summary = "Put motoboy parsing Id and body", description = "Put motoboy parsing Id and body",
-            tags = {"Motoboy"},
-            responses = {
-                    @ApiResponse(description = "Success", responseCode = "200",
-                            content = {
-                                    @Content(
-                                            mediaType = "application/json",
-                                            array = @ArraySchema(schema = @Schema(implementation = MotoboysModel.class))
-                                    )
-                            }),
-                    @ApiResponse(description = "Bad Request", responseCode = "400", content = @Content),
-                    @ApiResponse(description = "Unauthorized", responseCode = "401", content = @Content),
-                    @ApiResponse(description = "Not Found", responseCode = "404", content = @Content),
-                    @ApiResponse(description = "Internal Error", responseCode = "500", content = @Content),
-            }
-    )
+    @Operation(summary = "Put motoboy parsing Id and body", description = "Put motoboy parsing Id and body", tags = {"Motoboy"})
     @SecurityRequirement(name = "Bearer Authentication")
     public ResponseEntity<MotoboyResponseDTO> putMotoboy(@PathVariable(value = "motoboyId")Integer motoboyId, @RequestBody MotoboyRecord motoboyRecord, HttpServletRequest request){
         String token = tokenService.recoverToken(request);
@@ -166,22 +91,7 @@ public class MotoboyController {
     }
 
     @PutMapping("/active/{motoboyId}")
-    @Operation(summary = "Active motoboy parsing Id", description = "Active motoboy parsing Id",
-            tags = {"Motoboy"},
-            responses = {
-                    @ApiResponse(description = "Success", responseCode = "200",
-                            content = {
-                                    @Content(
-                                            mediaType = "application/json",
-                                            array = @ArraySchema(schema = @Schema(implementation = void.class))
-                                    )
-                            }),
-                    @ApiResponse(description = "Bad Request", responseCode = "400", content = @Content),
-                    @ApiResponse(description = "Unauthorized", responseCode = "401", content = @Content),
-                    @ApiResponse(description = "Not Found", responseCode = "404", content = @Content),
-                    @ApiResponse(description = "Internal Error", responseCode = "500", content = @Content),
-            }
-    )
+    @Operation(summary = "Active motoboy parsing Id", description = "Active motoboy parsing Id", tags = {"Motoboy"})
     @SecurityRequirement(name = "Bearer Authentication")
     public ResponseEntity activeMotoboy(@PathVariable(value = "motoboyId")Integer motoboyId, HttpServletRequest request){
         String token = tokenService.recoverToken(request);
@@ -191,22 +101,7 @@ public class MotoboyController {
     }
 
     @PutMapping("/inactive/{motoboyId}")
-    @Operation(summary = "Inactive motoboy parsing Id", description = "Inactive motoboy parsing Id",
-            tags = {"Motoboy"},
-            responses = {
-                    @ApiResponse(description = "Success", responseCode = "200",
-                            content = {
-                                    @Content(
-                                            mediaType = "application/json",
-                                            array = @ArraySchema(schema = @Schema(implementation = void.class))
-                                    )
-                            }),
-                    @ApiResponse(description = "Bad Request", responseCode = "400", content = @Content),
-                    @ApiResponse(description = "Unauthorized", responseCode = "401", content = @Content),
-                    @ApiResponse(description = "Not Found", responseCode = "404", content = @Content),
-                    @ApiResponse(description = "Internal Error", responseCode = "500", content = @Content),
-            }
-    )
+    @Operation(summary = "Inactive motoboy parsing Id", description = "Inactive motoboy parsing Id", tags = {"Motoboy"})
     @SecurityRequirement(name = "Bearer Authentication")
     public ResponseEntity inactiveMotoboy(@PathVariable(value = "motoboyId")Integer motoboyId, HttpServletRequest request){
         String token = tokenService.recoverToken(request);
@@ -216,22 +111,7 @@ public class MotoboyController {
     }
 
     @DeleteMapping("/{motoboyId}")
-    @Operation(summary = "Delete motoboy parsing Id", description = "Delete motoboy parsing Id",
-            tags = {"Motoboy"},
-            responses = {
-                    @ApiResponse(description = "Success", responseCode = "200",
-                            content = {
-                                    @Content(
-                                            mediaType = "application/json",
-                                            array = @ArraySchema(schema = @Schema(implementation = void.class))
-                                    )
-                            }),
-                    @ApiResponse(description = "Bad Request", responseCode = "400", content = @Content),
-                    @ApiResponse(description = "Unauthorized", responseCode = "401", content = @Content),
-                    @ApiResponse(description = "Not Found", responseCode = "404", content = @Content),
-                    @ApiResponse(description = "Internal Error", responseCode = "500", content = @Content),
-            }
-    )
+    @Operation(summary = "Delete motoboy parsing Id", description = "Delete motoboy parsing Id", tags = {"Motoboy"})
     @SecurityRequirement(name = "Bearer Authentication")
     public ResponseEntity deleteMotoboy(@PathVariable(value = "motoboyId")Integer motoboyId, HttpServletRequest request){
         String token = tokenService.recoverToken(request);

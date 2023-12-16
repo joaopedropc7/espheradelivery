@@ -3,6 +3,7 @@ package br.com.esphera.delivery.controller;
 import br.com.esphera.delivery.infra.security.TokenService;
 import br.com.esphera.delivery.models.CategoryModel;
 import br.com.esphera.delivery.models.DTOS.ProductRecord;
+import br.com.esphera.delivery.models.DTOS.responseDtos.ProductReportResponseDTO;
 import br.com.esphera.delivery.models.DTOS.responseDtos.ProductResponseDTO;
 import br.com.esphera.delivery.models.ProductModel;
 import br.com.esphera.delivery.service.ProductService;
@@ -85,8 +86,7 @@ public class ProductController {
     @GetMapping("/category/{categoryId}")
     @Operation(summary = "find products by category parsing categoryId and companyId", description = "find products by category parsing categoryId and companyId", tags = {"Product"})
     @SecurityRequirement(name = "Bearer Authentication")
-    public ResponseEntity<Page<ProductResponseDTO>> findAllProductsByCategory(HttpServletRequest request, @PathVariable(value = "categoryId")Integer categoryId, @RequestParam(value = "page", defaultValue = "0") Integer page, @RequestParam(value = "limit", defaultValue = "12") Integer limit, @RequestParam(value = "direction", defaultValue = "asc") String direction
-    ){
+    public ResponseEntity<Page<ProductResponseDTO>> findAllProductsByCategory(HttpServletRequest request, @PathVariable(value = "categoryId")Integer categoryId, @RequestParam(value = "page", defaultValue = "0") Integer page, @RequestParam(value = "limit", defaultValue = "12") Integer limit, @RequestParam(value = "direction", defaultValue = "asc") String direction){
         String token = tokenService.recoverToken(request);
         Integer companyId = tokenService.getCompanyIdFromToken(token);
         var sortDirection = "desc".equalsIgnoreCase(direction) ? Sort.Direction.DESC : Sort.Direction.ASC;
@@ -146,5 +146,15 @@ public class ProductController {
         return ResponseEntity.noContent().build();
     }
 
+    @GetMapping("/report/topselling")
+    @Operation(summary = "Get products more sells", description = "Get products more sells", tags = {"Product"})
+    @SecurityRequirement(name = "Bearer Authentication")
+    public ResponseEntity<Page<ProductReportResponseDTO>> getProductsTopSelling(HttpServletRequest request){
+        String token = tokenService.recoverToken(request);
+        Integer companyId = tokenService.getCompanyIdFromToken(token);
+        Pageable pageable = PageRequest.of(0, 5);
+        Page<ProductReportResponseDTO> products = productService.getProductsBestSellingProducts(companyId, pageable);
+        return ResponseEntity.ok().body(products);
+    }
 
 }

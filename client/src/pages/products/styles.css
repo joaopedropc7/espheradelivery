@@ -2,18 +2,25 @@
     padding: 20px;
     display: flex;
     width: 100%;
+    justify-content: space-between;
 }
 
 .products .listProducts{
+    box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
     display: flex;
     flex-direction: column;
-    width: 100%;
+    width: 50%;
     align-items: center;
     gap: 2rem;
+    padding: 20px;
 }
 
 .products .listProducts h2{
     font-size: 28px;
+}
+
+.products .listProducts ul{
+    width: 100%;
 }
 
 .products .listProducts ul li{
@@ -29,20 +36,21 @@
 }
 
 .products .listProducts ul li .cardInfo p{
-    width: 180px;
+    width: 140px;
     text-align: center;
-    font-size: 22px;
+    font-size: 18px;
 }
 
 .products .listProducts ul li .cardProduct{
     display: flex;
+    align-items: center;
     gap: 1rem;
 }
 
 .products .listProducts ul li .cardProduct p{
-    width: 180px;
+    width: 140px;
     text-align: center;
-    font-size: 18px;
+    font-size: 16px;
 }
 
 .products .listProducts ul li .cardProduct a{
@@ -55,6 +63,54 @@
     margin: 0;
     padding: 0;
 }
+
+.products .primary{
+    width: 25%;
+}
+
+.products .top-products {
+    display: flex;
+    box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+    margin: 0px 10px;
+    padding: 20px;
+    flex-direction: column;
+    align-items: center;
+    width: 25%;
+}
+
+.products .top-products .itensProduct{
+    width: 100%;
+}
+
+.products .top-products ul {
+    margin-top: 20px;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.products .top-products ul li {
+    list-style-type: none;
+    width: 100%;
+    display: flex;
+    font-size: 18px;
+    justify-content: space-between; /* Ajustado para espaçamento uniforme */
+    margin-bottom: 10px; /* Ajustado o espaçamento vertical */
+}
+
+.products .top-products ul li p{
+    width: 33%;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    display: flex;
+    justify-content: center;
+}
+
+.products .top-products h2 {
+    font-size: 28px;
+}
+
 
 .modalConfirm {
     position: fixed;

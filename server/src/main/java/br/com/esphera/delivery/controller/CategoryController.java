@@ -35,22 +35,7 @@ public class CategoryController {
     private TokenService tokenService;
 
     @PostMapping
-    @Operation(summary = "Create a category", description = "Create a category",
-            tags = {"Category"},
-            responses = {
-                    @ApiResponse(description = "Success", responseCode = "200",
-                            content = {
-                                    @Content(
-                                            mediaType = "application/json",
-                                            array = @ArraySchema(schema = @Schema(implementation = CategoryModel.class))
-                                    )
-                            }),
-                    @ApiResponse(description = "Bad Request", responseCode = "400", content = @Content),
-                    @ApiResponse(description = "Unauthorized", responseCode = "401", content = @Content),
-                    @ApiResponse(description = "Not Found", responseCode = "404", content = @Content),
-                    @ApiResponse(description = "Internal Error", responseCode = "500", content = @Content),
-            }
-    )
+    @Operation(summary = "Create a category", description = "Create a category", tags = {"Category"})
     @SecurityRequirement(name = "Bearer Authentication")
     public ResponseEntity<CategoryResponseDTO> createCategory(@RequestBody CategoryRecord nameCategory, HttpServletRequest request){
         String token = tokenService.recoverToken(request);
@@ -61,22 +46,7 @@ public class CategoryController {
     }
 
     @GetMapping("/find")
-    @Operation(summary = "find categorys", description = "find categorys parsing id Company",
-            tags = {"Category"},
-            responses = {
-                    @ApiResponse(description = "Success", responseCode = "200",
-                            content = {
-                                    @Content(
-                                            mediaType = "application/json",
-                                            array = @ArraySchema(schema = @Schema(implementation = CategoryModel.class))
-                                    )
-                            }),
-                    @ApiResponse(description = "Bad Request", responseCode = "400", content = @Content),
-                    @ApiResponse(description = "Unauthorized", responseCode = "401", content = @Content),
-                    @ApiResponse(description = "Not Found", responseCode = "404", content = @Content),
-                    @ApiResponse(description = "Internal Error", responseCode = "500", content = @Content),
-            }
-    )
+    @Operation(summary = "find categorys", description = "find categorys parsing id Company", tags = {"Category"})
     @SecurityRequirement(name = "Bearer Authentication")
     public ResponseEntity<Page<CategoryResponseDTO>> findAllCategorys(HttpServletRequest request, @RequestParam(value = "page", defaultValue = "0") Integer page, @RequestParam(value = "limit", defaultValue = "12") Integer limit, @RequestParam(value = "direction", defaultValue = "asc") String direction){
         String token = tokenService.recoverToken(request);
@@ -89,22 +59,7 @@ public class CategoryController {
     }
 
     @GetMapping("/findByName/{name}")
-    @Operation(summary = "find categorys by name", description = "find categorys by name",
-            tags = {"Category"},
-            responses = {
-                    @ApiResponse(description = "Success", responseCode = "200",
-                            content = {
-                                    @Content(
-                                            mediaType = "application/json",
-                                            array = @ArraySchema(schema = @Schema(implementation = CategoryModel.class))
-                                    )
-                            }),
-                    @ApiResponse(description = "Bad Request", responseCode = "400", content = @Content),
-                    @ApiResponse(description = "Unauthorized", responseCode = "401", content = @Content),
-                    @ApiResponse(description = "Not Found", responseCode = "404", content = @Content),
-                    @ApiResponse(description = "Internal Error", responseCode = "500", content = @Content),
-            }
-    )
+    @Operation(summary = "find categorys by name", description = "find categorys by name", tags = {"Category"})
     @SecurityRequirement(name = "Bearer Authentication")
     public ResponseEntity<Page<CategoryResponseDTO>> findCategorysByName(@PathVariable(value = "name")String name, HttpServletRequest request, @RequestParam(value = "page", defaultValue = "0") Integer page, @RequestParam(value = "limit", defaultValue = "12") Integer limit, @RequestParam(value = "direction", defaultValue = "asc") String direction){
         String token = tokenService.recoverToken(request);
@@ -117,22 +72,7 @@ public class CategoryController {
     }
 
     @GetMapping("/{id}")
-    @Operation(summary = "find category by id", description = "find category by id",
-            tags = {"Category"},
-            responses = {
-                    @ApiResponse(description = "Success", responseCode = "200",
-                            content = {
-                                    @Content(
-                                            mediaType = "application/json",
-                                            array = @ArraySchema(schema = @Schema(implementation = CategoryModel.class))
-                                    )
-                            }),
-                    @ApiResponse(description = "Bad Request", responseCode = "400", content = @Content),
-                    @ApiResponse(description = "Unauthorized", responseCode = "401", content = @Content),
-                    @ApiResponse(description = "Not Found", responseCode = "404", content = @Content),
-                    @ApiResponse(description = "Internal Error", responseCode = "500", content = @Content),
-            }
-    )
+    @Operation(summary = "find category by id", description = "find category by id", tags = {"Category"})
     public ResponseEntity<CategoryResponseDTO> findById(@PathVariable(value = "id") Integer id){
         CategoryModel category = categoryService.findById(id);
         CategoryResponseDTO categoryResponseDTO = new CategoryResponseDTO(category);
@@ -140,22 +80,7 @@ public class CategoryController {
     }
 
     @PutMapping("/{id}")
-    @Operation(summary = "Put category by id and body", description = "Put category by id and body",
-            tags = {"Category"},
-            responses = {
-                    @ApiResponse(description = "Success", responseCode = "200",
-                            content = {
-                                    @Content(
-                                            mediaType = "application/json",
-                                            array = @ArraySchema(schema = @Schema(implementation = CategoryModel.class))
-                                    )
-                            }),
-                    @ApiResponse(description = "Bad Request", responseCode = "400", content = @Content),
-                    @ApiResponse(description = "Unauthorized", responseCode = "401", content = @Content),
-                    @ApiResponse(description = "Not Found", responseCode = "404", content = @Content),
-                    @ApiResponse(description = "Internal Error", responseCode = "500", content = @Content),
-            }
-    )
+    @Operation(summary = "Put category by id and body", description = "Put category by id and body", tags = {"Category"})
     @SecurityRequirement(name = "Bearer Authentication")
     public ResponseEntity<CategoryResponseDTO> updateCategory(@PathVariable(value = "id")Integer categoryId, @RequestBody String categoryName, HttpServletRequest request){
         String token = tokenService.recoverToken(request);
@@ -166,22 +91,7 @@ public class CategoryController {
     }
 
     @DeleteMapping("/{id}")
-    @Operation(summary = "delete category by id", description = "delete category by id",
-            tags = {"Category"},
-            responses = {
-                    @ApiResponse(description = "Success", responseCode = "200",
-                            content = {
-                                    @Content(
-                                            mediaType = "application/json",
-                                            array = @ArraySchema(schema = @Schema(implementation = void.class))
-                                    )
-                            }),
-                    @ApiResponse(description = "Bad Request", responseCode = "400", content = @Content),
-                    @ApiResponse(description = "Unauthorized", responseCode = "401", content = @Content),
-                    @ApiResponse(description = "Not Found", responseCode = "404", content = @Content),
-                    @ApiResponse(description = "Internal Error", responseCode = "500", content = @Content),
-            }
-    )
+    @Operation(summary = "delete category by id", description = "delete category by id", tags = {"Category"})
     @SecurityRequirement(name = "Bearer Authentication")
     public ResponseEntity inactiveCategory(@PathVariable(value = "id")Integer id, HttpServletRequest request){
         String token = tokenService.recoverToken(request);

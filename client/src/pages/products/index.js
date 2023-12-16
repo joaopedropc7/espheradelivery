@@ -15,6 +15,7 @@ import deleteImg from '../../assets/delete.png'
 export default function Products(){
     
     const [products, setProducts] = useState([]);
+    const [topProducts, setTopProducts] = useState([]);
     const token = localStorage.getItem('token');
     const [companyInfo, setCompanyInfo] = useState({});
     const [modalIsOpen, setModalIsOpen] = useState(false);
@@ -25,6 +26,12 @@ export default function Products(){
 
         const fetchProducts = async () => {
           try {
+            const topProductsResponse = await api.get('api/product/report/topselling', {
+              headers: {
+                Authorization: `Bearer ${token}`,
+              },
+            });
+            setTopProducts(topProductsResponse.data.content);
             const companyResponse = await api.get('api/company/info', {
                 headers: {
                   Authorization: `Bearer ${token}`,
@@ -115,6 +122,9 @@ export default function Products(){
             </nav>
         </header>
         <section className='products'>
+          <div className="primary">
+
+          </div>
             <div className='listProducts'>
                 <h2>Lista de Produtos</h2>
                 <ul>
@@ -140,9 +150,31 @@ export default function Products(){
                                 <p><a href=''><img src={changeImg} alt="" /></a></p>
                                 <p><a href="" onClick={(e) => { e.preventDefault(); handleDeleteClick(product.id); }}><img src={deleteImg} alt="" /></a></p>
                             </div>
+                            <hr />
                         </li>
                     ))}
                 </ul>
+                </div>
+                <div className="top-products">
+                  <div className="itensProduct">
+                  <h2>Top 5 Produtos Mais Vendidos</h2>
+                  <ul>
+                    <li>
+                        <p>Nome</p>
+                        <p>Quantidade</p>
+                        <p>Valor</p>               
+                    </li>
+                  {Array.isArray(topProducts) && topProducts.map((product) => (
+                    <li key={product.productId}>
+                      <p className='productName'>{product.productName}</p>
+                      <p>{product.quantitySales}</p>
+                      <p>R$ {product.valueSellTotal}</p>
+                    </li>
+                  ))}
+                  </ul>
+                </div>
+                  </div>
+            </section>
                 <Modal className="modalConfirm"
                     isOpen={modalIsOpen}
                     onRequestClose={handleCancelDelete}
@@ -151,8 +183,7 @@ export default function Products(){
                     <button onClick={handleConfirmDelete}>Confirmar</button>
                     <button onClick={handleCancelDelete}>Cancelar</button>
                 </Modal>
-            </div>
-        </section>
+           
         <div>
       {error && (
         <div style={errorDialogStyle}>
