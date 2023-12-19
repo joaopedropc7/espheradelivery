@@ -1,4 +1,4 @@
-package br.com.esphera.delivery.models.DTOS;
+package br.com.esphera.delivery.models.DTOS.responseDtos;
 
 public record DeliveryConsultValueDTO(
         Double distance,

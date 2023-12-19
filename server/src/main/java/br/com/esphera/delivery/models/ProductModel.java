@@ -6,6 +6,7 @@ import jakarta.persistence.*;
 import org.springframework.hateoas.RepresentationModel;
 
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Objects;
 
 @Entity
@@ -36,12 +37,16 @@ public class ProductModel extends RepresentationModel<ProductModel> {
     @JoinColumn(name = "company_id")
     @JsonIgnore
     private CompanyModel companyModel;
+    @ManyToMany
+    @JoinColumn(name = "optional_id")
+    private List<OptionalModel> optionals;
+    private Integer quantityOptionalsFree;
 
 
     public ProductModel() {
     }
 
-    public ProductModel(ProductRecord dto, CategoryModel category, CompanyModel companyModel ) {
+    public ProductModel(ProductRecord dto, CategoryModel category, CompanyModel companyModel, List<OptionalModel> optionals) {
         this.companyModel = companyModel;
         this.name = dto.name();
         this.categoryModel = category;
@@ -55,6 +60,8 @@ public class ProductModel extends RepresentationModel<ProductModel> {
         this.dateCreate = LocalDate.now();
         this.inactive = false;
         this.dateCreated = LocalDate.now();
+        this.optionals = optionals;
+        this.quantityOptionalsFree = dto.quantityOptionalsFree();
     }
 
 
@@ -176,6 +183,22 @@ public class ProductModel extends RepresentationModel<ProductModel> {
 
     public void setDateCreated(LocalDate dateCreated) {
         this.dateCreated = dateCreated;
+    }
+
+    public List<OptionalModel> getOptionals() {
+        return optionals;
+    }
+
+    public void setOptionals(List<OptionalModel> optionals) {
+        this.optionals = optionals;
+    }
+
+    public Integer getQuantityOptionalsFree() {
+        return quantityOptionalsFree;
+    }
+
+    public void setQuantityOptionalsFree(Integer quantityOptionalsFree) {
+        this.quantityOptionalsFree = quantityOptionalsFree;
     }
 
     @Override

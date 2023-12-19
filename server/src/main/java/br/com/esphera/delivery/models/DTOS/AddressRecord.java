@@ -3,18 +3,18 @@ package br.com.esphera.delivery.models.DTOS;
 import jakarta.validation.constraints.NotNull;
 
 public record AddressRecord(
-        @NotNull
+        @NotNull(message = "O campo logradouro é obrigatório")
         String logradouro,
-        @NotNull
+        @NotNull(message = "O campo CEP é obrigatório")
         String cep,
-        @NotNull
+        @NotNull(message = "O campo complemento é obrigatório")
         String complemento,
-        @NotNull
+        @NotNull(message = "O campo bairro é obrigatório")
         String bairro,
-        @NotNull
+        @NotNull(message = "O campo localidade é obrigatório")
         String localidade,
-        @NotNull
+        @NotNull(message = "O campo UF é obrigatório")
         String UF,
-        @NotNull
+        @NotNull(message = "O campo número é obrigatório")
         String numberHouse){
 }

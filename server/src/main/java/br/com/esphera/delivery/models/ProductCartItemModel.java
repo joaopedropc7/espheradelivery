@@ -20,6 +20,7 @@ public class ProductCartItemModel extends RepresentationModel<ProductCartItemMod
     @ManyToOne(cascade = CascadeType.DETACH)
     @JoinColumn(name = "product_id")
     private ProductModel product;
+    private Double totalValue;
     private Integer quantity;
 
     public ProductCartItemModel() {
@@ -62,6 +63,13 @@ public class ProductCartItemModel extends RepresentationModel<ProductCartItemMod
         this.shoppingCart = shoppingCart;
     }
 
+    public Double getTotalValue() {
+        return totalValue;
+    }
+
+    public void setTotalValue(Double totalValue) {
+        this.totalValue = totalValue;
+    }
 
     @Override
     public boolean equals(Object o) {

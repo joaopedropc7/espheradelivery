@@ -1,18 +1,9 @@
 package br.com.esphera.delivery.controller;
 
-import br.com.esphera.delivery.models.CompanyModel;
 import br.com.esphera.delivery.models.DTOS.AddressRecord;
-import br.com.esphera.delivery.models.DTOS.DeliveryConsultValueDTO;
-import br.com.esphera.delivery.models.DTOS.DistanceDurationDTO;
-import br.com.esphera.delivery.models.ProductModel;
-import br.com.esphera.delivery.service.AddressService;
-import br.com.esphera.delivery.service.CompanyService;
+import br.com.esphera.delivery.models.DTOS.responseDtos.DeliveryConsultValueDTO;
 import br.com.esphera.delivery.service.DeliveryService;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.media.ArraySchema;
-import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.Schema;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

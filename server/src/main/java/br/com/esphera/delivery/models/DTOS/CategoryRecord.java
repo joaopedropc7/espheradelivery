@@ -1,4 +1,9 @@
 package br.com.esphera.delivery.models.DTOS;
 
-public record CategoryRecord(String categoryName) {
+import jakarta.validation.constraints.NotNull;
+
+public record CategoryRecord(
+        @NotNull(message = "O campo nome é obrigatório")
+        String categoryName
+) {
 }

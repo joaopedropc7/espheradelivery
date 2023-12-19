@@ -15,6 +15,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -29,11 +30,19 @@ public class ProductService {
     @Autowired
     private CompanyService companyService;
 
+    @Autowired
+    private OptionalService optionalService;
+
 
     public ProductModel createProduct(ProductRecord dto, Integer companyId){
         CompanyModel companyModel = companyService.getCompanyById(companyId);
         CategoryModel categoryModel = categoryService.findById(dto.idCategory());
-        ProductModel product = new ProductModel(dto, categoryModel, companyModel);
+        List<OptionalModel> optionalModels = new ArrayList<>();
+        dto.optinalsId().forEach(optionalId -> {
+            OptionalModel optionalModel = optionalService.getOptionalById(optionalId);
+            optionalModels.add(optionalModel);
+        });
+        ProductModel product = new ProductModel(dto, categoryModel, companyModel, optionalModels);
         productRepository.save(product);
         product.add(linkTo(methodOn(ProductController.class).findProductById(product.getId())).withSelfRel());
         return product;
@@ -78,6 +87,13 @@ public class ProductService {
         product.setDescription(dto.description());
         product.setCostValue(dto.costValue());
         product.setValueSell(dto.valueSell());
+        List<OptionalModel> optionalModels = new ArrayList<>();
+        dto.optinalsId().forEach(optionalId -> {
+            OptionalModel optionalModel = optionalService.getOptionalById(optionalId);
+            optionalModels.add(optionalModel);
+        });
+        product.setOptionals(optionalModels);
+        product.setQuantityOptionalsFree(dto.quantityOptionalsFree());
         productRepository.save(product);
         product.add(linkTo(methodOn(ProductController.class).findProductById(product.getId())).withSelfRel());
         return product;
@@ -107,6 +123,11 @@ public class ProductService {
             throw new ResourceNotFoundException("Não é possível deletar um produto que haja movimentacoes, tente inativar o mesmo!");
         }
         productRepository.delete(productModel);
+    }
+
+    public List<OptionalModel> getOptionalsInProduct(Integer productId){
+        ProductModel product = findById(productId);
+        return product.getOptionals();
     }
 
     public void sellProduct(ProductModel product, Integer productQuantity){

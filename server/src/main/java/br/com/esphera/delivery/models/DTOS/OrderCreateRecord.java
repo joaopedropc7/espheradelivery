@@ -4,16 +4,16 @@ import br.com.esphera.delivery.models.Enums.TypeDelivery;
 import jakarta.validation.constraints.NotNull;
 
 public record OrderCreateRecord(
-        @NotNull
+        @NotNull(message = "O campo nome do cliente é obrigatório")
         String clientName,
-        @NotNull
         String cpf,
-        @NotNull
+        @NotNull(message = "O campo número do contato é obrigatório")
         String numberCellphone,
-        @NotNull
+        @NotNull(message = "O campo endereço é obrigatório")
         AddressRecord addressRecord,
-        @NotNull
+        @NotNull(message = "O campo id do carrinho é obrigatório")
         Integer shoppingCartId,
         String couponName,
+        @NotNull(message = "O campo tipo de entrega é obrigatório")
         TypeDelivery typeDelivery) {
 }

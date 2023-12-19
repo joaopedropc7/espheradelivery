@@ -20,7 +20,6 @@ public class ShoppingCartService {
 
     @Autowired
     private ShoppingCartRepository shoppingCartRepository;
-
     @Autowired
     private HttpSession httpSession;
 

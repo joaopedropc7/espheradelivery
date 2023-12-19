@@ -22,6 +22,7 @@ public record ProductResponseDTO(
         Integer categoryId,
         String categoryName,
         Integer companyId,
+        List<OptionalResponseDTO> optionals,
         Links links
 ) {
     public ProductResponseDTO(ProductModel productModel)  {
@@ -39,6 +40,7 @@ public record ProductResponseDTO(
                 productModel.getCategoryModel().getId(),
                 productModel.getCategoryModel().getCategoryName(),
                 productModel.getCompanyModel().getId(),
+                OptionalResponseDTO.convertToList(productModel.getOptionals()),
                 productModel.getLinks()
         );
     }

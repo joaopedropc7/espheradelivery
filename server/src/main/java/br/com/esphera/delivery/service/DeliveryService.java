@@ -1,11 +1,9 @@
 package br.com.esphera.delivery.service;
 
-import br.com.esphera.delivery.ApiMaps.MapsAPi;
-import br.com.esphera.delivery.controller.DeliveryController;
 import br.com.esphera.delivery.exceptions.ResourceNotFoundException;
 import br.com.esphera.delivery.models.*;
 import br.com.esphera.delivery.models.DTOS.AddressRecord;
-import br.com.esphera.delivery.models.DTOS.DeliveryConsultValueDTO;
+import br.com.esphera.delivery.models.DTOS.responseDtos.DeliveryConsultValueDTO;
 import br.com.esphera.delivery.models.DTOS.DeliveryRecord;
 import br.com.esphera.delivery.models.DTOS.DistanceDurationDTO;
 import br.com.esphera.delivery.repository.DeliveryRepository;
