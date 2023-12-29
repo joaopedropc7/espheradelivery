@@ -68,7 +68,7 @@ public class OrderService {
         }
         orderRepository.save(orderModel);
         shoppingCartModel.getProductCartItems().forEach(productCartItemModel -> {
-            productService.sellProduct(productCartItemModel);
+            productService.sellProduct(productCartItemModel.getProduct(), productCartItemModel.getQuantity(), productCartItemModel.getTotalValue());
         });
         companyService.incrementValueGenerated(companyModel,orderModel.getSellValueWithDiscount());
         orderModel.add(linkTo(methodOn(OrderController.class).findSellById(orderModel.getId())).withSelfRel());
@@ -104,7 +104,7 @@ public class OrderService {
             deliveryService.cancelDelivery(orderModel.getDeliveryModel());
         }
         orderModel.getShoppingCartModel().getProductCartItems().forEach(product -> {
-            productService.revertSellProduct(product);
+            productService.revertSellProduct(product.getProduct(), product.getQuantity(), product.getTotalValue());
         });
         orderModel.setOrderCancelled(true);
         orderModel.setStatusOrder(StatusOrder.Cancelado);

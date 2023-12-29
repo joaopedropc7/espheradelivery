@@ -38,7 +38,7 @@ public class CommandsTableService {
         CommandsTableModel commandsTableModel = new CommandsTableModel(tableModel.getCompanyModel(), tableModel, commandsTableRecord.paymentsMethod(), commandsTableRecord.observation());
         tableService.clearTable(tableModel.getId());
         commandsTableModel.getProductsTable().stream().forEach(productTable -> {
-            productService.sellProduct(productTable.getProduct(), productTable.getQuantity());
+            productService.sellProduct(productTable.getProduct(), productTable.getQuantity(), productTable.getTotalValue());
         });
        commandsTableRepository.save(commandsTableModel);
        commandsTableModel.add(linkTo(methodOn(CommandsTableController.class).getCommandsTableById(commandsTableModel.getId())).withSelfRel());

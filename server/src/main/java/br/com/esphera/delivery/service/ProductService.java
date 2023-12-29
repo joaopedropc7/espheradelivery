@@ -130,19 +130,18 @@ public class ProductService {
         return product.getOptionals();
     }
 
-    public void sellProduct(ProductCartItemModel productCartItemModel, ProductModel productModel, Integer quantity, Double valueProductInSell){
+    public void sellProduct(ProductModel productModel, Integer quantity, Double valueProductInSell){
         productModel.setQuantity(productModel.getQuantity() - quantity);
         productModel.setSales(productModel.getSales() + quantity);
-        productModel.setValueSellTotal(productModel.getValueSellTotal() + (productCartItemModel.getTotalValue() * productCartItemModel.getQuantity()));
+        productModel.setValueSellTotal(productModel.getValueSellTotal() + (valueProductInSell * quantity));
         productRepository.save(productModel);
     }
 
-    public void revertSellProduct(ProductCartItemModel productCartItemModel){
-        ProductModel product = productCartItemModel.getProduct();
-        product.setQuantity(product.getQuantity() + productCartItemModel.getQuantity());
-        product.setSales(product.getSales() - productCartItemModel.getQuantity());
-        product.setValueSellTotal(product.getValueSellTotal() - (productCartItemModel.getTotalValue() * productCartItemModel.getQuantity()));
-        productRepository.save(product);
+    public void revertSellProduct(ProductModel productModel, Integer quantity, Double valueProductInSell){
+        productModel.setQuantity(productModel.getQuantity() + quantity);
+        productModel.setSales(productModel.getSales() - quantity);
+        productModel.setValueSellTotal(productModel.getValueSellTotal() - (valueProductInSell * quantity));
+        productRepository.save(productModel);
     }
 
     public void addQuantityInProduct(List<ProductEntryItemModel> productsList){
