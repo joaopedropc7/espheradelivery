@@ -15,7 +15,7 @@ services:
     networks:
       - esphera-network
   deliveryesphera:
-    image: jpedrocunha/deliveryesphera
+    image: jpedrocunha/deliveryesphera:latest
     restart: always
     working_dir: /home/jp/Documentos/Esphera/espheradelivery
     environment:
