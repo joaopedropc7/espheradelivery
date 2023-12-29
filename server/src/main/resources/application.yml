@@ -34,4 +34,4 @@ api:
       secret: ${JWT_SECRET:my-secret-key}
 
 server:
-  port: 8080
+  port: 9999
