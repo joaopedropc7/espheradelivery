@@ -2,8 +2,10 @@ package br.com.esphera.delivery.service;
 
 import br.com.esphera.delivery.controller.CartController;
 import br.com.esphera.delivery.exceptions.ResourceNotFoundException;
-import br.com.esphera.delivery.models.ProductCartItemModel;
-import br.com.esphera.delivery.models.ShoppingCartModel;
+import br.com.esphera.delivery.models.*;
+import br.com.esphera.delivery.models.DTOS.AddProductCartRecord;
+import br.com.esphera.delivery.models.DTOS.OrderCreateRecord;
+import br.com.esphera.delivery.models.DTOS.responseDtos.OrderResponseDTO;
 import br.com.esphera.delivery.repository.ShoppingCartRepository;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,6 +13,7 @@ import org.springframework.stereotype.Service;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -22,6 +25,12 @@ public class ShoppingCartService {
     private ShoppingCartRepository shoppingCartRepository;
     @Autowired
     private HttpSession httpSession;
+    @Autowired
+    private OrderService orderService;
+    @Autowired
+    private ProductService productService;
+    @Autowired
+    private OptionalService optionalService;
 
     private ShoppingCartModel getShoppingCartInSession() {
         ShoppingCartModel shoppingCart = (ShoppingCartModel) this.httpSession.getAttribute(CART_ATTRIBUTE_NAME);
@@ -39,8 +48,22 @@ public class ShoppingCartService {
         return productInCart;
     }
 
-    public ProductCartItemModel addToCart(ProductCartItemModel productCartItemModel){
+    public ProductCartItemModel addToCart(AddProductCartRecord dto){
+        Double valueOptionals = 0.0;
+        ProductModel productModel = productService.findById(dto.productId());
         ShoppingCartModel shoppingCartModel = getShoppingCartInSession();
+        List<OptionalModel> optionals = new ArrayList<>();
+        dto.optionalsId().forEach(optionalId -> {
+            OptionalModel optionalModel = optionalService.getOptionalById(optionalId);
+            optionals.add(optionalModel);
+        });
+        if (optionals.size() > productModel.getQuantityOptionalsFree()){
+            for (int i = (productModel.getQuantityOptionalsFree() - 1); i <= optionals.size(); i++){
+                valueOptionals += optionals.get(i).getPrice();
+            }
+        }
+        ProductCartItemModel productCartItemModel = new ProductCartItemModel(productModel, dto.productQuantity(), valueOptionals);
+
         ProductCartItemModel producInCart = shoppingCartModel.addToCart(productCartItemModel);
         calculateAmount();
         return producInCart;
@@ -56,6 +79,12 @@ public class ShoppingCartService {
         ShoppingCartModel shoppingCartModel = getShoppingCartInSession();
         shoppingCartModel.getProductCartItems().stream().forEach(p -> p.setShoppingCart(shoppingCartModel));
         return shoppingCartRepository.save(shoppingCartModel);
+    }
+
+    public OrderResponseDTO createOrderWithCart(OrderCreateRecord dto, Integer companyId){
+        ShoppingCartModel shoppingCartModel = checkout();
+        OrderModel orderModel = orderService.createSell(dto, shoppingCartModel, companyId);
+        return new OrderResponseDTO(orderModel);
     }
 
     public Integer getQuantityTotalInCart(){
@@ -84,7 +113,7 @@ public class ShoppingCartService {
         ShoppingCartModel shoppingCart = getShoppingCartInSession();
         shoppingCart.setTotalValue((double) 0);
         for (ProductCartItemModel productCart : shoppingCart.getProductCartItems()){
-            shoppingCart.setTotalValue(shoppingCart.getTotalValue() + (productCart.getProduct().getValueSell() * productCart.getQuantity()));
+            shoppingCart.setTotalValue(shoppingCart.getTotalValue() + (productCart.getTotalValue()));
         }
     }
 

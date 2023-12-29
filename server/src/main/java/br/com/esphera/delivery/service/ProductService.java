@@ -130,17 +130,18 @@ public class ProductService {
         return product.getOptionals();
     }
 
-    public void sellProduct(ProductModel product, Integer productQuantity){
-        product.setQuantity(product.getQuantity() - productQuantity);
-        product.setSales(product.getSales() + productQuantity);
-        product.setValueSellTotal(product.getValueSellTotal() + (product.getValueSell() * productQuantity));
-        productRepository.save(product);
+    public void sellProduct(ProductCartItemModel productCartItemModel, ProductModel productModel, Integer quantity, Double valueProductInSell){
+        productModel.setQuantity(productModel.getQuantity() - quantity);
+        productModel.setSales(productModel.getSales() + quantity);
+        productModel.setValueSellTotal(productModel.getValueSellTotal() + (productCartItemModel.getTotalValue() * productCartItemModel.getQuantity()));
+        productRepository.save(productModel);
     }
 
-    public void revertSellProduct(ProductModel product, Integer productQuantity){
-        product.setQuantity(product.getQuantity() + productQuantity);
-        product.setSales(product.getSales() - productQuantity);
-        product.setValueSellTotal(product.getValueSellTotal() - (product.getValueSell() * productQuantity));
+    public void revertSellProduct(ProductCartItemModel productCartItemModel){
+        ProductModel product = productCartItemModel.getProduct();
+        product.setQuantity(product.getQuantity() + productCartItemModel.getQuantity());
+        product.setSales(product.getSales() - productCartItemModel.getQuantity());
+        product.setValueSellTotal(product.getValueSellTotal() - (productCartItemModel.getTotalValue() * productCartItemModel.getQuantity()));
         productRepository.save(product);
     }
 

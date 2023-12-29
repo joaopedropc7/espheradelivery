@@ -1,5 +1,8 @@
 package br.com.esphera.delivery.controller;
 
+import br.com.esphera.delivery.models.DTOS.AddProductCartRecord;
+import br.com.esphera.delivery.models.DTOS.OrderCreateRecord;
+import br.com.esphera.delivery.models.DTOS.responseDtos.OrderResponseDTO;
 import br.com.esphera.delivery.models.ProductCartItemModel;
 import br.com.esphera.delivery.models.ProductModel;
 import br.com.esphera.delivery.models.ShoppingCartModel;
@@ -26,12 +29,10 @@ public class CartController {
     @Autowired
     private ProductService productService;
 
-    @PostMapping("/add/{id}/{quantity}")
+    @PostMapping("/add")
     @Operation(summary = "Insert in cart", description = "Insert product in cart", tags = {"Cart"})
-    public ResponseEntity<ProductCartItemModel> addToCart(@PathVariable(value = "id") Integer productID, @PathVariable(value = "quantity") Integer quantity){
-       ProductModel productModel = productService.findById(productID);
-       ProductCartItemModel productCartItemModel = new ProductCartItemModel(productModel, quantity);
-       return ResponseEntity.ok().body(shoppingCartService.addToCart(productCartItemModel));
+    public ResponseEntity<ProductCartItemModel> addToCart(@RequestBody AddProductCartRecord dto){
+       return ResponseEntity.ok().body(shoppingCartService.addToCart(dto));
     }
 
     @PutMapping("/alter/{id}/{quantity}")
@@ -48,11 +49,11 @@ public class CartController {
         return ResponseEntity.ok().build();
     }
 
-    @PostMapping("/checkout")
-    @Operation(summary = "Checkout in cart", description = "Checkout in cart", tags = {"Cart"})
-    public ResponseEntity<Integer> checkout(){
-        ShoppingCartModel shoppingCartModel = shoppingCartService.checkout();
-        return ResponseEntity.ok(shoppingCartModel.getId());
+    @PostMapping("/checkout/{companyId}")
+    @Operation(summary = "Checkout in cart and create order", description = "Checkout in cart and create order", tags = {"Cart"})
+    public ResponseEntity<OrderResponseDTO> checkout(@RequestBody OrderCreateRecord orderCreateRecord, @PathVariable(value = "companyId")Integer companyId){
+        OrderResponseDTO orderResponseDTO = shoppingCartService.createOrderWithCart(orderCreateRecord, companyId);
+        return ResponseEntity.ok().body(orderResponseDTO);
     }
 
     @GetMapping("/quantity")

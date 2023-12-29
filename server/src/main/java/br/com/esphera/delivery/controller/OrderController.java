@@ -33,7 +33,7 @@ public class OrderController {
     @Autowired
     private TokenService tokenService;
 
-    @PostMapping
+    /* @PostMapping
     @Operation(summary = "Create Order", description = "Create Order parsing company Id",
             tags = {"Order"},
             responses = {
@@ -57,7 +57,7 @@ public class OrderController {
         OrderModel sellCrated = orderService.createSell(data, idCompany);
         OrderResponseDTO orderResponseDTO = new OrderResponseDTO(sellCrated);
         return ResponseEntity.ok().body(orderResponseDTO);
-    }
+    }*/
 
     @GetMapping("/findall")
     @Operation(summary = "Get all Orders", description = "Get all Orders parsing company Id", tags = {"Order"})

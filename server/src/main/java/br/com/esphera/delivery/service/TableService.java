@@ -2,11 +2,9 @@ package br.com.esphera.delivery.service;
 
 import br.com.esphera.delivery.controller.TableController;
 import br.com.esphera.delivery.exceptions.ResourceNotFoundException;
-import br.com.esphera.delivery.models.CompanyModel;
+import br.com.esphera.delivery.models.*;
+import br.com.esphera.delivery.models.DTOS.AddProductCartRecord;
 import br.com.esphera.delivery.models.Enums.StatusTable;
-import br.com.esphera.delivery.models.ProductModel;
-import br.com.esphera.delivery.models.ProductTableModel;
-import br.com.esphera.delivery.models.TableModel;
 import br.com.esphera.delivery.repository.TableRepository;
 import org.hibernate.ResourceClosedException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +12,7 @@ import org.springframework.stereotype.Service;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -27,6 +26,9 @@ public class TableService {
 
     @Autowired
     private ProductService productService;
+
+    @Autowired
+    private OptionalService optionalService;
 
     public TableModel inserTableInRest(Integer tableNumber, Integer companyId){
         CompanyModel companyModel = companyService.getCompanyById(companyId);
@@ -43,11 +45,22 @@ public class TableService {
         return tableModel;
     }
 
-    public ProductTableModel insertProductInTable(Integer tableId, Integer productId, Integer productQuantity, Integer companyId){
+    public ProductTableModel insertProductInTable(Integer tableId, AddProductCartRecord addProductCartRecord, Integer companyId){
+        Double valueOptionals = 0.0;
         TableModel tableModel = getTableById(tableId);
         verifyTableStatus(tableModel);
-        ProductModel productModel = productService.findById(productId);
-        ProductTableModel productTableModel = new ProductTableModel(productModel, productQuantity);
+        ProductModel productModel = productService.findById(addProductCartRecord.productId());
+        List<OptionalModel> optionals = new ArrayList<>();
+        addProductCartRecord.optionalsId().forEach(optionalId -> {
+            OptionalModel optionalModel = optionalService.getOptionalById(optionalId);
+            optionals.add(optionalModel);
+        });
+        if (optionals.size() > productModel.getQuantityOptionalsFree()){
+            for (int i = (productModel.getQuantityOptionalsFree() - 1); i <= optionals.size(); i++){
+                valueOptionals += optionals.get(i).getPrice();
+            }
+        }
+        ProductTableModel productTableModel = new ProductTableModel(productModel, addProductCartRecord.productQuantity(), valueOptionals);
         productTableModel.setTableModel(tableModel);
         ProductTableModel productInTable = tableModel.insertIntoTable(productTableModel);
         tableRepository.save(tableModel);
@@ -91,7 +104,7 @@ public class TableService {
     public void calculeAmountTable(TableModel tableModel){
         tableModel.setCommandsValue(0.0);
         for(ProductTableModel tableProducts : tableModel.getProductsTable()){
-            tableModel.setCommandsValue(tableModel.getCommandsValue() + tableProducts.getProduct().getValueSell());
+            tableModel.setCommandsValue(tableModel.getCommandsValue() + tableProducts.getTotalValue());
         }
         tableRepository.save(tableModel);
     }

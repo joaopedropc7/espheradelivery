@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import org.springframework.hateoas.RepresentationModel;
 
+import java.util.List;
 import java.util.Objects;
 
 @Entity
@@ -22,13 +23,17 @@ public class ProductTableModel extends RepresentationModel<ProductTableModel> {
     @JsonIgnore
     private ProductModel product;
     private Integer quantity;
+    private Double totalValue;
+    @ManyToMany
+    private List<OptionalModel> optionalModels;
 
     public ProductTableModel() {
     }
 
-    public ProductTableModel(ProductModel product, Integer quantity) {
+    public ProductTableModel(ProductModel product, Integer quantity, Double valueOptionals) {
         this.product = product;
         this.quantity = quantity;
+        this.totalValue = product.getValueSell() + valueOptionals;
     }
 
 
@@ -62,6 +67,22 @@ public class ProductTableModel extends RepresentationModel<ProductTableModel> {
 
     public void setQuantity(Integer quantity) {
         this.quantity = quantity;
+    }
+
+    public Double getTotalValue() {
+        return totalValue;
+    }
+
+    public void setTotalValue(Double totalValue) {
+        this.totalValue = totalValue;
+    }
+
+    public List<OptionalModel> getOptionalModels() {
+        return optionalModels;
+    }
+
+    public void setOptionalModels(List<OptionalModel> optionalModels) {
+        this.optionalModels = optionalModels;
     }
 
     @Override

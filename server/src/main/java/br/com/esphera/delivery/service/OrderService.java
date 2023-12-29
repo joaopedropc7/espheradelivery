@@ -47,10 +47,9 @@ public class OrderService {
     @Autowired
     private AddressService addressService;
 
-    public OrderModel createSell(OrderCreateRecord data, Integer companyId){
+    public OrderModel createSell(OrderCreateRecord data,ShoppingCartModel shoppingCartModel, Integer companyId){
         addressService.getPlaceIdApiMaps(data.addressRecord());
         CompanyModel companyModel = companyService.getCompanyById(companyId);
-        ShoppingCartModel shoppingCartModel = shoppingCartRepository.findById(data.shoppingCartId()).orElseThrow(() -> new ResourceNotFoundException("No records found for this id"));
         validationSales.forEach(validationSales -> validationSales.valid(data, shoppingCartModel));
         Double discount = 0.0;
         if(data.couponName() != null){
@@ -69,7 +68,7 @@ public class OrderService {
         }
         orderRepository.save(orderModel);
         shoppingCartModel.getProductCartItems().forEach(productCartItemModel -> {
-            productService.sellProduct(productCartItemModel.getProduct(), productCartItemModel.getQuantity());
+            productService.sellProduct(productCartItemModel);
         });
         companyService.incrementValueGenerated(companyModel,orderModel.getSellValueWithDiscount());
         orderModel.add(linkTo(methodOn(OrderController.class).findSellById(orderModel.getId())).withSelfRel());
@@ -105,7 +104,7 @@ public class OrderService {
             deliveryService.cancelDelivery(orderModel.getDeliveryModel());
         }
         orderModel.getShoppingCartModel().getProductCartItems().forEach(product -> {
-            productService.revertSellProduct(product.getProduct(), product.getQuantity());
+            productService.revertSellProduct(product);
         });
         orderModel.setOrderCancelled(true);
         orderModel.setStatusOrder(StatusOrder.Cancelado);

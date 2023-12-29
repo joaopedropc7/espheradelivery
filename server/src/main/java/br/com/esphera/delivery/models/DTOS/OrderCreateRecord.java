@@ -11,8 +11,6 @@ public record OrderCreateRecord(
         String numberCellphone,
         @NotNull(message = "O campo endereço é obrigatório")
         AddressRecord addressRecord,
-        @NotNull(message = "O campo id do carrinho é obrigatório")
-        Integer shoppingCartId,
         String couponName,
         @NotNull(message = "O campo tipo de entrega é obrigatório")
         TypeDelivery typeDelivery) {

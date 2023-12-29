@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import org.springframework.hateoas.RepresentationModel;
 
+import java.util.List;
 import java.util.Objects;
 
 @Entity
@@ -22,13 +23,16 @@ public class ProductCartItemModel extends RepresentationModel<ProductCartItemMod
     private ProductModel product;
     private Double totalValue;
     private Integer quantity;
+    @ManyToMany
+    private List<OptionalModel> optionalModels;
 
     public ProductCartItemModel() {
     }
 
-    public ProductCartItemModel(ProductModel product, Integer quantity) {
+    public ProductCartItemModel(ProductModel product, Integer quantity, Double valueIncrementOptionals) {
         this.product = product;
         this.quantity = quantity;
+        this.totalValue = product.getValueSell() + valueIncrementOptionals;
     }
 
     public Integer getId() {

@@ -1,6 +1,7 @@
 package br.com.esphera.delivery.controller;
 
 import br.com.esphera.delivery.infra.security.TokenService;
+import br.com.esphera.delivery.models.DTOS.AddProductCartRecord;
 import br.com.esphera.delivery.models.ProductModel;
 import br.com.esphera.delivery.models.ProductTableModel;
 import br.com.esphera.delivery.models.TableModel;
@@ -49,12 +50,12 @@ public class TableController {
         return ResponseEntity.ok().body(tables);
     }
 
-    @PostMapping("/addproduct/{tableId}/{productId}/{productQuantity}")
+    @PostMapping("/addproduct/{tableId}")
     @Operation(summary = "add product in table parsing id table, id product and quantity", description = "add product in table parsing id table, id product and quantity", tags = {"Table"})
-    public ResponseEntity<ProductTableModel> addProductInTable(@PathVariable(value = "tableId") Integer tableId, @PathVariable(value = "productId") Integer productId, @PathVariable(value = "productQuantity") Integer productQuantity, HttpServletRequest request){
+    public ResponseEntity<ProductTableModel> addProductInTable(@PathVariable(value = "tableId") Integer tableId, @RequestBody AddProductCartRecord addProductCartRecord, HttpServletRequest request){
         String token = tokenService.recoverToken(request);
         Integer companyId = tokenService.getCompanyIdFromToken(token);
-        return ResponseEntity.ok().body(tableService.insertProductInTable(tableId, productId, productQuantity, companyId));
+        return ResponseEntity.ok().body(tableService.insertProductInTable(tableId, addProductCartRecord, companyId));
     }
 
     @PutMapping("/alterquantityproduct/{tableId}/{productId}/{productQuantity}")
