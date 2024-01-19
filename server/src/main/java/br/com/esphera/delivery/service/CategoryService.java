@@ -30,6 +30,7 @@ public class CategoryService {
         CategoryModel categoryModel = new CategoryModel(categoryRecord, companyModel);
         categoryRepository.save(categoryModel);
         categoryModel.add(linkTo(methodOn(CategoryController.class).findById(categoryModel.getId())).withSelfRel());
+        System.out.println(categoryModel);
         return categoryModel;
     }
 

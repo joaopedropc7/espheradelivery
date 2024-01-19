@@ -27,6 +27,16 @@ public class MotoboysModel extends RepresentationModel<MotoboysModel> {
     public MotoboysModel() {
     }
 
+    public MotoboysModel(Integer id, String nameMotoboy, String number, String email, CompanyModel companyModel, Integer quantityDelivered, Boolean inactive) {
+        this.id = id;
+        this.nameMotoboy = nameMotoboy;
+        this.number = number;
+        this.email = email;
+        this.companyModel = companyModel;
+        this.quantityDelivered = quantityDelivered;
+        this.inactive = inactive;
+    }
+
     public MotoboysModel(MotoboyRecord dto, CompanyModel companyModel){
         this.nameMotoboy = dto.nameMotoboy();
         this.number = dto.number();

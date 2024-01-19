@@ -28,6 +28,7 @@ public class MotoboyService {
         MotoboysModel motoboysModel = new MotoboysModel(dto, companyModel);
         motoboyRepository.save(motoboysModel);
         motoboysModel.add(linkTo(methodOn(MotoboyController.class).findMotoboyById(motoboysModel.getId())).withSelfRel());
+        System.out.println(motoboysModel);
         return motoboysModel;
     }
 

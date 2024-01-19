@@ -60,6 +60,38 @@ public class CompanyModel extends RepresentationModel<CompanyModel> {
     public CompanyModel() {
     }
 
+    public CompanyModel(Integer id, String nomeFantasia, String razaoSocial, String cpf, String cnpj, String nameContact, String numberCompany1, String numberCompany2, LocalDate dateRegister, LocalDate dateLastPayment, LocalDate dateNextPayment, LocalDate expirationDateSignature, Boolean signatureActive, String emailCompany, Boolean defaulter, List<OrderModel> sells, List<ProductModel> products, Double valueGenerated, Boolean inactive, FileEntity bannerImage, FileEntity logoImage, String logradouro, String cep, String complemento, String bairro, String localidade, String UF, String numberHouse, String idLocalCompanyMaps) {
+        this.id = id;
+        this.nomeFantasia = nomeFantasia;
+        this.razaoSocial = razaoSocial;
+        this.cpf = cpf;
+        this.cnpj = cnpj;
+        this.nameContact = nameContact;
+        this.numberCompany1 = numberCompany1;
+        NumberCompany2 = numberCompany2;
+        this.dateRegister = dateRegister;
+        this.dateLastPayment = dateLastPayment;
+        this.dateNextPayment = dateNextPayment;
+        this.expirationDateSignature = expirationDateSignature;
+        this.signatureActive = signatureActive;
+        this.emailCompany = emailCompany;
+        this.defaulter = defaulter;
+        this.sells = sells;
+        this.products = products;
+        this.valueGenerated = valueGenerated;
+        this.inactive = inactive;
+        this.bannerImage = bannerImage;
+        this.logoImage = logoImage;
+        this.logradouro = logradouro;
+        this.cep = cep;
+        this.complemento = complemento;
+        this.bairro = bairro;
+        this.localidade = localidade;
+        this.UF = UF;
+        this.numberHouse = numberHouse;
+        this.idLocalCompanyMaps = idLocalCompanyMaps;
+    }
+
     public CompanyModel(CompanyRecord dto, AddressRecord addressRecord, String placeId) {
         this.nomeFantasia = dto.nomeFantasia();
         this.razaoSocial = dto.razaoSocial();
